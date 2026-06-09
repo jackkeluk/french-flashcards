@@ -1,0 +1,1064 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="French Cards">
+<meta name="theme-color" content="#1a3a6b">
+<link rel="manifest" href="./manifest.json">
+<link rel="apple-touch-icon" href="./icons/icon-192.png">
+<title>French Flashcards — Leçons avec Josefa</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: #f0f4f8; min-height: 100vh; }
+
+  header {
+    background: linear-gradient(135deg, #1a3a6b, #2d6a9f);
+    color: white;
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  header h1 { font-size: 1.1rem; font-weight: 600; }
+
+  .tabs {
+    display: flex;
+    overflow-x: auto;
+    background: white;
+    border-bottom: 2px solid #e8edf2;
+    padding: 0 12px;
+    scrollbar-width: none;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab {
+    padding: 10px 14px;
+    cursor: pointer;
+    border: none;
+    background: none;
+    font-size: 0.82rem;
+    white-space: nowrap;
+    color: #777;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    transition: all 0.2s;
+    font-family: inherit;
+  }
+  .tab.active { color: #2d6a9f; border-bottom-color: #2d6a9f; font-weight: 700; }
+  .tab:hover { color: #2d6a9f; }
+
+  .main { max-width: 580px; margin: 0 auto; padding: 20px 16px 32px; }
+
+  .progress-section {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .progress-bar { flex: 1; height: 7px; background: #e2e8f0; border-radius: 4px; overflow: hidden; }
+  .progress-fill { height: 100%; background: #48bb78; border-radius: 4px; transition: width 0.4s ease; }
+  .progress-text { font-size: 0.8rem; color: #888; white-space: nowrap; min-width: 70px; text-align: right; }
+
+  .card-container {
+    perspective: 1200px;
+    height: 300px;
+    margin-bottom: 16px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .card {
+    width: 100%; height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .card.flipped { transform: rotateY(180deg); }
+
+  .card-face {
+    position: absolute;
+    width: 100%; height: 100%;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    border-radius: 18px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 28px 24px 20px;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.09), 0 1px 4px rgba(0,0,0,0.06);
+  }
+  .card-front { background: white; }
+  .card-back { background: linear-gradient(145deg, #1a3a6b, #2d6a9f); color: white; transform: rotateY(180deg); }
+
+  .card-label {
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 14px;
+    font-weight: 600;
+  }
+  .card-front .card-label { color: #bbc8d4; }
+  .card-back .card-label { color: rgba(255,255,255,0.55); }
+
+  .card-main {
+    font-size: 1.95rem;
+    font-weight: 700;
+    text-align: center;
+    line-height: 1.25;
+    word-break: break-word;
+  }
+  .card-front .card-main { color: #1a2d4a; }
+
+  .card-sub {
+    margin-top: 12px;
+    font-size: 0.82rem;
+    text-align: center;
+    line-height: 1.55;
+    opacity: 0.78;
+    font-style: italic;
+    max-width: 100%;
+  }
+
+  .flip-hint {
+    position: absolute;
+    bottom: 14px;
+    font-size: 0.72rem;
+    color: #c8d5e0;
+    letter-spacing: 0.5px;
+  }
+
+  .known-badge {
+    margin-top: 10px;
+    font-size: 0.75rem;
+    color: #48bb78;
+    font-weight: 600;
+  }
+
+  .cat-badge {
+    position: absolute;
+    bottom: 14px;
+    font-size: 0.7rem;
+    background: rgba(255,255,255,0.15);
+    padding: 3px 10px;
+    border-radius: 50px;
+  }
+
+  .nav-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    gap: 12px;
+  }
+  .nav-btn {
+    background: white;
+    border: 1.5px solid #dde4ec;
+    border-radius: 50px;
+    padding: 9px 22px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: #555;
+    transition: all 0.2s;
+    font-family: inherit;
+  }
+  .nav-btn:hover { border-color: #2d6a9f; color: #2d6a9f; background: #f0f6ff; }
+  .nav-btn:active { transform: scale(0.97); }
+  .card-counter { font-size: 0.85rem; color: #999; }
+
+  .action-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .btn-action {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: all 0.2s;
+    font-family: inherit;
+  }
+  .btn-gotit { background: #f0fff4; color: #276749; border: 1.5px solid #9ae6b4; }
+  .btn-gotit:hover { background: #48bb78; color: white; border-color: #48bb78; }
+  .btn-again { background: #fff5f5; color: #9b2c2c; border: 1.5px solid #feb2b2; }
+  .btn-again:hover { background: #e53e3e; color: white; border-color: #e53e3e; }
+  .btn-action:active { transform: scale(0.97); }
+
+  .controls-row {
+    display: flex;
+    gap: 7px;
+    flex-wrap: wrap;
+  }
+  .ctrl-btn {
+    padding: 7px 14px;
+    border: 1.5px solid #dde4ec;
+    border-radius: 50px;
+    background: white;
+    cursor: pointer;
+    font-size: 0.78rem;
+    color: #666;
+    transition: all 0.2s;
+    font-family: inherit;
+  }
+  .ctrl-btn:hover { background: #f0f6ff; border-color: #2d6a9f; color: #2d6a9f; }
+  .ctrl-btn.active { background: #2d6a9f; color: white; border-color: #2d6a9f; }
+
+  .keyboard-hint {
+    margin-top: 18px;
+    font-size: 0.72rem;
+    color: #bbb;
+    text-align: center;
+  }
+  kbd {
+    background: #f0f4f8;
+    border: 1px solid #dde4ec;
+    border-radius: 4px;
+    padding: 1px 5px;
+    font-size: 0.7rem;
+    color: #888;
+    font-family: inherit;
+  }
+
+  @media (max-width: 480px) {
+    .card-main { font-size: 1.5rem; }
+    .card-container { height: 270px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🇫🇷 French Flashcards — Leçons avec Josefa</h1>
+  <span style="font-size:1.3rem">✨</span>
+</header>
+
+<div class="tabs" id="tabs"></div>
+
+<div class="main">
+  <div class="progress-section">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    <span class="progress-text" id="progressText">0 / 0 known</span>
+  </div>
+
+  <div class="card-container" onclick="flipCard()" id="cardContainer">
+    <div class="card" id="card">
+      <div class="card-face card-front" id="cardFront"></div>
+      <div class="card-face card-back" id="cardBack"></div>
+    </div>
+  </div>
+
+  <div class="nav-row">
+    <button class="nav-btn" onclick="prevCard()">← Prev</button>
+    <span class="card-counter" id="cardCounter">1 / 1</span>
+    <button class="nav-btn" onclick="nextCard()">Next →</button>
+  </div>
+
+  <div class="action-row">
+    <button class="btn-action btn-gotit" onclick="markKnown()">✓ Got it!</button>
+    <button class="btn-action btn-again" onclick="markAgain()">↩ Study again</button>
+  </div>
+
+  <div class="controls-row">
+    <button class="ctrl-btn" onclick="shuffleCards()">🔀 Shuffle</button>
+    <button class="ctrl-btn" id="reviewBtn" onclick="toggleReviewMode()">📚 Unknowns only</button>
+    <button class="ctrl-btn" id="flipDefaultBtn" onclick="toggleFlipDefault()">🔄 Show French first</button>
+    <button class="ctrl-btn" onclick="resetProgress()">↺ Reset</button>
+  </div>
+
+  <div class="keyboard-hint">
+    <kbd>Space</kbd> flip &nbsp;·&nbsp; <kbd>→</kbd> next &nbsp;·&nbsp; <kbd>←</kbd> prev &nbsp;·&nbsp; <kbd>Enter</kbd> mark known
+  </div>
+</div>
+
+<script>
+const categories = [
+  {
+    id: 'pronouns', name: '👤 Pronouns',
+    cards: [
+      { front: 'I', back: 'je', sub: 'j\'aime, je parle...' },
+      { front: 'you (singular / informal)', back: 'tu', sub: 'tu aimes, tu parles...\n→ se tutoyer' },
+      { front: 'he', back: 'il', sub: 'il aime, il parle...' },
+      { front: 'she', back: 'elle', sub: 'elle aime, elle parle...' },
+      { front: 'we', back: 'nous', sub: 'nous aimons, nous parlons...' },
+      { front: 'you (plural or formal)', back: 'vous', sub: 'vous aimez, vous parlez...\n→ se vouvoyer' },
+      { front: 'they (masculine / mixed)', back: 'ils', sub: 'ils aiment, ils parlent...' },
+      { front: 'they (feminine)', back: 'elles', sub: 'elles aiment, elles parlent...' },
+    ]
+  },
+  {
+    id: 'verbs', name: '🔵 Verbs',
+    cards: [
+      { front: 'to speak', back: 'parler', sub: 'je parle · tu parles · il/elle parle\nnous parlons · vous parlez · ils/elles parlent' },
+      { front: 'to think', back: 'penser', sub: 'je pense · tu penses · il/elle pense\nnous pensons · vous pensez · ils/elles pensent' },
+      { front: 'to like / to love', back: 'aimer', sub: 'j\'aime · tu aimes · il/elle aime\nnous aimons · vous aimez · ils/elles aiment' },
+      { front: 'to be called', back: 's\'appeler', sub: 'je m\'appelle · tu t\'appelles · il/elle s\'appelle\nnous nous appelons · vous vous appelez · ils/elles s\'appellent' },
+      { front: 'to be', back: 'être', sub: 'je suis · tu es · il/elle est\nnous sommes · vous êtes · ils/elles sont' },
+      { front: 'to have', back: 'avoir', sub: 'j\'ai · tu as · il/elle a\nnous avons · vous avez · ils/elles ont' },
+    ]
+  },
+  {
+    id: 'countries', name: '🌍 Countries',
+    cards: [
+      { front: 'England', back: 'l\'Angleterre', sub: 'feminine' },
+      { front: 'France', back: 'la France', sub: 'feminine' },
+      { front: 'Spain', back: 'l\'Espagne', sub: 'feminine' },
+      { front: 'Italy', back: 'l\'Italie', sub: 'feminine' },
+      { front: 'Germany', back: 'l\'Allemagne', sub: 'feminine · L-A-lle-ma-gne (4 syllables)' },
+      { front: 'Japan', back: 'le Japon', sub: 'masculine' },
+    ]
+  },
+  {
+    id: 'languages', name: '🗣️ Languages',
+    cards: [
+      { front: 'English (language)', back: 'l\'anglais', sub: 'Je parle anglais\n⚠ No article after parler / penser' },
+      { front: 'French (language)', back: 'le français', sub: 'Je parle français' },
+      { front: 'Spanish (language)', back: 'l\'espagnol', sub: 'Je parle espagnol' },
+      { front: 'Italian (language)', back: 'l\'italien', sub: 'Je parle italien' },
+      { front: 'German (language)', back: 'l\'allemand', sub: 'L-A-lle-mand (3 syllables)' },
+      { front: 'Japanese (language)', back: 'le japonais', sub: 'Je parle japonais' },
+    ]
+  },
+  {
+    id: 'nationalities', name: '🏳️ Nationalities',
+    cards: [
+      { front: 'English (nationality)', back: 'anglais / anglaise', sub: 'anglais (m) · anglaise (f)\nanglais (m.pl) · anglaises (f.pl)' },
+      { front: 'French (nationality)', back: 'français / française', sub: 'français (m) · française (f)\nfrançais (m.pl) · françaises (f.pl)' },
+      { front: 'Spanish (nationality)', back: 'espagnol / espagnole', sub: 'espagnol (m) · espagnole (f)\nespagnols (m.pl) · espagnoles (f.pl)' },
+      { front: 'Italian (nationality)', back: 'italien / italienne', sub: 'italien (m) · italienne (f)\n⚠ double n in feminine!\nitaliens (m.pl) · italiennes (f.pl)' },
+      { front: 'German (nationality)', back: 'allemand / allemande', sub: 'allemand (m) · allemande (f)\nallemands (m.pl) · allemandes (f.pl)' },
+      { front: 'Japanese (nationality)', back: 'japonais / japonaise', sub: 'japonais (m) · japonaise (f)\njaponais (m.pl) · japonaises (f.pl)' },
+    ]
+  },
+  {
+    id: 'days', name: '📅 Days',
+    cards: [
+      { front: 'Monday', back: 'le lundi' },
+      { front: 'Tuesday', back: 'le mardi' },
+      { front: 'Wednesday', back: 'le mercredi' },
+      { front: 'Thursday', back: 'le jeudi' },
+      { front: 'Friday', back: 'le vendredi' },
+      { front: 'Saturday', back: 'le samedi' },
+      { front: 'Sunday', back: 'le dimanche' },
+      { front: 'the weekend', back: 'le weekend' },
+    ]
+  },
+  {
+    id: 'months', name: '🗓️ Months',
+    cards: [
+      { front: 'January', back: 'janvier' },
+      { front: 'February', back: 'février', sub: '🔊 sounds like: Brave' },
+      { front: 'March', back: 'mars' },
+      { front: 'April', back: 'avril' },
+      { front: 'May', back: 'mai' },
+      { front: 'June', back: 'juin', sub: '🔊 sounds like: juun (short u)' },
+      { front: 'July', back: 'juillet', sub: '🔊 jui-ill (y like yellow)' },
+      { front: 'August', back: 'août', sub: '🔊 sounds like: Oot' },
+      { front: 'September', back: 'septembre' },
+      { front: 'October', back: 'octobre' },
+      { front: 'November', back: 'novembre' },
+      { front: 'December', back: 'décembre' },
+    ]
+  },
+  {
+    id: 'seasons', name: '🌸 Seasons',
+    cards: [
+      { front: 'Autumn', back: 'l\'automne', sub: '🔊 l\'oton' },
+      { front: 'Winter', back: 'l\'hiver' },
+      { front: 'Spring', back: 'le printemps', sub: '🔊 Prunt+en (silent ps)' },
+      { front: 'Summer', back: 'l\'été' },
+    ]
+  },
+  {
+    id: 'clothes', name: '👗 Clothes',
+    cards: [
+      { front: 'a shirt', back: 'une chemise', sub: 'feminine · J\'ai une chemise' },
+      { front: 'a pullover / jumper', back: 'un pull', sub: 'masculine · J\'ai un pull' },
+      { front: 'a T-shirt', back: 'un T-shirt', sub: 'masculine' },
+      { front: 'a top', back: 'un top', sub: 'masculine' },
+      { front: 'a jacket', back: 'une veste', sub: 'feminine' },
+      { front: 'jeans', back: 'un jean', sub: 'masculine' },
+      { front: 'trousers', back: 'un pantalon', sub: 'masculine' },
+      { front: 'a skirt', back: 'une jupe', sub: 'feminine' },
+      { front: 'a dress', back: 'une robe', sub: 'feminine' },
+      { front: 'boots', back: 'des bottes', sub: 'feminine plural' },
+      { front: 'trainers / sneakers', back: 'des baskets', sub: 'feminine plural' },
+      { front: 'shoes', back: 'des chaussures', sub: 'feminine plural' },
+    ]
+  },
+  {
+    id: 'colours', name: '🎨 Colours',
+    cards: [
+      { front: 'beige', back: 'beige', sub: '✓ Never changes: beige (m/f/pl)' },
+      { front: 'white', back: 'blanc / blanche', sub: 'blanc (m) · blanche (f)\nblancs (m.pl) · blanches (f.pl)' },
+      { front: 'blue', back: 'bleu / bleue', sub: 'bleu (m) · bleue (f)\nbleus (m.pl) · bleues (f.pl)' },
+      { front: 'brown', back: 'marron', sub: '✓ Never changes: marron (m/f/pl)' },
+      { front: 'grey', back: 'gris / grise', sub: 'gris (m) · grise (f)\ngris (m.pl) · grises (f.pl)' },
+      { front: 'yellow', back: 'jaune', sub: 'jaune (m/f) · jaunes (pl)' },
+      { front: 'black', back: 'noir / noire', sub: 'noir (m) · noire (f)\nnoirs (m.pl) · noires (f.pl)' },
+      { front: 'orange', back: 'orange', sub: '✓ Never changes: orange (m/f/pl)' },
+      { front: 'pink', back: 'rose', sub: 'rose (m/f) · roses (pl)' },
+      { front: 'red', back: 'rouge', sub: 'rouge (m/f) · rouges (pl)' },
+      { front: 'green', back: 'vert / verte', sub: 'vert (m) · verte (f)\nverts (m.pl) · vertes (f.pl)' },
+      { front: 'purple', back: 'violet / violette', sub: 'violet (m) · violette (f)\n⚠ double t in feminine!\nviolets (m.pl) · violettes (f.pl)' },
+    ]
+  },
+  {
+    id: 'grammar', name: '📝 Grammar',
+    cards: [
+      { front: '-er verb endings\n(present tense)', back: 'je→ -e · tu→ -es · il/elle→ -e\nnous→ -ons · vous→ -ez · ils/elles→ -ent', sub: 'The ending -s is NEVER pronounced\nje parle = tu parles = il parle (same sound)' },
+      { front: 'The NEGATIVE form', back: 'NE + verb + PAS', sub: 'Je ne parle pas français.\nTu ne penses pas en japonais.\n⚠ ne → n\' before a vowel:\nNous n\'aimons pas l\'Allemagne.' },
+      { front: 'The INTERROGATIVE form\n(standard)', back: 'Est-ce que + affirmative sentence?', sub: 'Est-ce que vous parlez français?\nEst-ce qu\'elle s\'appelle Sarah?\n⚠ que → qu\' before a vowel' },
+      { front: 'Answering NO in French', back: 'Non + NE...PAS (double negative)', sub: 'Non, je ne suis pas français.\nNon, je ne parle pas espagnol.' },
+      { front: 'TU vs VOUS', back: 'TU = singular informal (1 person you know)\nVOUS = plural OR polite/formal', sub: 'se tutoyer = using tu\nse vouvoyer = using vous\nSame conjugation for polite & plural vous' },
+      { front: 'Liaison — when does it happen?', back: 'Word ending in consonant + next word starting with a vowel', sub: 'nous aimons (s→a)\nvous aimez (s→a)\nils aiment (s→a)\nelles aiment (s→a)' },
+      { front: 'Feminine nationality — rule', back: 'Add -e to the masculine form', sub: 'français → française\nespagnol → espagnole\nallemand → allemande\n⚠ Exception: italien → italienne (double n)' },
+      { front: 'Article before language names?', back: 'NO article after parler or penser', sub: 'Je parle français ✓\nJe parle le français ✗\nJe pense en français ✓\n(use EN to mean "in" a language)' },
+      { front: 'S\'appeler — special notes', back: 'Reflexive verb: needs a reflexive pronoun', sub: 'je m\'appelle · tu t\'appelles · il/elle s\'appelle\nNOUS/VOUS form: only ONE l\nnous nous appelons · vous vous appelez' },
+      { front: 'Masculine / Feminine plural form', back: 'Add -s to the singular form', sub: 'français → français (m.pl — same!)\nfrançaise → françaises (f.pl)\n⚠ Plural -s is NEVER pronounced\nitalien → italiens (m.pl)' },
+      { front: 'C\'EST — how to say "it is"', back: 'c\'est + noun', sub: 'C\'est mardi. C\'est février. C\'est l\'hiver.\nToday = Aujourd\'hui c\'est mardi\nNow = Maintenant c\'est l\'hiver' },
+      { front: 'CE N\'EST PAS — "it is not"', back: 'ce n\'est pas + noun', sub: 'Ce n\'est pas lundi. Ce n\'est pas janvier.\n⚠ With seasons add article:\nCe n\'est pas l\'été. Ce n\'est pas le printemps.' },
+      { front: 'IL Y A — "there is / there are"', back: 'Il y a + noun', sub: 'Il y a une grande table dans la cuisine.\nIl y a six chambres.\nNEGATIVE: Il n\'y a pas de + noun' },
+      { front: 'CHEZ — at someone\'s place', back: 'chez + person/professional', sub: 'Je vais chez Sarah. (I\'m going to Sarah\'s)\nChez le boulanger. (at the baker\'s)\nChez le docteur. (at the doctor\'s)' },
+      { front: 'ON — informal "we"', back: 'ON = informal NOUS in spoken French\nConjugates like IL/ELLE', sub: 'On aime... On a... On est... On parle...\nOn va en France. (we\'re going to France)\nOn achète du pain. (we buy bread)' },
+      { front: 'Prepositions for COUNTRIES', back: 'EN + feminine country\nAU + masculine country\nAUX + plural country', sub: 'en France, en Espagne, en Allemagne\nau Japon, au Mexique, au Portugal\naux États-Unis, aux Pays-Bas' },
+      { front: 'Prepositions for CITIES', back: 'À + city name', sub: 'à Paris, à Limoges, à Londres\n⚠ Exception: LE MANS → au Mans\n(compound name starting with LE → use AU)' },
+      { front: 'Seasons: which preposition?', back: 'EN for most seasons\nAU for spring only', sub: 'en été · en automne · en hiver\nBUT: au printemps ⚠' },
+      { front: 'DU / DE LA / DE L\' / DES — "some"', back: 'du (masc) · de la (fem) · de l\' (vowel) · des (plural)', sub: 'du fromage · du vin · du pain\nde la soupe · de la viande\nde l\'eau · des légumes\n⚠ After NEGATIVE → just DE / D\'' },
+      { front: 'À + article = AU / À LA / AUX\n("to the" / "at the")', back: 'à + le = AU · à + la = À LA\nà + l\' = À L\' · à + les = AUX', sub: 'au supermarché · à la maison\nà l\'hôtel · aux États-Unis' },
+      { front: 'CHAQUE vs TOUS/TOUTES\n("each" vs "every")', back: 'CHAQUE = each (always singular, more formal)\nTOUS/TOUTES = every (agrees with noun)', sub: 'chaque jour = each day (formal)\ntous les jours = every day (common)\ntoutes les semaines = every week\ntous les matins = every morning' },
+      { front: 'AVOIR MAL À — to have pain in', back: 'J\'ai mal à + body part', sub: 'J\'ai mal à la tête. (headache)\nJ\'ai mal au dos. (backache)\nJ\'ai mal aux épaules. (sore shoulders)\nà la + fem · au + masc · aux + plural' },
+      { front: 'Negative with UN/UNE/DES\n→ becomes DE', back: 'After NE…PAS, un/une/des → DE / D\'', sub: 'J\'ai un vélo → Je n\'ai pas DE vélo.\nIl mange des fruits → Il ne mange pas DE fruits.\nElle boit de l\'eau → Elle ne boit pas D\'eau.' },
+    ]
+  },
+  {
+    id: 'ordinals', name: '🔢 Ordinal Numbers',
+    cards: [
+      { front: 'first', back: 'le premier / la première', sub: 'le premier jour · la première fois\nle premier mois de l\'année' },
+      { front: 'second', back: 'le deuxième / la deuxième', sub: 'C\'est la deuxième fois que je bois du café.' },
+      { front: 'third', back: 'le troisième / la troisième', sub: 'C\'est notre troisième fois à Londres.' },
+      { front: 'fourth', back: 'le quatrième / la quatrième', sub: 'Jeudi c\'est le quatrième jour de la semaine.' },
+      { front: 'fifth', back: 'le cinquième / la cinquième' },
+      { front: 'sixth', back: 'le sixième / la sixième' },
+      { front: 'seventh', back: 'le septième / la septième' },
+      { front: 'eighth', back: 'le huitième / la huitième' },
+      { front: 'ninth', back: 'le neuvième / la neuvième' },
+      { front: 'tenth', back: 'le dixième / la dixième' },
+    ]
+  },
+  {
+    id: 'time', name: '⏰ Time & Dates',
+    cards: [
+      { front: 'today', back: 'aujourd\'hui', sub: '🔊 ojurdui\nAujourd\'hui c\'est mardi.' },
+      { front: 'now', back: 'maintenant', sub: '🔊 muntenan\nMaintenant c\'est l\'hiver.' },
+      { front: 'tomorrow', back: 'demain', sub: 'Mon rendez-vous est demain à 9 heures.' },
+      { front: 'yesterday', back: 'hier', sub: 'Mon rendez-vous était hier.' },
+      { front: 'in the morning', back: 'le matin', sub: 'Je mange du pain le matin.' },
+      { front: 'in the afternoon', back: 'l\'après-midi' },
+      { front: 'in the evening', back: 'le soir' },
+      { front: 'next (m/f)', back: 'prochain / prochaine', sub: 'lundi prochain (next Monday)\nla semaine prochaine (next week)' },
+      { front: 'as soon as possible', back: 'le plus vite possible', sub: 'Je voudrais un rendez-vous le plus vite possible.' },
+      { front: 'every morning', back: 'tous les matins', sub: 'Je suis disponible tous les matins.' },
+      { front: 'every day', back: 'tous les jours', sub: 'tous les jours (common) = chaque jour (formal)' },
+      { front: 'every week', back: 'toutes les semaines', sub: 'Elle va chez le coiffeur toutes les semaines.' },
+      { front: 'once a month', back: 'une fois par mois', sub: 'Elle va chez le médecin une fois par mois.\ntrois fois par mois = three times a month' },
+      { front: 'in a while / a bit earlier', back: 'tout à l\'heure', sub: 'Past: J\'ai rencontré David tout à l\'heure.\nFuture: Je vais parler avec lui tout à l\'heure.\nÀ tout à l\'heure! (see you in a bit!)' },
+      { front: 'immediately / right away', back: 'tout de suite', sub: 'Il arrive tout de suite.' },
+      { front: 'all the time', back: 'tout le temps', sub: 'Il pleut tout le temps.' },
+      { front: 'suddenly', back: 'tout à coup', sub: 'Tout à coup, il a commencé à pleuvoir.' },
+      { front: 'absolutely / completely', back: 'tout à fait', sub: 'Ta réponse est tout à fait correcte.' },
+      { front: 'that\'s all', back: 'c\'est tout', sub: 'Ça sera tout ? (will that be all?)\nC\'est tout, merci.' },
+      { front: 'not at all', back: 'pas du tout', sub: 'Je n\'ai pas du tout faim.\nJe n\'ai pas du tout mal au dos.' },
+      { front: 'absolutely nothing', back: 'rien du tout', sub: 'Il ne reste rien du tout dans le frigo.' },
+      { front: 'everybody', back: 'tout le monde', sub: '⚠ Always SINGULAR!\nTout le monde est content. (not sont!)' },
+    ]
+  },
+  {
+    id: 'verbs2', name: '🔵 More Verbs',
+    cards: [
+      { front: 'to go', back: 'aller (irregular)', sub: 'je vais · tu vas · il/elle/on va\nnous allons · vous allez · ils/elles vont' },
+      { front: 'to do / to make', back: 'faire (irregular)', sub: 'je fais · tu fais · il/elle/on fait\nnous faisons · vous faites · ils/elles font' },
+      { front: 'to buy', back: 'acheter', sub: 'j\'achète · tu achètes · il/elle achète\nnous achetons · vous achetez · ils achètent' },
+      { front: 'to adore / love', back: 'adorer', sub: 'j\'adore · tu adores · il/elle adore\nnous adorons · vous adorez · ils adorent' },
+      { front: 'to prefer', back: 'préférer', sub: 'je préfère · tu préfères · il/elle préfère\nnous préférons · vous préférez · ils préfèrent' },
+      { front: 'to hate', back: 'détester', sub: 'je déteste · tu détestes · il/elle déteste\nnous détestons · vous détestez · ils détestent' },
+      { front: 'to wear', back: 'porter', sub: 'je porte · tu portes · il/elle porte\nnous portons · vous portez · ils portent\nAujourd\'hui je porte une chemise blanche.' },
+      { front: 'to live (reside)', back: 'habiter', sub: 'j\'habite · tu habites · il/elle habite\nnous habitons · vous habitez · ils habitent\nJ\'habite dans une grande maison.' },
+      { front: 'to eat', back: 'manger', sub: 'je mange · tu manges · il/elle mange\nnous mangeons · vous mangez · ils mangent\nNous mangeons au restaurant tous les samedis.' },
+      { front: 'to drink', back: 'boire (irregular)', sub: 'je bois · tu bois · il/elle boit\nnous buvons · vous buvez · ils boivent' },
+      { front: 'to take / to have (appointment)', back: 'prendre (irregular)', sub: 'je prends · tu prends · il/elle prend\nnous prenons · vous prenez · ils prennent\nPrendre un rendez-vous = to make an appointment' },
+      { front: 'to want', back: 'vouloir (irregular)', sub: 'je veux · tu veux · il/elle veut\nnous voulons · vous voulez · ils veulent\nJe voudrais = I would like (polite)' },
+      { front: 'to go shopping (food)', back: 'faire des courses', sub: 'On va faire des courses au supermarché.\n(buying food & everyday items)' },
+      { front: 'to go shopping (clothes)', back: 'faire du shopping', sub: 'On va faire du shopping en ville.\n(more informal, buying clothes/non-food)' },
+      { front: 'to work', back: 'travailler', sub: 'je travaille · tu travailles · il travaille\nnous travaillons · vous travaillez · ils travaillent\nJe travaille tous les jours au bureau.' },
+      { front: 'to rain', back: 'pleuvoir (irregular)', sub: 'il pleut (it rains / it is raining)\nIl pleut tout le temps.' },
+    ]
+  },
+  {
+    id: 'body', name: '💪 The Body',
+    cards: [
+      { front: 'the head', back: 'la tête', sub: 'J\'ai mal à la tête. (headache)\nLa tête me fait mal.' },
+      { front: 'the eye / the eyes', back: 'l\'œil / les yeux', sub: '🔊 leull / lézieu\nJ\'ai mal à l\'œil gauche.\nJ\'ai mal aux yeux.' },
+      { front: 'the ears', back: 'les oreilles', sub: 'J\'ai mal aux oreilles.\nLes oreilles me font mal.' },
+      { front: 'the throat', back: 'la gorge', sub: 'J\'ai mal à la gorge.' },
+      { front: 'the shoulder', back: 'l\'épaule', sub: 'feminine · la épaule\nJ\'ai mal à l\'épaule gauche.\nJ\'ai mal aux épaules.' },
+      { front: 'the arm', back: 'le bras', sub: 'J\'ai mal au bras droit.' },
+      { front: 'the hand', back: 'la main', sub: '🔊 lamin (pl: les mains = lémin)\nJ\'ai mal à la main.' },
+      { front: 'the chest', back: 'la poitrine' },
+      { front: 'the lung / the lungs', back: 'le poumon / les poumons' },
+      { front: 'the belly', back: 'le ventre', sub: 'J\'ai mal au ventre.' },
+      { front: 'the stomach', back: 'l\'estomac' },
+      { front: 'the back', back: 'le dos', sub: 'J\'ai mal au dos. (backache)\nJe n\'ai pas du tout mal au dos.' },
+      { front: 'the leg', back: 'la jambe', sub: 'J\'ai mal à la jambe.' },
+      { front: 'the knee', back: 'le genou', sub: 'J\'ai mal au genou.' },
+      { front: 'the ankle', back: 'la cheville' },
+      { front: 'the foot / the feet', back: 'le pied / les pieds', sub: 'J\'ai mal au pied droit.\nJ\'ai mal aux pieds.' },
+      { front: 'the hip', back: 'la hanche' },
+      { front: 'the thigh', back: 'la cuisse' },
+      { front: 'right', back: 'droit / droite', sub: 'le pied droit · la main droite' },
+      { front: 'left', back: 'gauche', sub: 'le pied gauche · la main gauche\n(same for m/f)' },
+      { front: 'I have a pain in… / my … hurts', back: 'J\'ai mal à…\n… me fait mal', sub: 'J\'ai mal à la tête = La tête me fait mal\nJ\'ai mal aux pieds = Les pieds me font mal' },
+    ]
+  },
+  {
+    id: 'shops', name: '🥖 Shops',
+    cards: [
+      { front: 'a shop', back: 'un magasin' },
+      { front: 'the bakery', back: 'la boulangerie', sub: 'CHEZ: chez le boulanger / chez la boulangère\nWe buy bread = on achète du pain' },
+      { front: 'the butcher\'s', back: 'la boucherie', sub: '🔊 bush\nCHEZ: chez le boucher (bushé)' },
+      { front: 'the greengrocer\'s', back: 'l\'épicerie', sub: '🔊 lépissri · sells vegetables\nCHEZ: chez l\'épicier (lépissiéh)' },
+      { front: 'the fishmonger\'s', back: 'la poissonnerie', sub: 'CHEZ: chez le poissonnier' },
+      { front: 'the flower shop', back: 'la fleuriste', sub: 'CHEZ: chez le/la fleuriste' },
+      { front: 'the bookshop', back: 'la librairie', sub: 'CHEZ: chez le libraire\nTu vas à la librairie pour acheter un livre.' },
+      { front: 'the pharmacy', back: 'la pharmacie', sub: 'CHEZ: chez le pharmacien\ndes médicaments = medicines' },
+      { front: 'the hairdresser\'s', back: 'le salon de coiffure', sub: 'CHEZ: chez le coiffeur\nElle va chez le coiffeur toutes les semaines.' },
+      { front: 'the doctor\'s', back: 'chez le médecin / chez le docteur', sub: 'Elle va chez le médecin tous les mois.' },
+      { front: 'the dentist\'s', back: 'chez le dentiste', sub: 'Je vais chez le dentiste deux fois par an.' },
+      { front: 'the supermarket', back: 'le supermarché', sub: 'On va faire des courses au supermarché.' },
+      { front: 'the market', back: 'le marché', sub: 'J\'aime acheter des légumes au marché.' },
+      { front: 'an appointment', back: 'un rendez-vous', sub: 'AVOIR un rendez-vous = to have an appointment\nPRENDRE un rendez-vous = to make an appointment' },
+      { front: 'I would like to make an appointment', back: 'Je voudrais prendre un rendez-vous', sub: '… chez le docteur, s\'il vous plaît.\n… avec le Docteur Martin, s\'il vous plaît.' },
+      { front: 'I am a new patient', back: 'Je suis un nouveau patient\nJe suis une nouvelle patiente', sub: '⚠ pronounce the final T in patiente (f)!\nUn patient = pacian (t silent)\nUne patiente = paciante (t pronounced)' },
+    ]
+  },
+  {
+    id: 'house', name: '🏠 House & Rooms',
+    cards: [
+      { front: 'the house', back: 'la maison', sub: 'J\'habite dans une grande maison.' },
+      { front: 'the apartment', back: 'l\'appartement', sub: 'masculine' },
+      { front: 'the garden', back: 'le jardin', sub: 'Nous avons un beau jardin.' },
+      { front: 'the garage', back: 'le garage' },
+      { front: 'the cellar', back: 'la cave', sub: 'Nous avons une cave.' },
+      { front: 'the kitchen', back: 'la cuisine', sub: '🔊 kuizin\nNous avons une belle cuisine.' },
+      { front: 'the dining room', back: 'la salle à manger' },
+      { front: 'the living room', back: 'le salon', sub: 'Il y a un grand sofa dans le salon.' },
+      { front: 'the bathroom', back: 'la salle de bains' },
+      { front: 'the toilet(s)', back: 'les toilettes', sub: 'always plural in French!' },
+      { front: 'the bedroom', back: 'la chambre', sub: 'Il y a trois chambres au premier étage.' },
+      { front: 'the entrance / hall', back: 'l\'entrée', sub: 'feminine · Il y a une grande entrée.' },
+      { front: 'the stairs', back: 'l\'escalier / les escaliers', sub: '🔊 lezescalieh' },
+      { front: 'the ground floor', back: 'le rez-de-chaussée', sub: '🔊 rehdeshosseh\nau rez-de-chaussée = on the ground floor' },
+      { front: 'the first floor', back: 'le premier étage', sub: 'au premier étage' },
+      { front: 'the second floor', back: 'le deuxième étage' },
+      { front: 'the third floor', back: 'le troisième étage' },
+      { front: 'the attic', back: 'le grenier', sub: 'Il y a un grand grenier au troisième étage.' },
+      { front: 'the barn', back: 'la grange' },
+    ]
+  },
+  {
+    id: 'furniture', name: '🛋️ Furniture',
+    cards: [
+      { front: 'a chair', back: 'une chaise', sub: 'Le chat est sur la chaise.' },
+      { front: 'an armchair', back: 'un fauteuil', sub: 'Il y a deux petits fauteuils dans ma chambre.' },
+      { front: 'a sofa', back: 'un sofa / un canapé', sub: 'Je suis sur le canapé.\nNote: un divan = sofa bed / couch' },
+      { front: 'a table', back: 'une table', sub: 'Il y a une grande table dans la cuisine.' },
+      { front: 'a coffee table', back: 'une table basse', sub: 'Il y a une table basse dans le salon.' },
+      { front: 'a bed', back: 'un lit', sub: 'On a beaucoup de lits dans notre maison.' },
+      { front: 'a cupboard (kitchen)', back: 'un placard', sub: 'Il y a deux placards dans la cuisine.' },
+      { front: 'a wardrobe', back: 'une armoire', sub: 'On a une grande armoire.' },
+      { front: 'a chest of drawers', back: 'une commode', sub: 'On a une petite commode.' },
+      { front: 'a bedside table', back: 'une table de nuit\nune table de chevet' },
+      { front: 'a door', back: 'une porte', sub: 'Il y a une grande porte à l\'entrée.' },
+      { front: 'a window', back: 'une fenêtre', sub: 'La table est à côté de la fenêtre.' },
+      { front: 'a wall', back: 'un mur' },
+      { front: 'a shelf', back: 'une étagère' },
+      { front: 'a bookshelf', back: 'une bibliothèque' },
+      { front: 'a lamp', back: 'une lampe' },
+      { front: 'a curtain', back: 'un rideau' },
+      { front: 'a stove / cooker', back: 'une cuisinière', sub: 'feminine · 🔊 cui-si-ni-ère\nNote: une cuisinière also = a female cook!' },
+      { front: 'a fridge', back: 'un réfrigérateur\nun frigidaire / un frigo', sub: 'frigo = informal' },
+      { front: 'an oven', back: 'un four' },
+      { front: 'a microwave', back: 'un four à micro-ondes' },
+      { front: 'a kitchen sink', back: 'un évier' },
+      { front: 'a tap', back: 'un robinet', sub: 'un robinet d\'eau chaude (hot)\nun robinet d\'eau froide (cold)' },
+    ]
+  },
+  {
+    id: 'family', name: '👨‍👩‍👧 Family',
+    cards: [
+      { front: 'the father', back: 'le père', sub: 'mon père · son père (his/her father)' },
+      { front: 'the mother', back: 'la mère', sub: 'ma mère · sa mère\n⚠ In French possessives agree with the THING owned, not the owner' },
+      { front: 'the brother', back: 'le frère', sub: 'mon frère · son frère' },
+      { front: 'the sister', back: 'la sœur', sub: 'ma sœur · sa sœur' },
+      { front: 'the uncle', back: 'l\'oncle', sub: 'mon oncle · son oncle\nJ\'ai beaucoup d\'oncles.' },
+      { front: 'the aunt', back: 'la tante', sub: 'ma tante · sa tante' },
+      { front: 'the nephew', back: 'le neveu', sub: 'mon neveu\nJe n\'ai pas de neveu.' },
+      { front: 'the niece', back: 'la nièce', sub: 'ma nièce' },
+      { front: 'the cousin (male)', back: 'le cousin', sub: 'mon cousin · Nous avons beaucoup de cousins.' },
+      { front: 'the cousin (female)', back: 'la cousine', sub: 'ma cousine' },
+      { front: 'the grandfather', back: 'le grand-père', sub: 'mon grand-père' },
+      { front: 'the grandmother', back: 'la grand-mère', sub: 'ma grand-mère' },
+      { front: 'father-in-law / stepfather', back: 'le beau-père', sub: 'mon beau-père' },
+      { front: 'mother-in-law / stepmother', back: 'la belle-mère', sub: 'ma belle-mère' },
+    ]
+  },
+  {
+    id: 'possessives', name: '🗂️ Possessives',
+    cards: [
+      { front: 'my (m / f / pl)', back: 'mon / ma / mes', sub: 'mon père · ma mère · mes parents\n⚠ Agrees with the THING owned, not owner' },
+      { front: 'your informal (m / f / pl)', back: 'ton / ta / tes', sub: 'ton frère · ta sœur · tes cousins' },
+      { front: 'his / her (m / f / pl)', back: 'son / sa / ses', sub: 'son père · sa mère · ses enfants\n⚠ A woman says "son frère" for her brother!' },
+      { front: 'our (m&f / pl)', back: 'notre / nos', sub: 'notre maison · notre jardin · nos voisins' },
+      { front: 'your formal/plural (m&f / pl)', back: 'votre / vos', sub: 'votre frère · vos frères' },
+      { front: 'their (m&f / pl)', back: 'leur / leurs', sub: 'leur maison · leurs amis' },
+    ]
+  },
+  {
+    id: 'appearance', name: '💁 Appearance',
+    cards: [
+      { front: 'tall', back: 'grand / grande', sub: 'Je suis grand. Elle est grande.' },
+      { front: 'short', back: 'petit / petite', sub: 'Il est petit. Je suis petite.' },
+      { front: 'medium-height', back: 'de taille moyenne', sub: 'Same for both genders.' },
+      { front: 'slim', back: 'mince', sub: '🔊 mence · same m/f · Je suis mince.' },
+      { front: 'thin / skinny', back: 'maigre', sub: 'Same for both genders.' },
+      { front: 'a little chubby', back: 'un peu rond / ronde' },
+      { front: 'fat', back: 'gros / grosse' },
+      { front: 'hair', back: 'les cheveux', sub: '⚠ Always MASCULINE PLURAL in French!\nException: un cheveu (one single hair)' },
+      { front: 'short hair', back: 'les cheveux courts', sub: 'Always masc. plural when talking about hair.' },
+      { front: 'shoulder-length hair', back: 'les cheveux mi-longs' },
+      { front: 'quite long hair', back: 'les cheveux assez longs' },
+      { front: 'straight hair', back: 'les cheveux lisses' },
+      { front: 'curly hair', back: 'les cheveux bouclés' },
+      { front: 'frizzy hair', back: 'les cheveux frisés' },
+      { front: 'blond hair', back: 'les cheveux blonds' },
+      { front: 'red hair', back: 'les cheveux roux', sub: 'Nicole Kidman a les cheveux roux.' },
+      { front: 'black hair', back: 'les cheveux noirs' },
+      { front: 'brown hair', back: 'les cheveux bruns / châtains', sub: 'brun clair = light brown\nchâtain foncé = dark brown' },
+      { front: 'dark (shade)', back: 'foncé / foncés', sub: '⚠ When used alone: agrees with noun.\nBleu foncé (after colour): stays invariable!\ndes chaussures bleu foncé' },
+      { front: 'light (shade)', back: 'clair / clairs', sub: 'brun clair · bleu clair\nj\'ai les cheveux clairs' },
+      { front: 'blue eyes', back: 'les yeux bleus', sub: 'J\'ai les yeux bleus.' },
+      { front: 'green eyes', back: 'les yeux verts' },
+      { front: 'brown eyes', back: 'les yeux marron', sub: '⚠ marron never changes!' },
+      { front: 'black eyes', back: 'les yeux noirs' },
+      { front: 'Hair colour → length → type (word order)', back: '1st: Colour · 2nd: Length · 3rd: Type/shade', sub: 'j\'ai les cheveux blonds, longs et lisses\nil a les cheveux brun clair et courts' },
+    ]
+  },
+  {
+    id: 'personality', name: '😊 Personality',
+    cards: [
+      { front: 'amazing', back: 'magnifique', sub: 'same m/f' },
+      { front: 'nice / pleasant', back: 'agréable', sub: 'same m/f · also: sympa (sympathique) informal' },
+      { front: 'funny', back: 'amusant / amusante\ndrôle', sub: 'drôle = same m/f' },
+      { front: 'lively', back: 'plein de vie / pleine de vie\nanimé / animée' },
+      { front: 'chatty', back: 'bavard / bavarde' },
+      { front: 'honest', back: 'honnête', sub: 'same m/f' },
+      { front: 'friendly', back: 'amical / amicale', sub: 'also: aimable (same m/f)' },
+      { front: 'kind', back: 'gentil / gentille', sub: '🔊 gentiye (f)\nalso: aimable (same m/f)' },
+      { front: 'generous', back: 'généreux / généreuse' },
+      { front: 'hard-working', back: 'travailleur / travailleuse' },
+      { front: 'stupid', back: 'idiot / idiote\nimbécile', sub: 'imbécile = same m/f' },
+      { front: 'intelligent', back: 'intelligent / intelligente' },
+      { front: 'impatient', back: 'impatient / impatiente' },
+      { front: 'rude / impolite', back: 'impoli / impolie' },
+      { front: 'mean / nasty', back: 'méchant / méchante' },
+      { front: 'boring', back: 'ennuyeux / ennuyeuse' },
+      { front: 'lazy', back: 'paresseux / paresseuse\nfaignant / faignante' },
+      { front: 'jealous', back: 'jaloux / jalouse' },
+      { front: 'selfish', back: 'égoïste', sub: 'same m/f' },
+      { front: 'proud', back: 'fier / fière', sub: '🔊 fièrre (f)' },
+      { front: 'shy', back: 'timide', sub: 'same m/f' },
+      { front: 'sad', back: 'triste', sub: 'same m/f' },
+    ]
+  },
+  {
+    id: 'adjectives', name: '📏 Adjectives',
+    cards: [
+      { front: 'pretty', back: 'joli / jolie' },
+      { front: 'new', back: 'nouveau (m) / nouvelle (f)', sub: '🔊 nuvo / nuvel\nune nouvelle voiture · un nouveau pull' },
+      { front: 'old', back: 'vieux (m) / vieille (f)', sub: '🔊 viu / viell\nun vieux chien · une vieille voiture bleue' },
+      { front: 'good', back: 'bon / bonne', sub: 'un bon repas · une bonne cuisine\nC\'est bon = it\'s good' },
+      { front: 'bad', back: 'mauvais / mauvaise', sub: 'un mauvais mois · le mauvais temps (bad weather)\nC\'est mauvais pour la santé.' },
+      { front: 'big / tall', back: 'grand / grande', sub: 'un grand jardin · une grande maison' },
+      { front: 'small', back: 'petit / petite', sub: 'un petit jardin · une petite chambre' },
+      { front: 'beautiful', back: 'beau (m) / belle (f)', sub: 'un beau jardin · une belle cuisine\nBeau temps = nice weather' },
+      { front: 'right / correct', back: 'droit / droite', sub: 'Also means RIGHT (direction): à droite' },
+      { front: 'a lot (of)', back: 'beaucoup (de)', sub: 'beaucoup de cousins\nJ\'ai beaucoup d\'oncles.' },
+      { front: 'a little (of)', back: 'un peu (de)', sub: 'un peu rond · un petit peu de vin\nun tout petit peu = a tiny bit' },
+      { front: 'only', back: 'seulement', sub: 'J\'ai seulement un oncle.' },
+      { front: 'several', back: 'plusieurs', sub: 'Ils vont en France plusieurs fois par an.' },
+      { front: 'too / too much', back: 'trop', sub: 'Ce manteau est trop petit. (too small)\nC\'est trop cher. (too expensive)' },
+      { front: 'really', back: 'vraiment', sub: 'C\'est vraiment bon!' },
+      { front: 'very', back: 'très', sub: 'très cher · très grand · très beau' },
+      { front: 'expensive', back: 'cher / chère', sub: 'Ce téléphone est très cher.' },
+      { front: 'comfortable', back: 'confortable', sub: 'Ces fauteuils sont très confortables.' },
+      { front: 'delicious', back: 'délicieux / délicieuse', sub: 'Ces fruits sont délicieux.' },
+      { front: 'ready', back: 'prêt / prête', sub: 'quand il est prêt (when it\'s ready)' },
+      { front: 'new (pair, item)', back: 'nouveau (m) / nouvelle (f)\n+ nouvel before vowel', sub: 'une nouvelle paire de chaussures\nun nouveau garage\nNOUVEL ami (masc + vowel)' },
+    ]
+  },
+  {
+    id: 'demonstratives', name: '👉 Demonstratives',
+    cards: [
+      { front: 'THIS / THAT + masculine noun', back: 'CE + noun', sub: 'ce week-end · ce garçon · ce restaurant\nce film · ce manteau · ce magasin' },
+      { front: 'THIS / THAT + masculine noun starting with a vowel', back: 'CET + noun', sub: '⚠ ce → CET before masculine + vowel/h\ncet ami · cet été · cet enfant\ncet oiseau · cet hôpital · cet arbre' },
+      { front: 'THIS / THAT + feminine noun', back: 'CETTE + noun', sub: 'cette semaine · cette leçon · cette fille\ncette femme · cette maison · cette rue\ncette plante · cette couleur' },
+      { front: 'THESE / THOSE (all genders)', back: 'CES + noun (plural)', sub: 'ces amis · ces amies · ces semaines\nces fauteuils · ces fruits · ces couleurs\nces femmes · ces garçons' },
+      { front: 'a bird', back: 'un oiseau', sub: 'Cet oiseau est très beau.' },
+      { front: 'a tree', back: 'un arbre', sub: 'Cet arbre est très grand.' },
+      { front: 'a coat', back: 'un manteau', sub: 'Ce manteau est trop petit.' },
+      { front: 'a street', back: 'une rue', sub: 'Comment s\'appelle cette rue?' },
+      { front: 'a plant', back: 'une plante', sub: 'Cette plante a besoin d\'eau.' },
+      { front: 'choice', back: 'le choix', sub: '🔊 shwah\navoir du choix = to have a choice\nCe magasin a beaucoup de choix.' },
+      { front: 'a company', back: 'une entreprise', sub: 'Ces entreprises sont anglaises.' },
+      { front: 'to need', back: 'avoir besoin de', sub: 'Cette plante a besoin d\'eau.\n(this plant needs water)' },
+      { front: 'for sale / for rent', back: 'à vendre / à louer', sub: 'Cette maison est à vendre.\nCet appartement est à louer.' },
+    ]
+  },
+  {
+    id: 'weather', name: '🌤️ Weather',
+    cards: [
+      { front: 'What\'s the weather like?', back: 'Quel temps il fait ?', sub: 'le temps = weather/climate\nla météo = weather forecast\nJe regarde toujours la météo avant de sortir.' },
+      { front: 'The weather is nice', back: 'Il fait beau', sub: '⚠ Weather uses il fait — always 3rd person singular' },
+      { front: 'The weather is bad', back: 'Il fait mauvais' },
+      { front: 'It\'s hot', back: 'Il fait chaud' },
+      { front: 'It\'s cold', back: 'Il fait froid', sub: 'En hiver il fait très froid.' },
+      { front: 'It\'s cool', back: 'Il fait frais' },
+      { front: 'It\'s mild', back: 'Il fait doux' },
+      { front: 'It\'s raining / it rains', back: 'Il pleut', sub: 'infinitive: pleuvoir (irregular)\nIl pleut tout le temps.' },
+      { front: 'It\'s snowing / it snows', back: 'Il neige', sub: 'infinitive: neiger' },
+      { front: 'It\'s sunny', back: 'Il y a du soleil' },
+      { front: 'It\'s foggy', back: 'Il y a du brouillard', sub: '🔊 brullar' },
+      { front: 'It\'s windy', back: 'Il y a du vent' },
+      { front: 'It\'s cloudy', back: 'Il y a des nuages' },
+      { front: 'In winter it\'s very cold', back: 'En hiver il fait très froid', sub: 'L\'hiver il fait très froid (also correct)' },
+      { front: 'nice weather (noun)', back: 'le beau temps', sub: 'avoir du beau temps = to have nice weather\nIl fait beau temps.' },
+    ]
+  },
+  {
+    id: 'frequency', name: '📊 Frequency',
+    cards: [
+      { front: 'always (100%)', back: 'toujours', sub: 'On prend toujours le petit déjeuner à la maison.\n⚠ Adverb goes AFTER the conjugated verb' },
+      { front: 'usually (90%)', back: 'habituellement\ngénéralement', sub: 'On a habituellement une leçon les mardis.' },
+      { front: 'normally (80%)', back: 'normalement', sub: 'On ne travaille pas normalement les samedis.' },
+      { front: 'frequently (60%)', back: 'fréquemment', sub: 'On va fréquemment au restaurant.' },
+      { front: 'often (50%)', back: 'souvent', sub: 'On va souvent en France.\nJe regarde toujours la météo avant de sortir.' },
+      { front: 'sometimes (30%)', back: 'parfois\nquelquefois', sub: 'On va quelquefois au cinéma.' },
+      { front: 'hardly ever (10%)', back: 'presque jamais', sub: 'Nous ne jouons presque jamais au tennis.\n⚠ Keep NE...JAMAIS around the verb' },
+      { front: 'never (0%)', back: 'jamais', sub: 'Francesca ne cuisine jamais.\nJe ne vais jamais là-bas.\n⚠ ne + verb + jamais' },
+      { front: 'Where do adverbs of frequency go?', back: 'AFTER the conjugated verb', sub: 'Je vais SOUVENT au restaurant.\nOn prend TOUJOURS le petit déjeuner à la maison.\nElle ne cuisine JAMAIS.' },
+    ]
+  },
+  {
+    id: 'faire', name: '⚙️ FAIRE expressions',
+    cards: [
+      { front: 'to do the shopping (food)', back: 'faire les courses\nfaire des courses', sub: 'Je vais faire les courses.\nOn fait des courses au supermarché.' },
+      { front: 'to do sports', back: 'faire du sport', sub: 'Nous ne faisons presque jamais du sport.' },
+      { front: 'to go skiing', back: 'faire du ski', sub: 'Nous partons faire du ski chaque hiver.' },
+      { front: 'to do dancing', back: 'faire de la danse' },
+      { front: 'to do painting', back: 'faire de la peinture' },
+      { front: 'to do the cleaning', back: 'faire le ménage', sub: 'Je fais le ménage tous les samedis.' },
+      { front: 'to make coffee / tea', back: 'faire du café\nfaire du thé', sub: 'faire le café = make THE coffee\nfaire un café = make A coffee\nfaire du café = make SOME coffee' },
+      { front: 'to take a trip', back: 'faire un voyage', sub: 'Nous allons faire un voyage en France.' },
+      { front: 'to pay a visit', back: 'faire une visite' },
+      { front: 'to take a photo', back: 'faire une photo\nprendre une photo', sub: 'Both are correct!' },
+      { front: 'to go shopping (clothes)', back: 'faire du shopping', sub: 'On va faire du shopping en ville.\n(non-food, informal)' },
+      { front: 'to order in a restaurant', back: 'Je vais prendre…', sub: 'Je vais prendre un café au lait.\nJe vais prendre du poisson.\nJe vais prendre une carafe d\'eau.\n(use PRENDRE when ordering)' },
+    ]
+  },
+  {
+    id: 'verbs_ir_regular', name: '🔵 -ir Verbs (Regular)',
+    cards: [
+      { front: 'to finish', back: 'finir', sub: 'je finis · tu finis · il/elle finit\nnous finissons · vous finissez · ils finissent\n⚠ -ISS- added in plural forms' },
+      { front: 'to choose', back: 'choisir', sub: '🔊 choizir\nje choisis · tu choisis · il choisit\nnous choisissons · vous choisissez · ils choisissent' },
+      { front: 'to invest', back: 'investir', sub: 'j\'investis · tu investis · il investit\nnous investissons · vous investissez · ils investissent' },
+      { front: 'to accomplish / carry out', back: 'accomplir', sub: 'j\'accomplis · nous accomplissons\nJ\'accomplis mon devoir.' },
+      { front: 'to enlarge / extend', back: 'agrandir', sub: 'j\'agrandis · nous agrandissons\nJ\'agrandis la cuisine.' },
+      { front: 'to build / construct', back: 'bâtir', sub: 'je bâtis · nous bâtissons\nNous bâtissons une nouvelle maison.' },
+      { front: 'to entertain / amuse', back: 'divertir', sub: 'je divertis · nous divertissons\nNous divertissons nos invités.' },
+      { front: 'to invade', back: 'envahir', sub: 'j\'envahis · nous envahissons' },
+      { front: 'to cure / recover / heal', back: 'guérir', sub: 'je guéris · nous guérissons\nLes enfants guérissent très vite.' },
+      { front: 'to unite / join', back: 'unir', sub: 'j\'unis · nous unissons\nNous unissons nos deux familles.' },
+      { front: 'to grow old / age', back: 'vieillir', sub: 'je vieillis · nous vieillissons\nNous vieillissons ensemble.' },
+      { front: '-ir regular verb rule', back: 'Drop -ir, add endings:\nje -is · tu -is · il -it\nnous -issons · vous -issez · ils -issent', sub: 'Present participle: en -issant\nen finissant · en choisissant' },
+    ]
+  },
+  {
+    id: 'verbs_ir_irregular', name: '🔴 -ir Verbs (Irregular)',
+    cards: [
+      { front: 'to sleep', back: 'dormir', sub: 'je dors · tu dors · il dort\nnous dormons · vous dormez · ils dorment\nen dormant' },
+      { front: 'to leave / go away', back: 'partir', sub: 'je pars · tu pars · il part\nnous partons · vous partez · ils partent\npartir en vacances = to go on holiday\nLe train part à 13h30.' },
+      { front: 'to go out / exit / take out', back: 'sortir', sub: 'je sors · tu sors · il sort\nnous sortons · vous sortez · ils sortent\nSortir les chiens = take the dogs out\nSortir du bureau à 5h = leave the office at 5' },
+      { front: 'PARTIR vs SORTIR', back: 'PARTIR = leave (more permanently)\nSORTIR = go out (with intention to return)', sub: 'Nous partons en vacances. (going away)\nJe sors avec des amis ce soir. (going out)\nJe sors le chien. (take the dog out)' },
+      { front: 'to offer / give (as a gift)', back: 'offrir', sub: 'j\'offre · tu offres · il offre\nnous offrons · vous offrez · ils offrent\nNous offrons des cadeaux à Noël.' },
+      { front: 'to hold / grip', back: 'tenir', sub: 'je tiens · tu tiens · il tient\nnous tenons · vous tenez · ils tiennent\nMa grand-mère tient mon bras pour marcher.' },
+      { front: 'to obtain / get', back: 'obtenir', sub: 'j\'obtiens · tu obtiens · il obtient\nnous obtenons · vous obtenez · ils obtiennent' },
+      { front: 'to feel / to smell', back: 'sentir', sub: 'je sens · tu sens · il sent\nnous sentons · vous sentez · ils sentent\nJe sens le froid en hiver.\nElle sent les fleurs dans le jardin.' },
+      { front: 'to cover / wrap', back: 'couvrir', sub: 'je couvre · tu couvres · il couvre\nnous couvrons · vous couvrez · ils couvrent\nJe couvre le riz quand il est prêt.' },
+      { front: 'to pick / pluck / gather', back: 'cueillir', sub: '🔊 kehyir\nje cueille · tu cueilles · il cueille\nnous cueillons · vous cueillez · ils cueillent\nJe cueille une rose du jardin.' },
+      { front: 'to boil', back: 'bouillir', sub: '🔊 booyir\nje bous · tu bous · il bout\nnous bouillons · vous bouillez · ils bouillent\nOn fait bouillir de l\'eau pour le thé.' },
+      { front: 'to die', back: 'mourir', sub: 'je meurs · tu meurs · il meurt\nnous mourons · vous mourez · ils meurent' },
+      { front: 'to serve / pour', back: 'servir', sub: 'je sers · tu sers · il sert\nnous servons · vous servez · ils servent\nLe serveur sert le vin.' },
+      { front: 'to flee / run away / leak', back: 'fuir', sub: 'je fuis · tu fuis · il fuit\nnous fuyons · vous fuyez · ils fuient' },
+      { front: 'to run / rush', back: 'courir', sub: 'je cours · tu cours · il court\nnous courons · vous courez · ils courent' },
+      { front: '-ir irregular verb rule', back: 'No -ISS- in plural forms\nDrop -ir, add endings directly:', sub: 'nous dorm-ONS · vous dorm-EZ · ils dorm-ENT\n(same endings as -er verbs in plural!)\nPresent participle: en dorm-ANT' },
+    ]
+  },
+  {
+    id: 'kitchen', name: '🍳 Kitchen & Dining',
+    cards: [
+      { front: 'a frying pan', back: 'une poêle', sub: 'Pour faire une omelette on utilise une poêle.' },
+      { front: 'a saucepan', back: 'une casserole', sub: 'Pour faire bouillir des œufs on utilise une casserole.' },
+      { front: 'a cutting board', back: 'une planche à découper', sub: 'Pour couper la viande on utilise une planche à découper.' },
+      { front: 'a whisk', back: 'un fouet' },
+      { front: 'a ladle', back: 'une louche', sub: 'Pour servir la soupe on utilise une louche.' },
+      { front: 'a colander', back: 'une passoire' },
+      { front: 'a corkscrew', back: 'un tire-bouchon', sub: 'Pour ouvrir une bouteille de vin on utilise un tire-bouchon.' },
+      { front: 'a dish', back: 'un plat', sub: 'Nous servons la salade dans un beau plat.' },
+      { front: 'a kettle', back: 'une bouilloire', sub: 'On fait bouillir l\'eau dans la bouilloire pour faire du thé.' },
+      { front: 'a knife', back: 'un couteau', sub: 'On utilise le couteau et la fourchette pour manger la viande.' },
+      { front: 'a fork', back: 'une fourchette' },
+      { front: 'a spoon', back: 'une cuillière' },
+      { front: 'a plate', back: 'une assiette' },
+      { front: 'a glass', back: 'un verre', sub: 'Les verres sont dans le placard.' },
+      { front: 'a champagne flute', back: 'une coupe (de champagne)' },
+      { front: 'a bowl', back: 'un bol' },
+      { front: 'a cup / mug', back: 'une tasse', sub: 'On boit notre thé dans une tasse.' },
+      { front: 'a napkin', back: 'une serviette', sub: 'On utilise toujours une serviette à table.' },
+      { front: 'a (bath) towel', back: 'une serviette de bain', sub: 'J\'aime utiliser une grande serviette de bain.' },
+      { front: 'breakfast', back: 'le petit déjeuner', sub: 'On prend toujours le petit déjeuner à la maison.' },
+      { front: 'a present / gift', back: 'un cadeau', sub: 'Nous offrons des cadeaux à Noël.' },
+      { front: 'a walk', back: 'une promenade', sub: 'Je sors le chien pour une promenade.\nalso: promener le chien' },
+      { front: 'a jug / carafe of water', back: 'une carafe d\'eau', sub: 'Je vais prendre une carafe d\'eau, s\'il vous plaît.' },
+    ]
+  },
+];
+
+
+
+let currentCatIndex = 0;
+let currentCardIndex = 0;
+let isFlipped = false;
+let knownCards = {};
+let reviewModeOnly = false;
+let showFrenchFirst = false;
+let currentDeck = [];
+
+function buildDeck() {
+  const cat = categories[currentCatIndex];
+  let pool = cat.cards.map((c, i) => ({ ...c, origIndex: i }));
+  if (reviewModeOnly) {
+    const filtered = pool.filter(c => !knownCards[cat.id + '_' + c.origIndex]);
+    pool = filtered.length > 0 ? filtered : pool;
+  }
+  currentDeck = pool;
+  currentCardIndex = 0;
+}
+
+function renderTabs() {
+  document.getElementById('tabs').innerHTML = categories.map((c, i) =>
+    `<button class="tab ${i === currentCatIndex ? 'active' : ''}" onclick="switchCategory(${i})">${c.name}</button>`
+  ).join('');
+}
+
+function renderCard() {
+  if (!currentDeck.length) return;
+  const card = currentDeck[currentCardIndex];
+  const cat = categories[currentCatIndex];
+  const key = cat.id + '_' + card.origIndex;
+  const isKnown = !!knownCards[key];
+
+  const A = showFrenchFirst ? card.back : card.front;
+  const B = showFrenchFirst ? card.front : card.back;
+  const labelA = showFrenchFirst ? 'Français' : 'English';
+  const labelB = showFrenchFirst ? 'English' : 'Français';
+
+  document.getElementById('cardFront').innerHTML =
+    `<div class="card-label">${labelA}</div>
+     <div class="card-main">${esc(A)}</div>
+     ${isKnown ? '<div class="known-badge">✓ Known</div>' : ''}
+     <div class="flip-hint">tap to reveal →</div>`;
+
+  const subHtml = card.sub ? `<div class="card-sub">${esc(card.sub).replace(/\n/g, '<br>')}</div>` : '';
+  document.getElementById('cardBack').innerHTML =
+    `<div class="card-label">${labelB}</div>
+     <div class="card-main">${esc(B)}</div>
+     ${subHtml}
+     <div class="cat-badge">${cat.name}</div>`;
+
+  const cardEl = document.getElementById('card');
+  cardEl.classList.remove('flipped');
+  isFlipped = false;
+
+  document.getElementById('cardCounter').textContent = `${currentCardIndex + 1} / ${currentDeck.length}`;
+  updateProgress();
+}
+
+function esc(s) {
+  return (s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function updateProgress() {
+  const cat = categories[currentCatIndex];
+  const total = cat.cards.length;
+  const known = cat.cards.filter((_, i) => knownCards[cat.id + '_' + i]).length;
+  const pct = total > 0 ? (known / total * 100) : 0;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressText').textContent = `${known} / ${total} known`;
+}
+
+function flipCard() {
+  isFlipped = !isFlipped;
+  document.getElementById('card').classList.toggle('flipped', isFlipped);
+}
+
+function nextCard() {
+  if (!currentDeck.length) return;
+  currentCardIndex = (currentCardIndex + 1) % currentDeck.length;
+  renderCard();
+}
+
+function prevCard() {
+  if (!currentDeck.length) return;
+  currentCardIndex = (currentCardIndex - 1 + currentDeck.length) % currentDeck.length;
+  renderCard();
+}
+
+function markKnown() {
+  if (!currentDeck.length) return;
+  const card = currentDeck[currentCardIndex];
+  const cat = categories[currentCatIndex];
+  knownCards[cat.id + '_' + card.origIndex] = true;
+  save();
+  nextCard();
+}
+
+function markAgain() {
+  if (!currentDeck.length) return;
+  const card = currentDeck[currentCardIndex];
+  const cat = categories[currentCatIndex];
+  delete knownCards[cat.id + '_' + card.origIndex];
+  save();
+  nextCard();
+}
+
+function shuffleCards() {
+  for (let i = currentDeck.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [currentDeck[i], currentDeck[j]] = [currentDeck[j], currentDeck[i]];
+  }
+  currentCardIndex = 0;
+  renderCard();
+}
+
+function toggleReviewMode() {
+  reviewModeOnly = !reviewModeOnly;
+  document.getElementById('reviewBtn').classList.toggle('active', reviewModeOnly);
+  buildDeck();
+  renderCard();
+}
+
+function toggleFlipDefault() {
+  showFrenchFirst = !showFrenchFirst;
+  const btn = document.getElementById('flipDefaultBtn');
+  btn.textContent = showFrenchFirst ? '🔄 Show English first' : '🔄 Show French first';
+  btn.classList.toggle('active', showFrenchFirst);
+  renderCard();
+}
+
+function resetProgress() {
+  const cat = categories[currentCatIndex];
+  cat.cards.forEach((_, i) => delete knownCards[cat.id + '_' + i]);
+  save();
+  buildDeck();
+  renderCard();
+}
+
+function switchCategory(i) {
+  currentCatIndex = i;
+  renderTabs();
+  buildDeck();
+  renderCard();
+}
+
+function save() {
+  try { localStorage.setItem('jf_flashcards', JSON.stringify(knownCards)); } catch(e) {}
+}
+function load() {
+  try { const s = localStorage.getItem('jf_flashcards'); if (s) knownCards = JSON.parse(s); } catch(e) {}
+}
+
+load();
+renderTabs();
+buildDeck();
+renderCard();
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight') nextCard();
+  else if (e.key === 'ArrowLeft') prevCard();
+  else if (e.key === ' ') { e.preventDefault(); flipCard(); }
+  else if (e.key === 'Enter') markKnown();
+});
+
+// PWA: register service worker
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js')
+      .then(() => console.log('SW registered'))
+      .catch(e => console.log('SW error:', e));
+  });
+}
+
+// PWA: install prompt banner
+let deferredPrompt;
+const installBanner = document.getElementById('installBanner');
+const installBtn = document.getElementById('installBtn');
+const dismissBtn = document.getElementById('dismissBtn');
+
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  installBanner.style.display = 'flex';
+});
+
+installBtn && installBtn.addEventListener('click', async () => {
+  installBanner.style.display = 'none';
+  deferredPrompt.prompt();
+  const { outcome } = await deferredPrompt.userChoice;
+  deferredPrompt = null;
+});
+
+dismissBtn && dismissBtn.addEventListener('click', () => {
+  installBanner.style.display = 'none';
+});
+
+window.addEventListener('appinstalled', () => {
+  installBanner.style.display = 'none';
+});
+</script>
+
+<!-- Install banner -->
+<div id="installBanner" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#1a3a6b;color:white;padding:14px 16px;align-items:center;justify-content:space-between;gap:12px;z-index:999;box-shadow:0 -2px 12px rgba(0,0,0,0.2);">
+  <span style="font-size:0.9rem">📲 Add to your home screen for offline use</span>
+  <div style="display:flex;gap:8px;flex-shrink:0">
+    <button id="installBtn" style="background:#48bb78;color:white;border:none;border-radius:50px;padding:8px 16px;font-size:0.85rem;cursor:pointer;font-weight:600">Install</button>
+    <button id="dismissBtn" style="background:rgba(255,255,255,0.2);color:white;border:none;border-radius:50px;padding:8px 12px;font-size:0.85rem;cursor:pointer">✕</button>
+  </div>
+</div>
+
+</body>
+</html>
