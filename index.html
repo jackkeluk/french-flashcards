@@ -2,14 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="French Cards">
-<meta name="theme-color" content="#1a3a6b">
-<link rel="manifest" href="./manifest.json">
-<link rel="apple-touch-icon" href="./icons/icon-192.png">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>French Flashcards — Leçons avec Josefa</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -292,14 +285,45 @@ const categories = [
     ]
   },
   {
-    id: 'verbs', name: '🔵 Verbs',
+    id: 'verbs_er', name: '🟢 -er Verbs',
     cards: [
+      { front: '-er verb rule (present tense)', back: 'Drop -er, add:\nje -e · tu -es · il/elle -e\nnous -ons · vous -ez · ils/elles -ent', sub: 'parl+e · parl+es · parl+e\nparl+ons · parl+ez · parl+ent\n⚠ endings -e / -es / -ent all sound the same!' },
       { front: 'to speak', back: 'parler', sub: 'je parle · tu parles · il/elle parle\nnous parlons · vous parlez · ils/elles parlent' },
       { front: 'to think', back: 'penser', sub: 'je pense · tu penses · il/elle pense\nnous pensons · vous pensez · ils/elles pensent' },
       { front: 'to like / to love', back: 'aimer', sub: 'j\'aime · tu aimes · il/elle aime\nnous aimons · vous aimez · ils/elles aiment' },
-      { front: 'to be called', back: 's\'appeler', sub: 'je m\'appelle · tu t\'appelles · il/elle s\'appelle\nnous nous appelons · vous vous appelez · ils/elles s\'appellent' },
-      { front: 'to be', back: 'être', sub: 'je suis · tu es · il/elle est\nnous sommes · vous êtes · ils/elles sont' },
-      { front: 'to have', back: 'avoir', sub: 'j\'ai · tu as · il/elle a\nnous avons · vous avez · ils/elles ont' },
+      { front: 'to adore', back: 'adorer', sub: 'j\'adore · tu adores · il/elle adore\nnous adorons · vous adorez · ils adorent' },
+      { front: 'to prefer', back: 'préférer', sub: 'je préfère · tu préfères · il/elle préfère\nnous préférons · vous préférez · ils préfèrent\n⚠ stem change: é→è when stressed' },
+      { front: 'to hate', back: 'détester', sub: 'je déteste · tu détestes · il/elle déteste\nnous détestons · vous détestez · ils détestent' },
+      { front: 'to wear', back: 'porter', sub: 'je porte · tu portes · il/elle porte\nnous portons · vous portez · ils portent' },
+      { front: 'to live (reside)', back: 'habiter', sub: 'j\'habite · tu habites · il/elle habite\nnous habitons · vous habitez · ils habitent\nJ\'habite dans une grande maison.' },
+      { front: 'to eat', back: 'manger', sub: 'je mange · tu manges · il/elle mange\nnous mangeons · vous mangez · ils mangent\n⚠ nous mangeONS (keeps the e for soft g)' },
+      { front: 'to work', back: 'travailler', sub: 'je travaille · tu travailles · il travaille\nnous travaillons · vous travaillez · ils travaillent' },
+      { front: 'to buy', back: 'acheter', sub: 'j\'achète · tu achètes · il/elle achète\nnous achetons · vous achetez · ils achètent\n⚠ stem change: e→è when stressed' },
+      { front: 'to be called (reflexive -er)', back: 's\'appeler', sub: 'je m\'appelle · tu t\'appelles · il/elle s\'appelle\nnous nous appelons · vous vous appelez · ils s\'appellent\n⚠ doubles the L when stressed' },
+    ]
+  },
+  {
+    id: 'verbs_etre_avoir', name: '⚡ Être & Avoir',
+    cards: [
+      { front: 'to be', back: 'être', sub: 'je suis · tu es · il/elle/on est\nnous sommes · vous êtes · ils/elles sont\n🔊 sommes=Noo somm · êtes=Voo zett' },
+      { front: 'to have', back: 'avoir', sub: 'j\'ai · tu as · il/elle/on a\nnous avons · vous avez · ils/elles ont\n🔊 ont=like "on" in "bonjour"' },
+      { front: 'être — past tense (imparfait)', back: 'j\'étais · tu étais · il/elle était\nnous étions · vous étiez · ils/elles étaient', sub: 'Mon rendez-vous était hier.\n(my appointment was yesterday)' },
+      { front: 'avoir — past tense (imparfait)', back: 'j\'avais · tu avais · il/elle avait\nnous avions · vous aviez · ils/elles avaient' },
+      { front: 'AVOIR MAL À — to have pain in', back: 'J\'ai mal à + body part', sub: 'J\'ai mal à la tête. (headache)\nJ\'ai mal au dos. (backache)\nJ\'ai mal aux épaules.' },
+      { front: 'AVOIR BESOIN DE — to need', back: 'J\'ai besoin de + noun/infinitive', sub: 'Cette plante a besoin d\'eau.\nJ\'ai besoin de dormir.' },
+      { front: 'être vs avoir — key difference', back: 'ÊTRE = to be (state, identity)\nAVOIR = to have (possession)', sub: 'Je suis anglais. (I am English)\nJ\'ai une voiture. (I have a car)\n⚠ "I am hungry/cold/hot" → use AVOIR!\nJ\'ai faim · J\'ai froid · J\'ai chaud' },
+    ]
+  },
+  {
+    id: 'verbs_irregular', name: '⚡ Irregular Verbs',
+    cards: [
+      { front: 'to go', back: 'aller', sub: 'je vais · tu vas · il/elle/on va\nnous allons · vous allez · ils/elles vont\n⚠ looks like an -er verb but is NOT' },
+      { front: 'to do / to make', back: 'faire', sub: 'je fais · tu fais · il/elle/on fait\nnous faisons · vous faites · ils/elles font\n🔊 faisons=fezon · faites=fête' },
+      { front: 'to take / to have (food/drink)', back: 'prendre', sub: 'je prends · tu prends · il/elle prend\nnous prenons · vous prenez · ils prennent\nJe vais prendre un café. (ordering)' },
+      { front: 'to want', back: 'vouloir', sub: 'je veux · tu veux · il/elle veut\nnous voulons · vous voulez · ils veulent\nJe voudrais = I would like (polite form)' },
+      { front: 'to drink', back: 'boire', sub: 'je bois · tu bois · il/elle boit\nnous buvons · vous buvez · ils boivent' },
+      { front: 'to rain', back: 'pleuvoir', sub: 'il pleut (only used in 3rd person singular)\nIl pleut tout le temps.' },
+      { front: 'near future: going to…', back: 'aller + infinitive', sub: 'Je vais parler français.\nOn va manger au restaurant.\nNous allons faire une révision.\n= I\'m going to / We\'re going to…' },
     ]
   },
   {
@@ -479,24 +503,14 @@ const categories = [
     ]
   },
   {
-    id: 'verbs2', name: '🔵 More Verbs',
+    id: 'verbs2', name: '🟢 -er Verbs (likes)',
     cards: [
-      { front: 'to go', back: 'aller (irregular)', sub: 'je vais · tu vas · il/elle/on va\nnous allons · vous allez · ils/elles vont' },
-      { front: 'to do / to make', back: 'faire (irregular)', sub: 'je fais · tu fais · il/elle/on fait\nnous faisons · vous faites · ils/elles font' },
-      { front: 'to buy', back: 'acheter', sub: 'j\'achète · tu achètes · il/elle achète\nnous achetons · vous achetez · ils achètent' },
-      { front: 'to adore / love', back: 'adorer', sub: 'j\'adore · tu adores · il/elle adore\nnous adorons · vous adorez · ils adorent' },
-      { front: 'to prefer', back: 'préférer', sub: 'je préfère · tu préfères · il/elle préfère\nnous préférons · vous préférez · ils préfèrent' },
+      { front: 'Verbs of degree — overview', back: 'adorer > aimer beaucoup > aimer > préférer > détester', sub: 'I love → j\'adore\nI like a lot → j\'aime beaucoup\nI like → j\'aime\nI prefer → je préfère\nI hate → je déteste' },
+      { front: 'to adore / love (something)', back: 'adorer', sub: 'J\'adore le français!\nOn adore aller en France.' },
+      { front: 'to like a lot', back: 'aimer beaucoup', sub: 'J\'aime beaucoup le vin rouge.\nElle aime beaucoup cuisiner.' },
+      { front: 'to like / to love', back: 'aimer', sub: 'j\'aime · tu aimes · il/elle aime\nnous aimons · vous aimez · ils/elles aiment' },
+      { front: 'to prefer', back: 'préférer', sub: 'je préfère · tu préfères · il/elle préfère\nnous préférons · vous préférez · ils préfèrent\n⚠ stem change é→è' },
       { front: 'to hate', back: 'détester', sub: 'je déteste · tu détestes · il/elle déteste\nnous détestons · vous détestez · ils détestent' },
-      { front: 'to wear', back: 'porter', sub: 'je porte · tu portes · il/elle porte\nnous portons · vous portez · ils portent\nAujourd\'hui je porte une chemise blanche.' },
-      { front: 'to live (reside)', back: 'habiter', sub: 'j\'habite · tu habites · il/elle habite\nnous habitons · vous habitez · ils habitent\nJ\'habite dans une grande maison.' },
-      { front: 'to eat', back: 'manger', sub: 'je mange · tu manges · il/elle mange\nnous mangeons · vous mangez · ils mangent\nNous mangeons au restaurant tous les samedis.' },
-      { front: 'to drink', back: 'boire (irregular)', sub: 'je bois · tu bois · il/elle boit\nnous buvons · vous buvez · ils boivent' },
-      { front: 'to take / to have (appointment)', back: 'prendre (irregular)', sub: 'je prends · tu prends · il/elle prend\nnous prenons · vous prenez · ils prennent\nPrendre un rendez-vous = to make an appointment' },
-      { front: 'to want', back: 'vouloir (irregular)', sub: 'je veux · tu veux · il/elle veut\nnous voulons · vous voulez · ils veulent\nJe voudrais = I would like (polite)' },
-      { front: 'to go shopping (food)', back: 'faire des courses', sub: 'On va faire des courses au supermarché.\n(buying food & everyday items)' },
-      { front: 'to go shopping (clothes)', back: 'faire du shopping', sub: 'On va faire du shopping en ville.\n(more informal, buying clothes/non-food)' },
-      { front: 'to work', back: 'travailler', sub: 'je travaille · tu travailles · il travaille\nnous travaillons · vous travaillez · ils travaillent\nJe travaille tous les jours au bureau.' },
-      { front: 'to rain', back: 'pleuvoir (irregular)', sub: 'il pleut (it rains / it is raining)\nIl pleut tout le temps.' },
     ]
   },
   {
@@ -1013,52 +1027,6 @@ document.addEventListener('keydown', e => {
   else if (e.key === ' ') { e.preventDefault(); flipCard(); }
   else if (e.key === 'Enter') markKnown();
 });
-
-// PWA: register service worker
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js')
-      .then(() => console.log('SW registered'))
-      .catch(e => console.log('SW error:', e));
-  });
-}
-
-// PWA: install prompt banner
-let deferredPrompt;
-const installBanner = document.getElementById('installBanner');
-const installBtn = document.getElementById('installBtn');
-const dismissBtn = document.getElementById('dismissBtn');
-
-window.addEventListener('beforeinstallprompt', e => {
-  e.preventDefault();
-  deferredPrompt = e;
-  installBanner.style.display = 'flex';
-});
-
-installBtn && installBtn.addEventListener('click', async () => {
-  installBanner.style.display = 'none';
-  deferredPrompt.prompt();
-  const { outcome } = await deferredPrompt.userChoice;
-  deferredPrompt = null;
-});
-
-dismissBtn && dismissBtn.addEventListener('click', () => {
-  installBanner.style.display = 'none';
-});
-
-window.addEventListener('appinstalled', () => {
-  installBanner.style.display = 'none';
-});
 </script>
-
-<!-- Install banner -->
-<div id="installBanner" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#1a3a6b;color:white;padding:14px 16px;align-items:center;justify-content:space-between;gap:12px;z-index:999;box-shadow:0 -2px 12px rgba(0,0,0,0.2);">
-  <span style="font-size:0.9rem">📲 Add to your home screen for offline use</span>
-  <div style="display:flex;gap:8px;flex-shrink:0">
-    <button id="installBtn" style="background:#48bb78;color:white;border:none;border-radius:50px;padding:8px 16px;font-size:0.85rem;cursor:pointer;font-weight:600">Install</button>
-    <button id="dismissBtn" style="background:rgba(255,255,255,0.2);color:white;border:none;border-radius:50px;padding:8px 12px;font-size:0.85rem;cursor:pointer">✕</button>
-  </div>
-</div>
-
 </body>
 </html>
