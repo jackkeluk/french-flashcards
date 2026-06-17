@@ -634,12 +634,59 @@ const categories = [
   {
     id: 'possessives', name: '🗂️ Possessives',
     cards: [
-      { front: 'my (m / f / pl)', back: 'mon / ma / mes', sub: 'mon père · ma mère · mes parents\n⚠ Agrees with the THING owned, not owner' },
-      { front: 'your informal (m / f / pl)', back: 'ton / ta / tes', sub: 'ton frère · ta sœur · tes cousins' },
-      { front: 'his / her (m / f / pl)', back: 'son / sa / ses', sub: 'son père · sa mère · ses enfants\n⚠ A woman says "son frère" for her brother!' },
-      { front: 'our (m&f / pl)', back: 'notre / nos', sub: 'notre maison · notre jardin · nos voisins' },
-      { front: 'your formal/plural (m&f / pl)', back: 'votre / vos', sub: 'votre frère · vos frères' },
-      { front: 'their (m&f / pl)', back: 'leur / leurs', sub: 'leur maison · leurs amis' },
+      // ── THE GOLDEN RULE ──
+      { front: '⚠️ The golden rule of possessives', back: 'Agree with the THING owned — not the owner', sub: 'son chien = his dog OR her dog\nsa voiture = his car OR her car\n→ chien is masculine → son\n→ voiture is feminine → sa' },
+
+      // ── MON / MA / MES ──
+      { front: 'my (m / f / pl)', back: 'mon / ma / mes', sub: 'mon père · ma mère · mes parents\n→ always agrees with the thing owned' },
+      { front: 'my + masculine noun', back: 'mon', sub: 'mon frère · mon chien · mon bureau\nmon livre · mon appartement' },
+      { front: 'my + feminine noun', back: 'ma', sub: 'ma sœur · ma mère · ma voiture\nma maison · ma serviette' },
+      { front: 'my + plural noun (any gender)', back: 'mes', sub: 'mes parents · mes amis · mes livres\nmes chaussures · mes enfants' },
+      { front: '⚠️ my + feminine noun starting with a vowel or silent h', back: 'mon (not ma!)', sub: 'mon amie (not ma amie)\nmon école (not ma école)\nmon histoire (not ma histoire)\n→ sounds flow better: mon_amie' },
+
+      // ── TON / TA / TES ──
+      { front: 'your — informal singular (m / f / pl)', back: 'ton / ta / tes', sub: 'Use with people you call "tu"\nton frère · ta sœur · tes cousins' },
+      { front: 'your (informal) + masculine noun', back: 'ton', sub: 'ton père · ton chien · ton livre\nton appartement · ton café' },
+      { front: 'your (informal) + feminine noun', back: 'ta', sub: 'ta mère · ta voiture · ta maison\nta serviette · ta sœur' },
+      { front: 'your (informal) + plural noun', back: 'tes', sub: 'tes parents · tes amis · tes livres\ntes chaussures · tes enfants' },
+      { front: '⚠️ your (informal) + feminine noun starting with vowel or silent h', back: 'ton (not ta!)', sub: 'ton amie (not ta amie)\nton école (not ta école)\nton histoire\n→ same rule as mon/ma' },
+
+      // ── SON / SA / SES ──
+      { front: 'his / her (m / f / pl)', back: 'son / sa / ses', sub: '⚠️ Agrees with the THING — not the person!\nson père = his/her father (père is m)\nsa mère = his/her mother (mère is f)' },
+      { front: 'his/her + masculine noun', back: 'son', sub: 'son frère · son chien · son livre\n→ works for both "his" and "her"!' },
+      { front: 'his/her + feminine noun', back: 'sa', sub: 'sa sœur · sa voiture · sa maison\n→ works for both "his" and "her"!' },
+      { front: 'his/her + plural noun', back: 'ses', sub: 'ses parents · ses amis · ses livres\n→ works for both "his" and "her"!' },
+      { front: '⚠️ son/sa/ses — tricky example', back: 'Elle parle à son frère.\nIl parle à sa sœur.', sub: 'She speaks to HER brother → son frère (frère is m)\nHe speaks to HIS sister → sa sœur (sœur is f)\n→ The owner doesn\'t change son/sa — the noun does!' },
+
+      // ── NOTRE / NOS ──
+      { front: 'our (m&f singular / plural)', back: 'notre / nos', sub: 'notre maison · notre jardin (singular)\nnos enfants · nos amis (plural)\n→ notre is same for m and f!' },
+      { front: 'our + singular noun (any gender)', back: 'notre', sub: 'notre père · notre mère · notre chien\n→ same form for masculine and feminine' },
+      { front: 'our + plural noun', back: 'nos', sub: 'nos parents · nos amis · nos livres\nnos voitures · nos enfants' },
+
+      // ── VOTRE / VOS ──
+      { front: 'your — formal or plural (singular / plural)', back: 'votre / vos', sub: 'Use with people you call "vous"\nvotre fils · votre fille (singular)\nvos enfants · vos amis (plural)' },
+      { front: 'your (formal/plural) + singular noun', back: 'votre', sub: 'votre manteau · votre voiture\nvotre maison · votre question\n→ same for m and f' },
+      { front: 'your (formal/plural) + plural noun', back: 'vos', sub: 'vos clés · vos affaires · vos enfants\nvos questions · vos livres' },
+
+      // ── LEUR / LEURS ──
+      { front: 'their (singular / plural)', back: 'leur / leurs', sub: 'leur maison · leur fils (singular)\nleurs enfants · leurs amis (plural)\n→ leur is same for m and f!' },
+      { front: 'their + singular noun (any gender)', back: 'leur', sub: 'leur père · leur mère · leur chien\n→ same for masculine and feminine' },
+      { front: 'their + plural noun', back: 'leurs', sub: 'leurs parents · leurs amis · leurs livres\nleurs voitures · leurs enfants' },
+
+      // ── FULL TABLE ──
+      { front: 'Full possessive adjective table', back: 'my: mon/ma/mes\nyour (tu): ton/ta/tes\nhis/her: son/sa/ses\nour: notre/nos\nyour (vous): votre/vos\ntheir: leur/leurs', sub: '→ m/f/pl = agrees with the THING owned\n→ notre·votre·leur same m&f (only pl changes)\n→ mon/ton/son before vowel or silent h (any gender)' },
+
+      // ── PRACTICE SENTENCES ──
+      { front: 'Where is your (informal) dog?', back: 'Où est ton chien?', sub: 'chien = masculine → ton' },
+      { front: 'I like your (informal) house.', back: 'J\'aime ta maison.', sub: 'maison = feminine → ta' },
+      { front: 'She loves her children.', back: 'Elle aime ses enfants.', sub: 'enfants = plural → ses\n(even though she\'s the owner, it\'s the noun that counts!)' },
+      { front: 'He has his book.', back: 'Il a son livre.', sub: 'livre = masculine → son' },
+      { front: 'We like our garden.', back: 'Nous aimons notre jardin.', sub: 'jardin = singular → notre' },
+      { front: 'Do you have your keys? (informal)', back: 'Tu as tes clés?', sub: 'clés = plural → tes' },
+      { front: 'It\'s my friend (f). (vowel rule!)', back: 'C\'est mon amie.', sub: 'amie starts with vowel → mon not ma\n→ sounds better than "ma amie"' },
+      { front: 'It\'s your school. (informal)', back: 'C\'est ton école.', sub: 'école starts with vowel → ton not ta' },
+      { front: 'Their children are lovely.', back: 'Leurs enfants sont adorables.', sub: 'enfants = plural → leurs' },
+      { front: 'Do you have your ticket? (formal)', back: 'Vous avez votre billet?', sub: 'billet = singular → votre' },
     ]
   },
   {
