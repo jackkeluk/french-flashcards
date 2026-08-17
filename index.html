@@ -6,266 +6,218 @@
 <title>French Flashcards — Leçons avec Josefa</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Segoe UI', system-ui, sans-serif; background: #f0f4f8; min-height: 100vh; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: #f0f4f8; min-height: 100vh; color:#1a2d4a; }
+  header { background: linear-gradient(135deg, #1a3a6b, #2d6a9f); color: white; padding: 12px 20px; display:flex; align-items:center; justify-content:space-between; }
+  header h1 { font-size: 1.05rem; font-weight: 600; }
 
-  header {
-    background: linear-gradient(135deg, #1a3a6b, #2d6a9f);
-    color: white;
-    padding: 14px 24px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  header h1 { font-size: 1.1rem; font-weight: 600; }
+  .viewbar { display:flex; gap:8px; background:white; padding:8px 12px; border-bottom:2px solid #e8edf2; align-items:center; position:sticky; top:0; z-index:5; }
+  .viewbtn { padding:8px 16px; border:1.5px solid #dde4ec; background:white; border-radius:50px; cursor:pointer; font-size:0.85rem; color:#555; font-family:inherit; font-weight:600; }
+  .viewbtn.active { background:#2d6a9f; color:white; border-color:#2d6a9f; }
+  .viewbar .spacer { flex:1; }
+  .study-btn { padding:8px 18px; border:none; border-radius:50px; cursor:pointer; font-size:0.85rem; font-weight:700; font-family:inherit; background:#48bb78; color:white; }
+  .study-btn:active { transform:scale(0.97); }
 
-  .tabs {
-    display: flex;
-    overflow-x: auto;
-    background: white;
-    border-bottom: 2px solid #e8edf2;
-    padding: 0 12px;
-    scrollbar-width: none;
-  }
-  .tabs::-webkit-scrollbar { display: none; }
-  .tab {
-    padding: 10px 14px;
-    cursor: pointer;
-    border: none;
-    background: none;
-    font-size: 0.82rem;
-    white-space: nowrap;
-    color: #777;
-    border-bottom: 3px solid transparent;
-    margin-bottom: -2px;
-    transition: all 0.2s;
-    font-family: inherit;
-  }
-  .tab.active { color: #2d6a9f; border-bottom-color: #2d6a9f; font-weight: 700; }
-  .tab:hover { color: #2d6a9f; }
+  .tabs { display:flex; overflow-x:auto; background:white; border-bottom:2px solid #e8edf2; padding:0 12px; scrollbar-width:none; }
+  .tabs::-webkit-scrollbar { display:none; }
+  .tab { padding:10px 14px; cursor:pointer; border:none; background:none; font-size:0.82rem; white-space:nowrap; color:#777; border-bottom:3px solid transparent; margin-bottom:-2px; font-family:inherit; }
+  .tab.active { color:#2d6a9f; border-bottom-color:#2d6a9f; font-weight:700; }
 
-  .main { max-width: 580px; margin: 0 auto; padding: 20px 16px 32px; }
+  .main { max-width: 620px; margin: 0 auto; padding: 18px 16px 40px; }
 
-  .progress-section {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 14px;
-  }
-  .progress-bar { flex: 1; height: 7px; background: #e2e8f0; border-radius: 4px; overflow: hidden; }
-  .progress-fill { height: 100%; background: #48bb78; border-radius: 4px; transition: width 0.4s ease; }
-  .progress-text { font-size: 0.8rem; color: #888; white-space: nowrap; min-width: 70px; text-align: right; }
+  .progress-section { display:flex; align-items:center; gap:10px; margin-bottom:14px; }
+  .progress-bar { flex:1; height:7px; background:#e2e8f0; border-radius:4px; overflow:hidden; }
+  .progress-fill { height:100%; background:#48bb78; border-radius:4px; transition:width .4s ease; }
+  .progress-text { font-size:0.78rem; color:#888; white-space:nowrap; min-width:120px; text-align:right; }
 
-  .card-container {
-    perspective: 1200px;
-    height: 300px;
-    margin-bottom: 16px;
-    cursor: pointer;
-    user-select: none;
-  }
-  .card {
-    width: 100%; height: 100%;
-    position: relative;
-    transform-style: preserve-3d;
-    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-  .card.flipped { transform: rotateY(180deg); }
+  .card-container { perspective:1200px; min-height:300px; margin-bottom:14px; }
+  .card { width:100%; min-height:300px; position:relative; }
+  .flashface { background:white; border-radius:18px; min-height:300px; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:26px 22px; box-shadow:0 6px 24px rgba(0,0,0,.09),0 1px 4px rgba(0,0,0,.06); text-align:center; }
+  .card-label { font-size:0.66rem; text-transform:uppercase; letter-spacing:1.5px; margin-bottom:12px; font-weight:600; color:#bbc8d4; }
+  .card-main { font-size:1.9rem; font-weight:700; line-height:1.25; word-break:break-word; color:#1a2d4a; }
+  .answer-block { margin-top:16px; padding-top:16px; border-top:1px solid #eef2f6; width:100%; }
+  .answer-main { font-size:1.55rem; font-weight:700; color:#2d6a9f; }
+  .card-sub { margin-top:12px; font-size:0.85rem; line-height:1.55; color:#667; font-style:italic; }
+  .box-pip { margin-top:14px; font-size:0.72rem; color:#9aa7b4; }
+  .prompt-hint { margin-top:16px; font-size:0.8rem; color:#a8b4c0; }
 
-  .card-face {
-    position: absolute;
-    width: 100%; height: 100%;
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
-    border-radius: 18px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 28px 24px 20px;
-    box-shadow: 0 6px 24px rgba(0,0,0,0.09), 0 1px 4px rgba(0,0,0,0.06);
-  }
-  .card-front { background: white; }
-  .card-back { background: linear-gradient(145deg, #1a3a6b, #2d6a9f); color: white; transform: rotateY(180deg); }
+  .reveal-btn { margin-top:18px; padding:12px 26px; border:1.5px solid #2d6a9f; background:#f0f6ff; color:#2d6a9f; border-radius:50px; font-size:0.95rem; font-weight:700; cursor:pointer; font-family:inherit; }
+  .reveal-btn:active { transform:scale(.97); }
 
-  .card-label {
-    font-size: 0.68rem;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    margin-bottom: 14px;
-    font-weight: 600;
-  }
-  .card-front .card-label { color: #bbc8d4; }
-  .card-back .card-label { color: rgba(255,255,255,0.55); }
+  .grade-row { display:flex; gap:10px; margin-bottom:14px; }
+  .btn-grade { flex:1; padding:13px; border:none; border-radius:50px; cursor:pointer; font-size:0.9rem; font-weight:700; font-family:inherit; }
+  .btn-got { background:#f0fff4; color:#276749; border:1.5px solid #9ae6b4; }
+  .btn-got:hover { background:#48bb78; color:white; }
+  .btn-again { background:#fff5f5; color:#9b2c2c; border:1.5px solid #feb2b2; }
+  .btn-again:hover { background:#e53e3e; color:white; }
+  .btn-grade:active { transform:scale(.97); }
+  .btn-grade small { display:block; font-weight:500; font-size:0.68rem; opacity:.8; margin-top:2px; }
 
-  .card-main {
-    font-size: 1.95rem;
-    font-weight: 700;
-    text-align: center;
-    line-height: 1.25;
-    word-break: break-word;
-  }
-  .card-front .card-main { color: #1a2d4a; }
+  .nav-row { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; gap:12px; }
+  .nav-btn { background:white; border:1.5px solid #dde4ec; border-radius:50px; padding:9px 20px; cursor:pointer; font-size:0.88rem; color:#555; font-family:inherit; }
+  .card-counter { font-size:0.82rem; color:#999; }
 
-  .card-sub {
-    margin-top: 12px;
-    font-size: 0.82rem;
-    text-align: center;
-    line-height: 1.55;
-    opacity: 0.78;
-    font-style: italic;
-    max-width: 100%;
-  }
+  .controls-row { display:flex; gap:7px; flex-wrap:wrap; margin-top:4px; }
+  .ctrl-btn { padding:7px 14px; border:1.5px solid #dde4ec; border-radius:50px; background:white; cursor:pointer; font-size:0.76rem; color:#666; font-family:inherit; }
+  .ctrl-btn.active { background:#2d6a9f; color:white; border-color:#2d6a9f; }
 
-  .flip-hint {
-    position: absolute;
-    bottom: 14px;
-    font-size: 0.72rem;
-    color: #c8d5e0;
-    letter-spacing: 0.5px;
-  }
+  /* Verbs */
+  .verb-toolbar { display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap; }
+  .verb-search { flex:1; min-width:160px; padding:10px 14px; border:1.5px solid #dde4ec; border-radius:50px; font-size:0.9rem; font-family:inherit; }
+  .group-chips { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:12px; }
+  .chip { padding:5px 12px; border:1.5px solid #dde4ec; border-radius:50px; background:white; cursor:pointer; font-size:0.74rem; color:#666; font-family:inherit; white-space:nowrap; }
+  .chip.active { background:#1a3a6b; color:white; border-color:#1a3a6b; }
+  .verb-group-head { font-size:0.72rem; text-transform:uppercase; letter-spacing:1px; color:#9aa7b4; margin:14px 0 6px; font-weight:700; }
+  .verb-item { display:flex; justify-content:space-between; align-items:center; background:white; border:1px solid #e8edf2; border-radius:12px; padding:12px 16px; margin-bottom:7px; cursor:pointer; }
+  .verb-item:hover { border-color:#2d6a9f; background:#f7fbff; }
+  .verb-item .vinf { font-weight:700; font-size:1rem; }
+  .verb-item .ven { color:#8895a3; font-size:0.82rem; }
+  .verb-item .vaux { font-size:0.66rem; color:#b3bdc8; text-transform:uppercase; letter-spacing:.5px; }
 
-  .known-badge {
-    margin-top: 10px;
-    font-size: 0.75rem;
-    color: #48bb78;
-    font-weight: 600;
-  }
+  .verb-detail { background:white; border-radius:18px; padding:22px; box-shadow:0 6px 24px rgba(0,0,0,.09); }
+  .vd-back { background:none; border:none; color:#2d6a9f; font-size:0.85rem; cursor:pointer; font-family:inherit; margin-bottom:12px; padding:0; }
+  .vd-inf { font-size:1.8rem; font-weight:700; }
+  .vd-en { color:#8895a3; font-size:0.95rem; margin-bottom:4px; }
+  .vd-meta { font-size:0.72rem; color:#b3bdc8; text-transform:uppercase; letter-spacing:.5px; margin-bottom:14px; }
+  .tense-tabs { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:14px; }
+  .tense-tab { padding:8px 14px; border:1.5px solid #dde4ec; border-radius:50px; background:white; cursor:pointer; font-size:0.78rem; color:#555; font-family:inherit; font-weight:600; }
+  .tense-tab.active { background:#2d6a9f; color:white; border-color:#2d6a9f; }
+  .expl-box { background:#f0f6ff; border-left:3px solid #2d6a9f; padding:12px 14px; border-radius:8px; font-size:0.84rem; line-height:1.55; color:#3a4a5c; margin-bottom:16px; }
+  .conj-table { width:100%; border-collapse:collapse; }
+  .conj-table td { padding:10px 8px; border-bottom:1px solid #eef2f6; font-size:1rem; }
+  .conj-table td.subj { color:#9aa7b4; width:32%; font-size:0.82rem; }
+  .conj-table td.form { font-weight:600; }
+  .vd-note { margin-top:12px; font-size:0.8rem; color:#8895a3; font-style:italic; }
+  .phrases { margin-top:18px; }
+  .ph-head { font-size:0.72rem; text-transform:uppercase; letter-spacing:1px; color:#9aa7b4; font-weight:700; margin-bottom:8px; }
+  .ph { padding:9px 12px; background:#f7fafc; border-radius:10px; margin-bottom:7px; }
+  .ph-fr { font-weight:600; font-size:0.98rem; }
+  .ph-en { color:#8895a3; font-size:0.82rem; margin-top:2px; }
+  /* Talk / dialogues */
+  .bubble { max-width:85%; padding:10px 14px; border-radius:16px; margin-bottom:8px; }
+  .bubble .b-fr { font-weight:600; font-size:0.95rem; }
+  .bubble .b-en { font-size:0.78rem; opacity:.75; margin-top:2px; }
+  .bubble-them { background:white; border:1px solid #e8edf2; margin-right:auto; border-bottom-left-radius:4px; }
+  .bubble-you { background:#2d6a9f; color:white; margin-left:auto; border-bottom-right-radius:4px; }
+  .who-label { font-size:0.68rem; color:#9aa7b4; text-transform:uppercase; letter-spacing:1px; margin:2px 4px 4px; }
+  .who-you { text-align:right; }
+  .dialogue { display:flex; flex-direction:column; margin-bottom:8px; }
+  .hide-en .b-en { display:none; }
 
-  .cat-badge {
-    position: absolute;
-    bottom: 14px;
-    font-size: 0.7rem;
-    background: rgba(255,255,255,0.15);
-    padding: 3px 10px;
-    border-radius: 50px;
-  }
+  /* Study modal */
+  .overlay { position:fixed; inset:0; background:rgba(20,35,60,.55); display:flex; align-items:center; justify-content:center; padding:20px; z-index:20; }
+  .modal { background:white; border-radius:18px; padding:24px; max-width:420px; width:100%; box-shadow:0 20px 60px rgba(0,0,0,.3); }
+  .modal h2 { font-size:1.2rem; margin-bottom:4px; }
+  .modal p.sub { color:#8895a3; font-size:0.85rem; margin-bottom:16px; }
+  .opt-label { font-size:0.74rem; text-transform:uppercase; letter-spacing:1px; color:#9aa7b4; font-weight:700; margin:14px 0 7px; }
+  .opt-row { display:flex; gap:7px; flex-wrap:wrap; }
+  .opt { padding:9px 14px; border:1.5px solid #dde4ec; border-radius:50px; background:white; cursor:pointer; font-size:0.8rem; font-family:inherit; color:#555; }
+  .opt.active { background:#2d6a9f; color:white; border-color:#2d6a9f; }
+  .modal-actions { display:flex; gap:10px; margin-top:22px; }
+  .modal-actions button { flex:1; padding:12px; border-radius:50px; font-weight:700; font-size:0.9rem; cursor:pointer; font-family:inherit; border:none; }
+  .btn-start { background:#48bb78; color:white; }
+  .btn-cancel { background:#f0f4f8; color:#667; }
 
-  .nav-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 12px;
-    gap: 12px;
-  }
-  .nav-btn {
-    background: white;
-    border: 1.5px solid #dde4ec;
-    border-radius: 50px;
-    padding: 9px 22px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    color: #555;
-    transition: all 0.2s;
-    font-family: inherit;
-  }
-  .nav-btn:hover { border-color: #2d6a9f; color: #2d6a9f; background: #f0f6ff; }
-  .nav-btn:active { transform: scale(0.97); }
-  .card-counter { font-size: 0.85rem; color: #999; }
+  .session-hud { display:flex; justify-content:space-between; align-items:center; background:#1a3a6b; color:white; padding:10px 16px; border-radius:12px; margin-bottom:14px; font-size:0.82rem; }
+  .session-hud .end { background:rgba(255,255,255,.15); border:none; color:white; padding:6px 14px; border-radius:50px; cursor:pointer; font-family:inherit; font-size:0.78rem; }
 
-  .action-row {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 14px;
-  }
-  .btn-action {
-    flex: 1;
-    padding: 12px;
-    border: none;
-    border-radius: 50px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    font-weight: 600;
-    transition: all 0.2s;
-    font-family: inherit;
-  }
-  .btn-gotit { background: #f0fff4; color: #276749; border: 1.5px solid #9ae6b4; }
-  .btn-gotit:hover { background: #48bb78; color: white; border-color: #48bb78; }
-  .btn-again { background: #fff5f5; color: #9b2c2c; border: 1.5px solid #feb2b2; }
-  .btn-again:hover { background: #e53e3e; color: white; border-color: #e53e3e; }
-  .btn-action:active { transform: scale(0.97); }
+  .summary { background:white; border-radius:18px; padding:28px 24px; text-align:center; box-shadow:0 6px 24px rgba(0,0,0,.09); }
+  .summary h2 { font-size:1.4rem; margin-bottom:14px; }
+  .summary .big { font-size:2.4rem; font-weight:800; color:#2d6a9f; }
+  .summary .row { display:flex; justify-content:center; gap:26px; margin:16px 0; }
+  .summary .stat b { display:block; font-size:1.6rem; }
+  .summary .stat span { font-size:0.78rem; color:#8895a3; }
 
-  .controls-row {
-    display: flex;
-    gap: 7px;
-    flex-wrap: wrap;
-  }
-  .ctrl-btn {
-    padding: 7px 14px;
-    border: 1.5px solid #dde4ec;
-    border-radius: 50px;
-    background: white;
-    cursor: pointer;
-    font-size: 0.78rem;
-    color: #666;
-    transition: all 0.2s;
-    font-family: inherit;
-  }
-  .ctrl-btn:hover { background: #f0f6ff; border-color: #2d6a9f; color: #2d6a9f; }
-  .ctrl-btn.active { background: #2d6a9f; color: white; border-color: #2d6a9f; }
-
-  .keyboard-hint {
-    margin-top: 18px;
-    font-size: 0.72rem;
-    color: #bbb;
-    text-align: center;
-  }
-  kbd {
-    background: #f0f4f8;
-    border: 1px solid #dde4ec;
-    border-radius: 4px;
-    padding: 1px 5px;
-    font-size: 0.7rem;
-    color: #888;
-    font-family: inherit;
-  }
-
-  @media (max-width: 480px) {
-    .card-main { font-size: 1.5rem; }
-    .card-container { height: 270px; }
-  }
+  .keyboard-hint { margin-top:18px; font-size:0.72rem; color:#bbb; text-align:center; }
+  kbd { background:#f0f4f8; border:1px solid #dde4ec; border-radius:4px; padding:1px 5px; font-size:0.7rem; color:#888; }
+  .hidden { display:none !important; }
+  @media (max-width:480px){ .card-main{font-size:1.55rem;} .answer-main{font-size:1.3rem;} }
 </style>
 </head>
 <body>
-
 <header>
   <h1>🇫🇷 French Flashcards — Leçons avec Josefa</h1>
-  <span style="font-size:1.3rem">✨</span>
+  <span style="font-size:1.2rem">✨</span>
 </header>
 
-<div class="tabs" id="tabs"></div>
+<div class="viewbar">
+  <button class="viewbtn active" id="vb-cards" onclick="setView('cards')">🃏 Cards</button>
+  <button class="viewbtn" id="vb-verbs" onclick="setView('verbs')">📖 Verbs</button>
+  <button class="viewbtn" id="vb-talk" onclick="setView('talk')">💬 Talk</button>
+  <span class="spacer"></span>
+  <button class="study-btn" onclick="openStudy()">▶ Study</button>
+</div>
 
-<div class="main">
-  <div class="progress-section">
-    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
-    <span class="progress-text" id="progressText">0 / 0 known</span>
-  </div>
+<!-- CARDS VIEW -->
+<div id="cardsView">
+  <div class="group-chips" id="areaBar" style="padding:10px 12px 2px;margin:0;background:white;"></div>
+  <div class="tabs" id="tabs"></div>
+  <div class="main">
+    <div id="sessionHud" class="session-hud hidden"></div>
+    <div class="progress-section" id="progWrap">
+      <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+      <span class="progress-text" id="progressText"></span>
+    </div>
 
-  <div class="card-container" onclick="flipCard()" id="cardContainer">
-    <div class="card" id="card">
-      <div class="card-face card-front" id="cardFront"></div>
-      <div class="card-face card-back" id="cardBack"></div>
+    <div id="cardArea"></div>
+
+    <div id="summaryArea" class="hidden"></div>
+
+    <div class="keyboard-hint" id="kbHint">
+      <kbd>Space</kbd> reveal &nbsp;·&nbsp; <kbd>1</kbd> again &nbsp;·&nbsp; <kbd>2</kbd> got it &nbsp;·&nbsp; <kbd>→</kbd> next
     </div>
   </div>
+</div>
 
-  <div class="nav-row">
-    <button class="nav-btn" onclick="prevCard()">← Prev</button>
-    <span class="card-counter" id="cardCounter">1 / 1</span>
-    <button class="nav-btn" onclick="nextCard()">Next →</button>
+<!-- VERBS VIEW -->
+<div id="verbsView" class="hidden">
+  <div class="main">
+    <div id="verbListWrap">
+      <div class="verb-toolbar">
+        <input class="verb-search" id="verbSearch" placeholder="Search a verb (English or French)…" oninput="renderVerbList()">
+      </div>
+      <div class="group-chips" id="groupChips"></div>
+      <div id="verbList"></div>
+    </div>
+    <div id="verbDetailWrap" class="hidden"></div>
   </div>
+</div>
 
-  <div class="action-row">
-    <button class="btn-action btn-gotit" onclick="markKnown()">✓ Got it!</button>
-    <button class="btn-action btn-again" onclick="markAgain()">↩ Study again</button>
+<!-- TALK VIEW -->
+<div id="talkView" class="hidden">
+  <div class="main">
+    <div id="situListWrap"><div id="situList"></div></div>
+    <div id="situDetailWrap" class="hidden"></div>
   </div>
+</div>
 
-  <div class="controls-row">
-    <button class="ctrl-btn" onclick="shuffleCards()">🔀 Shuffle</button>
-    <button class="ctrl-btn" id="reviewBtn" onclick="toggleReviewMode()">📚 Unknowns only</button>
-    <button class="ctrl-btn" id="flipDefaultBtn" onclick="toggleFlipDefault()">🔄 Show French first</button>
-    <button class="ctrl-btn" onclick="resetProgress()">↺ Reset</button>
-  </div>
+<!-- STUDY MODAL -->
+<div id="studyOverlay" class="overlay hidden">
+  <div class="modal">
+    <h2>Study session</h2>
+    <p class="sub">Spaced repetition · recall first. Cards that are due come first; grade yourself honestly.</p>
 
-  <div class="keyboard-hint">
-    <kbd>Space</kbd> flip &nbsp;·&nbsp; <kbd>→</kbd> next &nbsp;·&nbsp; <kbd>←</kbd> prev &nbsp;·&nbsp; <kbd>Enter</kbd> mark known
+    <div class="opt-label">What</div>
+    <div class="opt-row" id="opt-scope"></div>
+
+    <div class="opt-label">Direction</div>
+    <div class="opt-row" id="opt-dir">
+      <div class="opt active" data-dir="en" onclick="pick('dir',this)">English → French (recall)</div>
+      <div class="opt" data-dir="fr" onclick="pick('dir',this)">French → English</div>
+    </div>
+
+    <div class="opt-label">Limit</div>
+    <div class="opt-row" id="opt-limit">
+      <div class="opt active" data-lim="c20" onclick="pick('lim',this)">20 cards</div>
+      <div class="opt" data-lim="c10" onclick="pick('lim',this)">10 cards</div>
+      <div class="opt" data-lim="c40" onclick="pick('lim',this)">40 cards</div>
+      <div class="opt" data-lim="t5" onclick="pick('lim',this)">5 min</div>
+      <div class="opt" data-lim="t10" onclick="pick('lim',this)">10 min</div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeStudy()">Cancel</button>
+      <button class="btn-start" onclick="beginSession()">Start ▶</button>
+    </div>
   </div>
 </div>
 
@@ -282,66 +234,6 @@ const categories = [
       { front: 'you (plural or formal)', back: 'vous', sub: 'vous aimez, vous parlez...\n→ se vouvoyer' },
       { front: 'they (masculine / mixed)', back: 'ils', sub: 'ils aiment, ils parlent...' },
       { front: 'they (feminine)', back: 'elles', sub: 'elles aiment, elles parlent...' },
-    ]
-  },
-  {
-    id: 'verbs_er', name: '🟢 -ER Verbs · Group 1',
-    cards: [
-      { front: '1st group (-ER) — what & how', back: 'All verbs ending in -ER (except aller)\nStem = infinitive minus -er', sub: 'The biggest, most regular group (~90% of all verbs).\nLearn one pattern and it works for thousands of verbs.' },
-      { front: '-er verb rule (present tense)', back: 'Drop -er, add:\nje -e · tu -es · il/elle -e\nnous -ons · vous -ez · ils/elles -ent', sub: 'parl+e · parl+es · parl+e\nparl+ons · parl+ez · parl+ent\n⚠ endings -e / -es / -ent all sound the same!' },
-      { front: 'to speak', back: 'parler', sub: 'je parle · tu parles · il/elle parle\nnous parlons · vous parlez · ils/elles parlent' },
-      { front: 'to think', back: 'penser', sub: 'je pense · tu penses · il/elle pense\nnous pensons · vous pensez · ils/elles pensent' },
-      { front: 'to like / to love', back: 'aimer', sub: 'j\'aime · tu aimes · il/elle aime\nnous aimons · vous aimez · ils/elles aiment' },
-      { front: 'to adore', back: 'adorer', sub: 'j\'adore · tu adores · il/elle adore\nnous adorons · vous adorez · ils adorent' },
-      { front: 'to hate', back: 'détester', sub: 'je déteste · tu détestes · il/elle déteste\nnous détestons · vous détestez · ils détestent' },
-      { front: 'to wear', back: 'porter', sub: 'je porte · tu portes · il/elle porte\nnous portons · vous portez · ils portent' },
-      { front: 'to live (reside)', back: 'habiter', sub: 'j\'habite · tu habites · il/elle habite\nnous habitons · vous habitez · ils habitent\nJ\'habite dans une grande maison.' },
-      { front: 'to work', back: 'travailler', sub: 'je travaille · tu travailles · il travaille\nnous travaillons · vous travaillez · ils travaillent' },
-      { front: 'to watch / to look at', back: 'regarder', sub: 'je regarde · tu regardes · il/elle regarde\nnous regardons · vous regardez · ils regardent\nJe regarde la météo avant de sortir.' },
-      { front: 'to play', back: 'jouer', sub: 'je joue · tu joues · il/elle joue\nnous jouons · vous jouez · ils/elles jouent\njouer AU tennis (sport) · jouer DU piano (instrument)' },
-      { front: '⚠ Spelling-change -ER verbs', back: 'Still Group 1 — the stem shifts to keep the sound', sub: 'préférer · acheter · manger · commencer · s\'appeler\nSee the cards below for each pattern.' },
-      { front: 'to prefer (é→è)', back: 'préférer', sub: 'je préfère · tu préfères · il/elle préfère\nnous préférons · vous préférez · ils préfèrent\n⚠ é→è when the ending is silent' },
-      { front: 'to buy (e→è)', back: 'acheter', sub: 'j\'achète · tu achètes · il/elle achète\nnous achetons · vous achetez · ils achètent\n⚠ e→è when the ending is silent' },
-      { front: 'to eat (-ger keeps the e)', back: 'manger', sub: 'je mange · tu manges · il/elle mange\nnous mangeons · vous mangez · ils mangent\n⚠ nous mange-ONS keeps the e (soft g)' },
-      { front: 'to begin (-cer takes a cedilla)', back: 'commencer', sub: 'je commence · tu commences · il commence\nnous commençons · vous commencez · ils commencent\n⚠ nous commen-ÇONS (soft c)' },
-      { front: 'to be called (reflexive -er)', back: 's\'appeler', sub: 'je m\'appelle · tu t\'appelles · il/elle s\'appelle\nnous nous appelons · vous vous appelez · ils s\'appellent\n⚠ doubles the L when stressed' },
-    ]
-  },
-  {
-    id: 'verbs_etre_avoir', name: '⚡ Être & Avoir',
-    cards: [
-      { front: 'to be', back: 'être', sub: 'je suis · tu es · il/elle/on est\nnous sommes · vous êtes · ils/elles sont\n🔊 sommes=Noo somm · êtes=Voo zett' },
-      { front: 'to have', back: 'avoir', sub: 'j\'ai · tu as · il/elle/on a\nnous avons · vous avez · ils/elles ont\n🔊 ont=like "on" in "bonjour"' },
-      { front: 'être — past tense (imparfait)', back: 'j\'étais · tu étais · il/elle était\nnous étions · vous étiez · ils/elles étaient', sub: 'Mon rendez-vous était hier.\n(my appointment was yesterday)' },
-      { front: 'avoir — past tense (imparfait)', back: 'j\'avais · tu avais · il/elle avait\nnous avions · vous aviez · ils/elles avaient' },
-      { front: 'AVOIR MAL À — to have pain in', back: 'J\'ai mal à + body part', sub: 'J\'ai mal à la tête. (headache)\nJ\'ai mal au dos. (backache)\nJ\'ai mal aux épaules.' },
-      { front: 'AVOIR BESOIN DE — to need', back: 'J\'ai besoin de + noun/infinitive', sub: 'Cette plante a besoin d\'eau.\nJ\'ai besoin de dormir.' },
-      { front: 'être vs avoir — key difference', back: 'ÊTRE = to be (state, identity)\nAVOIR = to have (possession)', sub: 'Je suis anglais. (I am English)\nJ\'ai une voiture. (I have a car)\n⚠ "I am hungry/cold/hot" → use AVOIR!\nJ\'ai faim · J\'ai froid · J\'ai chaud' },
-    ]
-  },
-  {
-    id: 'verbs_groups_overview', name: '🔺 Verb Groups (Overview)',
-    cards: [
-      { front: 'The 3 verb groups — the big picture', back: 'Group 1: -ER (regular)\nGroup 2: -IR like finir (regular, adds -iss-)\nGroup 3: everything irregular (-ir, -oir, -re) + aller', sub: 'Groups 1 & 2 follow fixed rules.\nGroup 3 must largely be learnt by heart.' },
-      { front: 'Group 1 — how to spot it', back: 'Infinitive ends in -ER (except aller)', sub: 'parler, aimer, manger…\nEndings: -e -es -e -ons -ez -ent' },
-      { front: 'Group 2 — how to spot it', back: 'Infinitive ends in -IR AND has -iss- in the plural', sub: 'finir → nous fin-ISS-ons\nchoisir → nous chois-ISS-ons\nEndings: -is -is -it -issons -issez -issent' },
-      { front: 'Group 3 — how to spot it', back: 'All the irregulars: -ir (no -iss-), -oir, -re — plus aller', sub: 'dormir, vouloir, prendre, faire…\nNo single rule — grouped by ending to spot the patterns.' },
-      { front: '-IR verb: Group 2 or Group 3?', back: 'Check the nous form:\n-issons → Group 2 · -ons only → Group 3', sub: 'nous fin-issons → Group 2 (finir)\nnous dorm-ons → Group 3 (dormir)' },
-      { front: 'aller — the odd one out', back: 'je vais · tu vas · il/elle/on va\nnous allons · vous allez · ils/elles vont', sub: '⚠ Ends in -er but is GROUP 3 (fully irregular).\nAlso builds the near future: aller + infinitive.' },
-      { front: 'Present-tense endings at a glance', back: 'G1 -ER: e·es·e·ons·ez·ent\nG2 -IR: is·is·it·issons·issez·issent\nG3 (most): s·s·t·ons·ez·ent', sub: 'Most Group 3 verbs share the s·s·t… endings — it\'s the STEM that changes.' },
-    ]
-  },
-  {
-    id: 'tenses', name: '🕰️ Tenses (Overview)',
-    cards: [
-      { front: 'Which tenses am I using so far?', back: 'Présent · Futur proche · Passé composé · Imparfait', sub: 'Présent = now / habits\nFutur proche = going to…\nPassé composé = completed past\nImparfait = ongoing / background past' },
-      { front: 'The PRESENT tense (le présent)', back: 'One French present covers 3 English forms', sub: 'Je parle = I speak / I am speaking / I do speak\n→ no separate "-ing" tense in French.' },
-      { front: 'NEAR FUTURE (le futur proche)', back: 'aller (present) + infinitive', sub: 'Je vais parler français.\nOn va manger au restaurant.\nNous allons faire une révision.\n= I\'m going to / we\'re going to…' },
-      { front: 'PASSÉ COMPOSÉ — the main past', back: 'avoir/être (present) + past participle', sub: 'A single, completed action in the past.\nJ\'ai mangé. · Je suis allé.\n→ full deck: ⏮️ Passé Composé.' },
-      { front: 'IMPARFAIT — the background past', back: 'Ongoing, repeated or "was …-ing" past', sub: 'Stem = nous form minus -ons, + ais·ais·ait·ions·iez·aient\nparl-ons → je parlais (I was speaking / used to speak)' },
-      { front: 'Passé composé vs imparfait', back: 'PC = what happened (one event)\nImparfait = what was going on / used to happen', sub: 'Je regardais la télé (imparfait, ongoing)\nquand le téléphone a sonné (passé composé, event).' },
-      { front: 'être & avoir in the imparfait', back: 'j\'étais / j\'avais …', sub: 'être: j\'étais·tu étais·il était·nous étions·vous étiez·ils étaient\navoir: j\'avais·tu avais·il avait·nous avions·vous aviez·ils avaient' },
-      { front: 'Coming next (not yet learnt)', back: 'Futur simple · Conditionnel', sub: 'Futur simple = will do (je parlerai)\nConditionnel = would do (je parlerais / je voudrais).\nFlagged so you know where they fit.' },
     ]
   },
   {
@@ -518,17 +410,6 @@ const categories = [
       { front: 'not at all', back: 'pas du tout', sub: 'Je n\'ai pas du tout faim.\nJe n\'ai pas du tout mal au dos.' },
       { front: 'absolutely nothing', back: 'rien du tout', sub: 'Il ne reste rien du tout dans le frigo.' },
       { front: 'everybody', back: 'tout le monde', sub: '⚠ Always SINGULAR!\nTout le monde est content. (not sont!)' },
-    ]
-  },
-  {
-    id: 'verbs2', name: '🟢 -ER Verbs · Likes & Degree',
-    cards: [
-      { front: 'Verbs of degree — overview', back: 'adorer > aimer beaucoup > aimer > préférer > détester', sub: 'I love → j\'adore\nI like a lot → j\'aime beaucoup\nI like → j\'aime\nI prefer → je préfère\nI hate → je déteste' },
-      { front: 'to adore / love (something)', back: 'adorer', sub: 'J\'adore le français!\nOn adore aller en France.' },
-      { front: 'to like a lot', back: 'aimer beaucoup', sub: 'J\'aime beaucoup le vin rouge.\nElle aime beaucoup cuisiner.' },
-      { front: 'to like / to love', back: 'aimer', sub: 'j\'aime · tu aimes · il/elle aime\nnous aimons · vous aimez · ils/elles aiment' },
-      { front: 'to prefer', back: 'préférer', sub: 'je préfère · tu préfères · il/elle préfère\nnous préférons · vous préférez · ils préfèrent\n⚠ stem change é→è' },
-      { front: 'to hate', back: 'détester', sub: 'je déteste · tu détestes · il/elle déteste\nnous détestons · vous détestez · ils détestent' },
     ]
   },
   {
@@ -860,50 +741,6 @@ const categories = [
     ]
   },
   {
-    id: 'verbs_ir_regular', name: '🔵 -IR Verbs · Group 2 (finir)',
-    cards: [
-      { front: 'Group 2 — what it is', back: 'Regular -IR verbs that add -ISS- in the plural', sub: 'The "finir family" — fully regular, one pattern for all.\nPast participle ends in -i (fini, choisi).' },
-      { front: '-ir (Group 2) verb rule', back: 'Drop -ir, add:\nje -is · tu -is · il -it\nnous -issons · vous -issez · ils -issent', sub: 'Present participle: en -issant (en finissant)\nImparfait keeps the -iss- stem: je finissais.' },
-      { front: 'to finish', back: 'finir', sub: 'je finis · tu finis · il/elle finit\nnous finissons · vous finissez · ils finissent\n⚠ -ISS- in the plural' },
-      { front: 'to choose', back: 'choisir', sub: '🔊 choizir\nje choisis · tu choisis · il choisit\nnous choisissons · vous choisissez · ils choisissent' },
-      { front: 'to succeed / to pass (an exam)', back: 'réussir', sub: 'je réussis · tu réussis · il réussit\nnous réussissons · vous réussissez · ils réussissent\nréussir À un examen' },
-      { front: 'to think over / to reflect', back: 'réfléchir', sub: 'je réfléchis · nous réfléchissons\nréfléchir À = to think about' },
-      { front: 'to fill', back: 'remplir', sub: 'je remplis · nous remplissons\nJe remplis le verre d\'eau.' },
-      { front: 'to grow (up)', back: 'grandir', sub: 'je grandis · nous grandissons\nLes enfants grandissent vite.' },
-      { front: 'to invest', back: 'investir', sub: 'j\'investis · tu investis · il investit\nnous investissons · vous investissez · ils investissent' },
-      { front: 'to build / construct', back: 'bâtir', sub: 'je bâtis · nous bâtissons\nNous bâtissons une nouvelle maison.' },
-      { front: 'to cure / recover / heal', back: 'guérir', sub: 'je guéris · nous guérissons\nLes enfants guérissent très vite.' },
-      { front: 'to grow old / to age', back: 'vieillir', sub: 'je vieillis · nous vieillissons\nNous vieillissons ensemble.' },
-      { front: 'More Group 2 verbs', back: 'accomplir · agrandir · divertir · envahir · unir', sub: 'to accomplish · to enlarge · to entertain · to invade · to unite\nAll follow the finir pattern (nous …issons).' },
-    ]
-  },
-  {
-    id: 'verbs_ir_irregular', name: '🟠 -IR Verbs · Group 3 (irregular)',
-    cards: [
-      { front: 'Group 3 -IR verbs — two families', back: 'Type A (offrir): endings like an -ER verb (-e -es -e)\nType B (dormir): endings -s -s -t', sub: 'Type A: offrir, ouvrir, couvrir, découvrir, souffrir, cueillir\nType B: dormir, sortir, partir, sentir, servir…' },
-      { front: 'Group 3 -IR rule (Type B)', back: 'No -ISS-. Drop -ir; the singular loses the last stem consonant', sub: 'dormir → je dor-s · tu dor-s · il dor-t\nnous dorm-ons · vous dorm-ez · ils dorm-ent\nPresent participle: en dorm-ant' },
-      { front: 'to sleep', back: 'dormir', sub: 'je dors · tu dors · il dort\nnous dormons · vous dormez · ils dorment\nen dormant' },
-      { front: 'to leave / to go away', back: 'partir', sub: 'je pars · tu pars · il part\nnous partons · vous partez · ils partent\npartir en vacances · Le train part à 13h30.\n⚠ passé composé with ÊTRE' },
-      { front: 'to go out / to take out', back: 'sortir', sub: 'je sors · tu sors · il sort\nnous sortons · vous sortez · ils sortent\nSortir le chien · sortir du bureau à 5h\n⚠ passé composé with ÊTRE' },
-      { front: 'PARTIR vs SORTIR', back: 'PARTIR = leave (going away)\nSORTIR = go out (intending to return)', sub: 'Nous partons en vacances. (going away)\nJe sors avec des amis ce soir. (going out)\nJe sors le chien. (take the dog out)' },
-      { front: 'to feel / to smell', back: 'sentir', sub: 'je sens · tu sens · il sent\nnous sentons · vous sentez · ils sentent\nJe sens le froid. · Elle sent les fleurs.' },
-      { front: 'to serve / to pour', back: 'servir', sub: 'je sers · tu sers · il sert\nnous servons · vous servez · ils servent\nLe serveur sert le vin.' },
-      { front: 'to come', back: 'venir', sub: 'je viens · tu viens · il/elle vient\nnous venons · vous venez · ils/elles viennent\nrevenir (come back) · devenir (become) — same pattern\n⚠ passé composé with ÊTRE' },
-      { front: 'to hold / to grip', back: 'tenir', sub: 'je tiens · tu tiens · il tient\nnous tenons · vous tenez · ils tiennent\nMa grand-mère tient mon bras pour marcher.' },
-      { front: 'to obtain / to get', back: 'obtenir', sub: 'j\'obtiens · tu obtiens · il obtient\nnous obtenons · vous obtenez · ils obtiennent\n(tenir family)' },
-      { front: 'to offer / to give (a gift)', back: 'offrir', sub: 'j\'offre · tu offres · il offre\nnous offrons · vous offrez · ils offrent\n⚠ Type A — endings like an -ER verb\nNous offrons des cadeaux à Noël.' },
-      { front: 'to open', back: 'ouvrir', sub: 'j\'ouvre · tu ouvres · il ouvre\nnous ouvrons · vous ouvrez · ils ouvrent\nType A · past participle: ouvert' },
-      { front: 'to cover / to wrap', back: 'couvrir', sub: 'je couvre · tu couvres · il couvre\nnous couvrons · vous couvrez · ils couvrent\nType A · Je couvre le riz quand il est prêt.' },
-      { front: 'to discover', back: 'découvrir', sub: 'je découvre · nous découvrons\nType A · past participle: découvert' },
-      { front: 'to suffer', back: 'souffrir', sub: 'je souffre · nous souffrons\nType A · past participle: souffert' },
-      { front: 'to pick / to gather', back: 'cueillir', sub: '🔊 kehyir\nje cueille · tu cueilles · il cueille\nnous cueillons · vous cueillez · ils cueillent\nType A · Je cueille une rose du jardin.' },
-      { front: 'to run / to rush', back: 'courir', sub: 'je cours · tu cours · il court\nnous courons · vous courez · ils courent\npast participle: couru' },
-      { front: 'to boil', back: 'bouillir', sub: '🔊 booyir\nje bous · tu bous · il bout\nnous bouillons · vous bouillez · ils bouillent\nOn fait bouillir de l\'eau pour le thé.' },
-      { front: 'to flee / to leak', back: 'fuir', sub: 'je fuis · tu fuis · il fuit\nnous fuyons · vous fuyez · ils fuient' },
-      { front: 'to die', back: 'mourir', sub: 'je meurs · tu meurs · il meurt\nnous mourons · vous mourez · ils meurent\n⚠ passé composé with ÊTRE · past participle: mort' },
-    ]
-  },
-  {
     id: 'kitchen', name: '🍳 Kitchen & Dining',
     cards: [
       { front: 'a frying pan', back: 'une poêle', sub: 'Pour faire une omelette on utilise une poêle.' },
@@ -952,87 +789,6 @@ const categories = [
     ]
   },
   {
-    id: 'reflexive_verbs', name: '🔄 Reflexive Verbs',
-    cards: [
-      { front: 'What is a reflexive (pronominal) verb?', back: 'The subject and object are the same', sub: 'e.g. "I wash myself"\nMarked by se (or s\' before a vowel) on the infinitive:\nse laver · s\'appeler' },
-      { front: 'The reflexive pronouns', back: 'me · te · se · nous · vous · se', sub: 'je → me · tu → te · il/elle/on → se\nnous → nous · vous → vous · ils/elles → se\nAlways comes before the verb, matching the subject.' },
-      { front: 'Elision with reflexive verbs', back: 'Drop the e before a vowel → m\' / t\' / s\'', sub: 'Je m\'endors. · Tu t\'es promené. · Il s\'appelle Jack.' },
-      { front: 'se laver (to wash oneself) — present', back: 'je me lave · tu te laves · il se lave\nnous nous lavons · vous vous lavez · ils se lavent' },
-      { front: 'to wake up', back: 'se réveiller', sub: 'Je me réveille à 6 heures du matin. = I wake up at 6am' },
-      { front: 'to get up', back: 'se lever', sub: 'Je me lève à 7 heures pendant la semaine.' },
-      { front: 'to wash (oneself)', back: 'se laver', sub: 'Je me lave les mains avant manger. = I wash my hands before eating' },
-      { front: 'to brush one\'s teeth', back: 'se brosser les dents', sub: 'Je me brosse les dents après manger.' },
-      { front: 'to have a shower', back: 'se doucher', sub: 'Je me douche tous les matins.' },
-      { front: 'to go to bed', back: 'se coucher', sub: 'Je me couche très tôt. = I go to bed very early' },
-      { front: 'to fall asleep', back: 's\'endormir', sub: 'Je m\'endors très vite. = I fall asleep very quickly' },
-      { front: 'to enjoy oneself / have fun', back: 's\'amuser', sub: 'Les enfants s\'amusent dans le jardin.\nIl s\'amuse avec des jeux vidéo.' },
-      { front: 'to feel (oneself)', back: 'se sentir', sub: 'Je me sens très bien aujourd\'hui.\nJe ne me sens pas très bien aujourd\'hui.' },
-      { front: 'to be called / call oneself', back: 's\'appeler', sub: 'Je m\'appelle Francesca. · Il s\'appelle Jack.' },
-      { front: 'to apologize', back: 's\'excuser', sub: 'Je m\'excuse du retard. = I apologize for the delay' },
-      { front: 'to be located / situated', back: 'se trouver', sub: 'lit. "to find oneself"\nOù se trouve la banque, s\'il vous plaît ?' },
-      { front: 'to be spelt', back: 's\'écrire / s\'épeler', sub: 'Comment ça s\'écrit ? = How is that spelt?\nComment s\'épèle ton nom ? = How do you spell your name?' },
-      { front: 'to be interested in', back: 's\'intéresser à', sub: 'Je m\'intéresse au tennis.\nNous nous intéressons aux langues.\nJe ne m\'intéresse pas au football.' },
-      { front: 'to happen', back: 'se passer', sub: 'Qu\'est-ce qui se passe ? = What\'s happening?\nIl ne se passe rien. = Nothing is happening.' },
-    ]
-  },
-  {
-    id: 'passe_compose', name: '⏮️ Passé Composé',
-    cards: [
-      { front: 'What is the passé composé?', back: 'The main French past tense', sub: 'Covers both English Past Simple AND Present Perfect.\nFormed like the Present Perfect: auxiliary (AVOIR or ÊTRE) + past participle.' },
-      { front: 'How do you form the passé composé?', back: 'AVOIR or ÊTRE (present) + past participle', sub: '~80% of verbs use AVOIR.\nA small group (movement verbs + all reflexive verbs) use ÊTRE.' },
-      { front: 'Regular past participle endings', back: '-er → é · -ir → i · -re → u', sub: 'parler → parlé · choisir → choisi · entendre → entendu' },
-      { front: 'AVOIR auxiliary — does the participle agree?', back: 'No — it is INVARIABLE', sub: 'Never changes for gender/number.\nJ\'ai parlé · nous avons parlé · ils ont parlé' },
-      { front: 'ÊTRE auxiliary — does the participle agree?', back: 'Yes — it AGREES with the subject', sub: 'f. + e · pl. + s\nIl est arrivé · Elle est arrivée · Ils sont arrivés · Elles sont arrivées' },
-      { front: 'Which verbs take ÊTRE?', back: 'Movement verbs (& their opposites) + all reflexive verbs', sub: 'aller, arriver, monter, descendre, entrer, rentrer, sortir, partir, rester…\nse lever, se laver, se coucher…' },
-      { front: 'I spoke with her yesterday', back: 'J\'ai parlé avec elle hier.', sub: 'parler → parlé (AVOIR)' },
-      { front: 'You chose a good film', back: 'Tu as choisi un bon film.', sub: 'choisir → choisi (AVOIR)' },
-      { front: 'We ate at a French restaurant', back: 'Nous avons mangé dans un restaurant français.', sub: 'manger → mangé (AVOIR)' },
-      { front: 'They heard a big noise', back: 'Ils ont entendu un grand bruit.', sub: 'entendre → entendu · un bruit = a noise' },
-      { front: 'I went shopping this morning', back: 'Je suis allé(e) faire les courses.', sub: 'aller → allé (ÊTRE) · allée for Francesca (f.)' },
-      { front: 'He went out / She went out', back: 'Il est sorti / Elle est sortie.', sub: 'sortir → sorti (ÊTRE) · agrees with subject' },
-      { front: 'We stayed home at the weekend', back: 'Nous sommes restés à la maison le week-end.', sub: 'rester → resté · restés (m. pl.)' },
-      { front: 'They left this morning', back: 'Ils sont partis ce matin.', sub: 'partir → parti · partis (m. pl.)' },
-      { front: 'être → past participle', back: 'été', sub: 'been' },
-      { front: 'avoir → past participle', back: 'eu', sub: 'had' },
-      { front: 'faire → past participle', back: 'fait', sub: 'done / made' },
-      { front: 'aller → past participle', back: 'allé', sub: 'gone (ÊTRE verb)' },
-      { front: 'pouvoir → past participle', back: 'pu', sub: 'been able to' },
-      { front: 'savoir → past participle', back: 'su', sub: 'known' },
-      { front: 'devoir → past participle', back: 'dû', sub: 'had to' },
-      { front: 'voir → past participle', back: 'vu', sub: 'seen' },
-      { front: 'naître → past participle', back: 'né', sub: 'born (ÊTRE verb)' },
-      { front: 'écrire → past participle', back: 'écrit', sub: 'written' },
-      { front: 'apprendre → past participle', back: 'appris', sub: 'learned' },
-      { front: 'vivre → past participle', back: 'vécu', sub: 'lived' },
-      { front: 'vouloir → past participle', back: 'voulu', sub: 'wanted' },
-      { front: 'découvrir → past participle', back: 'découvert', sub: 'discovered' },
-      { front: 'courir → past participle', back: 'couru', sub: 'run' },
-      { front: 'mourir → past participle', back: 'mort', sub: 'died (ÊTRE verb)' },
-      { front: 'dire → past participle', back: 'dit', sub: 'said' },
-      { front: 'lire → past participle', back: 'lu', sub: 'read' },
-      { front: 'mettre → past participle', back: 'mis', sub: 'put' },
-      { front: 'prendre → past participle', back: 'pris', sub: 'taken' },
-      { front: 'I spoke French when we went skiing in France', back: 'J\'ai parlé français quand nous sommes allés skier en France.', sub: 'leçon 18 — mixed AVOIR + ÊTRE in one sentence' },
-      { front: 'He has finished his work', back: 'Il a fini son travail.', sub: 'finir → fini (AVOIR)' },
-      { front: 'She has spoken with our neighbours', back: 'Elle a parlé avec nos voisins.', sub: 'un voisin = a neighbour' },
-      { front: 'We have bought some French cheese', back: 'Nous avons acheté du fromage français.', sub: 'acheter → acheté' },
-      { front: 'We have visited our friends', back: 'Nous avons visité nos amis.', sub: 'visiter → visité' },
-      { front: 'You (m. pl.) cooked a nice meal', back: 'Vous avez cuisiné un bon repas.', sub: 'cuisiner → cuisiné' },
-      { front: 'You (f. pl.) went to the chemist', back: 'Vous êtes allées à la pharmacie.', sub: 'ÊTRE + feminine plural → allées' },
-      { front: 'They decided to go on holiday to Japan', back: 'Ils ont décidé d\'aller en vacances au Japon.', sub: 'décider → décidé' },
-      { front: 'They have written a letter to their parents', back: 'Ils ont écrit une lettre à leurs parents.', sub: 'écrire → écrit' },
-      { front: 'You (m. sing.) arrived yesterday', back: 'Tu es arrivé hier.', sub: 'ÊTRE — no extra ending for masculine singular' },
-      { front: 'You (f. sing.) arrived this morning', back: 'Tu es arrivée ce matin.', sub: 'ÊTRE + feminine singular → + e' },
-      { front: 'He went upstairs to the attic', back: 'Il est monté au grenier.', sub: 'monter = to go upstairs · le grenier = attic' },
-      { front: 'She went upstairs to the second floor', back: 'Elle est montée au deuxième étage.', sub: 'ÊTRE + feminine → montée' },
-      { front: 'We went downstairs to the cellar', back: 'Nous sommes descendus à la cave.', sub: 'descendre → descendu · la cave = cellar' },
-      { front: 'You (m. pl.) went out of the office', back: 'Vous êtes sortis du bureau.', sub: 'ÊTRE + masculine plural → sortis' },
-      { front: 'You (f. pl.) came back home late', back: 'Vous êtes rentrées à la maison tard.', sub: 'ÊTRE + feminine plural → rentrées' },
-      { front: 'They (m.) stayed home to watch the football match', back: 'Ils sont restés à la maison pour regarder le match de football.', sub: 'ÊTRE + masculine plural → restés' },
-      { front: 'They (f.) stayed at the office to finish their work', back: 'Elles sont restées au bureau pour finir leur travail.', sub: 'ÊTRE + feminine plural → restées' },
-    ]
-  },
-  {
     id: 'telling_time', name: '🕐 Telling the Time',
     cards: [
       { front: 'What time is it?', back: 'Quelle heure est-il ?', sub: 'Formal.\nInformal: Quelle heure il est ? / Il est quelle heure ?' },
@@ -1074,101 +830,6 @@ const categories = [
       { front: '10:30 — It is half past ten', back: 'Il est dix heures et demie', sub: 'homework leçon 19' },
       { front: '11:45 — It is quarter to twelve', back: 'Il est midi moins le quart', sub: 'homework leçon 19\nor: douze heures moins le quart' },
       { front: '12:00 — It is twelve o\'clock', back: 'Il est midi', sub: 'homework leçon 19' },
-    ]
-  },
-  {
-    id: 'verbs_oir', name: '🟣 -OIR Verbs · Group 3',
-    cards: [
-      { front: '-OIR verbs — the pattern', back: 'Endings: -s -s -t -ons -ez -ent\nThe STEM changes (often two different stems)', sub: 'Singular stem ≠ plural stem:\nje veux / nous voulons · je dois / nous devons\nAll high-frequency — worth memorising.' },
-      { front: 'to want', back: 'vouloir', sub: 'je veux · tu veux · il/elle veut\nnous voulons · vous voulez · ils/elles veulent\nJe voudrais = I would like (polite, conditionnel)' },
-      { front: 'can / to be able to', back: 'pouvoir', sub: 'je peux · tu peux · il/elle peut\nnous pouvons · vous pouvez · ils/elles peuvent\n⚠ formal question: Puis-je…? · pp: pu' },
-      { front: 'must / to have to', back: 'devoir', sub: 'je dois · tu dois · il/elle doit\nnous devons · vous devez · ils/elles doivent\nAlso: to owe (Je te dois 10 €.) · pp: dû' },
-      { front: 'to know (a fact / how to)', back: 'savoir', sub: 'je sais · tu sais · il/elle sait\nnous savons · vous savez · ils/elles savent\nJe sais nager. = I know how to swim. · pp: su' },
-      { front: 'to see', back: 'voir', sub: 'je vois · tu vois · il/elle voit\nnous voyons · vous voyez · ils/elles voient\n⚠ nous/vous stem: voy- · pp: vu' },
-      { front: 'to receive', back: 'recevoir', sub: 'je reçois · tu reçois · il/elle reçoit\nnous recevons · vous recevez · ils/elles reçoivent\n⚠ ç before o/u · pp: reçu' },
-      { front: 'to have to (impersonal)', back: 'falloir → il faut', sub: 'Exists only as "il faut" (+ infinitive / noun)\nIl faut manger. = one must eat.\nIl faut du temps. = it takes time.' },
-      { front: 'to rain (impersonal)', back: 'pleuvoir → il pleut', sub: 'Only 3rd person singular.\nIl pleut tout le temps. · pp: plu' },
-      { front: 'SAVOIR vs CONNAÎTRE', back: 'SAVOIR = know a fact / how to do sth\nCONNAÎTRE = be familiar with a person/place', sub: 'Je sais où c\'est. (I know where it is)\nJe connais Paris. / Je connais Marie.\n(connaître is a -RE verb — see that deck)' },
-    ]
-  },
-  {
-    id: 'verbs_re', name: '🔴 -RE Verbs · Group 3',
-    cards: [
-      { front: '-RE verbs — the sub-families', back: 'Regular -dre · prendre family · -eindre/-indre · -uire · pure irregulars', sub: 'Endings are mostly -s -s -[Ø/t] -ons -ez -ent.\nGrouped below so the patterns show.\nRegular past participle: -re → u.' },
-      { front: 'Regular -DRE rule (vendre)', back: 'Keep the d. Endings: -s -s -[nothing] -ons -ez -ent', sub: 'je vend-s · tu vend-s · il vend (no ending!)\nnous vend-ons · vous vend-ez · ils vend-ent' },
-      { front: 'to sell', back: 'vendre', sub: 'je vends · tu vends · il/elle vend\nnous vendons · vous vendez · ils/elles vendent\nCette maison est à vendre. · pp: vendu' },
-      { front: 'to wait (for)', back: 'attendre', sub: 'j\'attends · tu attends · il/elle attend\nnous attendons · vous attendez · ils/elles attendent\n⚠ attendre = to wait FOR (no extra word)' },
-      { front: 'to hear', back: 'entendre', sub: 'j\'entends · tu entends · il/elle entend\nnous entendons · vous entendez · ils/elles entendent\npp: entendu' },
-      { front: 'PRENDRE family rule', back: 'Lose the d in the plural and DOUBLE the n', sub: 'je prends · nous prenons · ils prennent\nSame for apprendre, comprendre, surprendre.' },
-      { front: 'to take / to have (food/drink)', back: 'prendre', sub: 'je prends · tu prends · il/elle prend\nnous prenons · vous prenez · ils/elles prennent\nJe vais prendre un café. (ordering) · pp: pris' },
-      { front: 'to understand', back: 'comprendre', sub: 'je comprends · il comprend\nnous comprenons · ils comprennent\nSame pattern as prendre.' },
-      { front: 'to learn', back: 'apprendre', sub: 'j\'apprends · nous apprenons · ils apprennent\napprendre à + infinitive · pp: appris' },
-      { front: '-UIRE verbs', back: 'conduire, construire, cuire, réduire, traduire', sub: 'to drive, to build, to cook/bake, to reduce, to translate\nAll conjugate like conduire.' },
-      { front: 'to drive', back: 'conduire', sub: 'je conduis · tu conduis · il/elle conduit\nnous conduisons · vous conduisez · ils/elles conduisent\n⚠ plural adds -s-: condui-S-ons · pp: conduit' },
-      { front: '-EINDRE / -INDRE verbs', back: 'éteindre, atteindre, craindre, peindre, joindre', sub: 'to switch off, to reach, to fear, to paint, to join' },
-      { front: 'to switch off', back: 'éteindre', sub: 'j\'éteins · tu éteins · il/elle éteint\nnous éteignons · vous éteignez · ils/elles éteignent\nRULE: loses the d; in the plural n → gn.' },
-      { front: 'to do / to make', back: 'faire', sub: 'je fais · tu fais · il/elle/on fait\nnous faisons · vous faites · ils/elles font\n🔊 faisons=fezon · faites=fète · ⚠ vous faites · pp: fait' },
-      { front: 'to say / to tell', back: 'dire', sub: 'je dis · tu dis · il/elle dit\nnous disons · vous dites · ils/elles disent\n⚠ vous dites — not "vous disez" · pp: dit' },
-      { front: 'to put / to place', back: 'mettre', sub: 'je mets · tu mets · il/elle met\nnous mettons · vous mettez · ils/elles mettent\npast participle: mis' },
-      { front: 'to drink', back: 'boire', sub: 'je bois · tu bois · il/elle boit\nnous buvons · vous buvez · ils/elles boivent\n⚠ plural stem buv- · pp: bu' },
-      { front: 'to read', back: 'lire', sub: 'je lis · tu lis · il/elle lit\nnous lisons · vous lisez · ils/elles lisent\npp: lu' },
-      { front: 'to write', back: 'écrire', sub: 'j\'écris · tu écris · il/elle écrit\nnous écrivons · vous écrivez · ils/elles écrivent\n⚠ plural stem écriv- · pp: écrit' },
-      { front: 'to live', back: 'vivre', sub: 'je vis · tu vis · il/elle vit\nnous vivons · vous vivez · ils/elles vivent\npp: vécu' },
-      { front: 'to believe', back: 'croire', sub: 'je crois · tu crois · il/elle croit\nnous croyons · vous croyez · ils/elles croient\n⚠ nous/vous stem: croy-' },
-      { front: 'to follow', back: 'suivre', sub: 'je suis · tu suis · il/elle suit\nnous suivons · vous suivez · ils/elles suivent\n⚠ "je suis" = I follow AND I am — context decides' },
-      { front: 'to know (be familiar with)', back: 'connaître', sub: 'je connais · tu connais · il/elle connaît\nnous connaissons · vous connaissez · ils/elles connaissent\nSame pattern: paraître, disparaître · î before t' },
-      { front: 'More common -RE verbs', back: 'rire · sourire · plaire · mettre · écrire', sub: 'to laugh · to smile · to please · to put · to write\n"s\'il vous plaît" = literally "if it pleases you".' },
-    ]
-  },
-  {
-    id: 'travel_verbs_etre', name: '🚆 Travel Verbs · être',
-    cards: [
-      { front: 'venir family — the stem pattern', back: 'Singular & ils/elles: vien-\nnous / vous: ven-', sub: 'je viens · nous venons · ils viennent\nThe imperfect is built off the nous stem (ven-) throughout: je venais.\nvenir, revenir, devenir, parvenir, survenir, se souvenir → all take ÊTRE.' },
-      { front: '⚠️ être-verb past participles agree', back: 'They agree with the subject (like an adjective)', sub: 'elle est venue · elles sont venues\nil est arrivé · ils sont arrivés\n+ e (feminine) · + s (plural)' },
-      { front: 'to come', back: 'venir', sub: 'ÊTRE · pp venu\nPrés: je viens · tu viens · il/elle vient · nous venons · vous venez · ils/elles viennent\nImparf: je venais · tu venais · il/elle venait · nous venions · vous veniez · ils/elles venaient' },
-      { front: 'to come back / to return', back: 'revenir', sub: 'ÊTRE · pp revenu\nPrés: je reviens · tu reviens · il/elle revient · nous revenons · vous revenez · ils/elles reviennent\nImparf: je revenais · tu revenais · il/elle revenait · nous revenions · vous reveniez · ils/elles revenaient' },
-      { front: 'to become', back: 'devenir', sub: 'ÊTRE · pp devenu\nPrés: je deviens · tu deviens · il/elle devient · nous devenons · vous devenez · ils/elles deviennent\nImparf: je devenais · tu devenais · il/elle devenait · nous devenions · vous deveniez · ils/elles devenaient' },
-      { front: 'to reach / to manage to', back: 'parvenir à', sub: 'ÊTRE · pp parvenu\nPrés: je parviens · tu parviens · il/elle parvient · nous parvenons · vous parvenez · ils/elles parviennent\nImparf: je parvenais · tu parvenais · il/elle parvenait · nous parvenions · vous parveniez · ils/elles parvenaient' },
-      { front: 'to occur / to arise', back: 'survenir', sub: 'ÊTRE · pp survenu\nPrés: je surviens · tu surviens · il/elle survient · nous survenons · vous survenez · ils/elles surviennent\nImparf: je survenais · tu survenais · il/elle survenait · nous survenions · vous surveniez · ils/elles survenaient' },
-      { front: 'to remember', back: 'se souvenir de', sub: 'ÊTRE · pp souvenu (reflexive)\nPrés: je me souviens · tu te souviens · il/elle se souvient · nous nous souvenons · vous vous souvenez · ils/elles se souviennent\nImparf: je me souvenais · tu te souvenais · il/elle se souvenait · nous nous souvenions · vous vous souveniez · ils/elles se souvenaient' },
-      { front: 'to leave (from)', back: 'partir de', sub: 'ÊTRE · pp parti\nPrés: je pars · tu pars · il/elle part · nous partons · vous partez · ils/elles partent\nImparf: je partais · tu partais · il/elle partait · nous partions · vous partiez · ils/elles partaient' },
-      { front: 'to arrive (at)', back: 'arriver à', sub: 'ÊTRE · pp arrivé\nPrés: j\'arrive · tu arrives · il/elle arrive · nous arrivons · vous arrivez · ils/elles arrivent\nImparf: j\'arrivais · tu arrivais · il/elle arrivait · nous arrivions · vous arriviez · ils/elles arrivaient' },
-      { front: 'to go', back: 'aller', sub: 'ÊTRE · pp allé\nPrés: je vais · tu vas · il/elle va · nous allons · vous allez · ils/elles vont\nImparf: j\'allais · tu allais · il/elle allait · nous allions · vous alliez · ils/elles allaient' },
-      { front: 'to return home / to go back in', back: 'rentrer', sub: 'ÊTRE · pp rentré\nPrés: je rentre · tu rentres · il/elle rentre · nous rentrons · vous rentrez · ils/elles rentrent\nImparf: je rentrais · tu rentrais · il/elle rentrait · nous rentrions · vous rentriez · ils/elles rentraient' },
-      { front: 'to go back / to return', back: 'retourner', sub: 'ÊTRE · pp retourné\nPrés: je retourne · tu retournes · il/elle retourne · nous retournons · vous retournez · ils/elles retournent\nImparf: je retournais · tu retournais · il/elle retournait · nous retournions · vous retourniez · ils/elles retournaient' },
-      { front: 'to pass by / to go through', back: 'passer par', sub: 'ÊTRE (movement) · pp passé\n⚠ takes AVOIR when transitive (passer un examen)\nPrés: je passe · tu passes · il/elle passe · nous passons · vous passez · ils/elles passent\nImparf: je passais · tu passais · il/elle passait · nous passions · vous passiez · ils/elles passaient' },
-      { front: 'to get on / to board', back: 'monter dans', sub: 'ÊTRE (movement) · pp monté\n⚠ takes AVOIR when transitive (monter les valises)\nPrés: je monte · tu montes · il/elle monte · nous montons · vous montez · ils/elles montent\nImparf: je montais · tu montais · il/elle montait · nous montions · vous montiez · ils/elles montaient' },
-      { front: 'to get off / to get out of', back: 'descendre de', sub: 'ÊTRE (movement) · pp descendu\n⚠ takes AVOIR when transitive (descendre les bagages)\nPrés: je descends · tu descends · il/elle descend · nous descendons · vous descendez · ils/elles descendent\nImparf: je descendais · tu descendais · il/elle descendait · nous descendions · vous descendiez · ils/elles descendaient' },
-      { front: 'to park', back: 'se garer', sub: 'ÊTRE · pp garé (reflexive)\nPrés: je me gare · tu te gares · il/elle se gare · nous nous garons · vous vous garez · ils/elles se garent\nImparf: je me garais · tu te garais · il/elle se garait · nous nous garions · vous vous gariez · ils/elles se garaient' },
-      { front: 'to get lost', back: 'se perdre', sub: 'ÊTRE · pp perdu (reflexive)\nPrés: je me perds · tu te perds · il/elle se perd · nous nous perdons · vous vous perdez · ils/elles se perdent\nImparf: je me perdais · tu te perdais · il/elle se perdait · nous nous perdions · vous vous perdiez · ils/elles se perdaient' },
-    ]
-  },
-  {
-    id: 'travel_verbs_avoir', name: '🚗 Travel Verbs · avoir',
-    cards: [
-      { front: 'tenir family — the stem pattern', back: 'Singular & ils/elles: tien-\nnous / vous: ten-', sub: 'je tiens · nous tenons · ils tiennent\nThe imperfect is built off the nous stem (ten-): je tenais.\ntenir, obtenir, retenir, maintenir, soutenir, appartenir → all take AVOIR.\n⚠ prévenir also takes AVOIR despite the -venir ending.' },
-      { front: 'to hold / to grip', back: 'tenir', sub: 'AVOIR · pp tenu\nPrés: je tiens · tu tiens · il/elle tient · nous tenons · vous tenez · ils/elles tiennent\nImparf: je tenais · tu tenais · il/elle tenait · nous tenions · vous teniez · ils/elles tenaient' },
-      { front: 'to obtain / to get', back: 'obtenir', sub: 'AVOIR · pp obtenu\nPrés: j\'obtiens · tu obtiens · il/elle obtient · nous obtenons · vous obtenez · ils/elles obtiennent\nImparf: j\'obtenais · tu obtenais · il/elle obtenait · nous obtenions · vous obteniez · ils/elles obtenaient' },
-      { front: 'to retain / to hold back / to remember', back: 'retenir', sub: 'AVOIR · pp retenu\nPrés: je retiens · tu retiens · il/elle retient · nous retenons · vous retenez · ils/elles retiennent\nImparf: je retenais · tu retenais · il/elle retenait · nous retenions · vous reteniez · ils/elles retenaient' },
-      { front: 'to maintain / to keep', back: 'maintenir', sub: 'AVOIR · pp maintenu\nPrés: je maintiens · tu maintiens · il/elle maintient · nous maintenons · vous maintenez · ils/elles maintiennent\nImparf: je maintenais · tu maintenais · il/elle maintenait · nous maintenions · vous mainteniez · ils/elles maintenaient' },
-      { front: 'to support', back: 'soutenir', sub: 'AVOIR · pp soutenu\nPrés: je soutiens · tu soutiens · il/elle soutient · nous soutenons · vous soutenez · ils/elles soutiennent\nImparf: je soutenais · tu soutenais · il/elle soutenait · nous soutenions · vous souteniez · ils/elles soutenaient' },
-      { front: 'to belong to', back: 'appartenir à', sub: 'AVOIR · pp appartenu\nPrés: j\'appartiens · tu appartiens · il/elle appartient · nous appartenons · vous appartenez · ils/elles appartiennent\nImparf: j\'appartenais · tu appartenais · il/elle appartenait · nous appartenions · vous apparteniez · ils/elles appartenaient' },
-      { front: 'to warn / to notify / to let know', back: 'prévenir', sub: 'AVOIR · pp prévenu · ⚠ AVOIR despite the -venir ending!\nPrés: je préviens · tu préviens · il/elle prévient · nous prévenons · vous prévenez · ils/elles préviennent\nImparf: je prévenais · tu prévenais · il/elle prévenait · nous prévenions · vous préveniez · ils/elles prévenaient' },
-      { front: 'to suit / to agree on', back: 'convenir — dual auxiliary!', sub: 'AVOIR when it means "to suit": ça m\'a convenu.\nÊTRE when it means "to agree on": nous sommes convenus d\'un prix.\nPrés: je conviens · tu conviens · il/elle convient · nous convenons · vous convenez · ils/elles conviennent\nImparf: je convenais · tu convenais · il/elle convenait · nous convenions · vous conveniez · ils/elles convenaient' },
-      { front: 'to take', back: 'prendre', sub: 'AVOIR · pp pris\nPrés: je prends · tu prends · il/elle prend · nous prenons · vous prenez · ils/elles prennent\nImparf: je prenais · tu prenais · il/elle prenait · nous prenions · vous preniez · ils/elles prenaient' },
-      { front: 'to change (trains / money)', back: 'changer', sub: 'AVOIR · pp changé\nPrés: je change · tu changes · il/elle change · nous changeons · vous changez · ils/elles changent\nImparf: je changeais · tu changeais · il/elle changeait · nous changions · vous changiez · ils/elles changeaient' },
-      { front: 'to miss (a train — just miss it)', back: 'rater', sub: 'AVOIR · pp raté\nPrés: je rate · tu rates · il/elle rate · nous ratons · vous ratez · ils/elles ratent\nImparf: je ratais · tu ratais · il/elle ratait · nous rations · vous ratiez · ils/elles rataient' },
-      { front: 'to miss (a train / connection)', back: 'manquer', sub: 'AVOIR · pp manqué\nPrés: je manque · tu manques · il/elle manque · nous manquons · vous manquez · ils/elles manquent\nImparf: je manquais · tu manquais · il/elle manquait · nous manquions · vous manquiez · ils/elles manquaient' },
-      { front: 'to book / to reserve', back: 'réserver', sub: 'AVOIR · pp réservé\nPrés: je réserve · tu réserves · il/elle réserve · nous réservons · vous réservez · ils/elles réservent\nImparf: je réservais · tu réservais · il/elle réservait · nous réservions · vous réserviez · ils/elles réservaient' },
-      { front: 'to validate (a ticket)', back: 'valider', sub: 'AVOIR · pp validé\nPrés: je valide · tu valides · il/elle valide · nous validons · vous validez · ils/elles valident\nImparf: je validais · tu validais · il/elle validait · nous validions · vous validiez · ils/elles validaient' },
-      { front: 'to drive', back: 'conduire', sub: 'AVOIR · pp conduit\nPrés: je conduis · tu conduis · il/elle conduit · nous conduisons · vous conduisez · ils/elles conduisent\nImparf: je conduisais · tu conduisais · il/elle conduisait · nous conduisions · vous conduisiez · ils/elles conduisaient' },
-      { front: 'to drive along / to roll', back: 'rouler', sub: 'AVOIR · pp roulé\nPrés: je roule · tu roules · il/elle roule · nous roulons · vous roulez · ils/elles roulent\nImparf: je roulais · tu roulais · il/elle roulait · nous roulions · vous rouliez · ils/elles roulaient' },
-      { front: 'to overtake', back: 'doubler', sub: 'AVOIR · pp doublé\nPrés: je double · tu doubles · il/elle double · nous doublons · vous doublez · ils/elles doublent\nImparf: je doublais · tu doublais · il/elle doublait · nous doublions · vous doubliez · ils/elles doublaient' },
-      { front: 'to fill up (with petrol)', back: 'faire le plein', sub: 'AVOIR · pp fait (uses faire)\nPrés: je fais · tu fais · il/elle fait · nous faisons · vous faites · ils/elles font\nImparf: je faisais · tu faisais · il/elle faisait · nous faisions · vous faisiez · ils/elles faisaient' },
-      { front: 'to turn around / to make a U-turn', back: 'faire demi-tour', sub: 'AVOIR · pp fait (uses faire)\nPrés: je fais · tu fais · il/elle fait · nous faisons · vous faites · ils/elles font\nImparf: je faisais · tu faisais · il/elle faisait · nous faisions · vous faisiez · ils/elles faisaient' },
-      { front: 'to last', back: 'durer', sub: 'AVOIR · pp duré (usually 3rd person: le trajet dure…)\nPrés: je dure · tu dures · il/elle dure · nous durons · vous durez · ils/elles durent\nImparf: je durais · tu durais · il/elle durait · nous durions · vous duriez · ils/elles duraient' },
-      { front: 'to take off (plane)', back: 'décoller', sub: 'AVOIR · pp décollé\nPrés: je décolle · tu décolles · il/elle décolle · nous décollons · vous décollez · ils/elles décollent\nImparf: je décollais · tu décollais · il/elle décollait · nous décollions · vous décolliez · ils/elles décollaient' },
-      { front: 'to land (plane)', back: 'atterrir', sub: 'AVOIR · pp atterri · ⚠ Group 2 -ir (adds -iss-)\nPrés: j\'atterris · tu atterris · il/elle atterrit · nous atterrissons · vous atterrissez · ils/elles atterrissent\nImparf: j\'atterrissais · tu atterrissais · il/elle atterrissait · nous atterrissions · vous atterrissiez · ils/elles atterrissaient' },
     ]
   },
   {
@@ -1242,173 +903,409 @@ const categories = [
       { front: 'It\'ll take us two hours. (idiomatic)', back: 'On en a pour deux heures.', sub: 'en avoir pour = to be busy with / to need (time)' },
     ]
   },
+  {"id": "prepositions", "name": "🧭 Prepositions", "cards": [{"front": "to / in a CITY", "back": "à + city", "sub": "à Paris · à Londres · à Limoges\nJ'habite à Londres."}, {"front": "to / in a FEMININE country", "back": "en + country (f)", "sub": "en France · en Espagne · en Angleterre\nJe vais en France."}, {"front": "to / in a MASCULINE country", "back": "au + country (m)", "sub": "au Japon · au Portugal\nIl va au Japon."}, {"front": "to / in a PLURAL country", "back": "aux + country (pl)", "sub": "aux États-Unis · aux Pays-Bas"}, {"front": "to the / at the", "back": "à+le=au · à la · à l' · à+les=aux", "sub": "au supermarché · à la maison · à l'hôtel · aux toilettes"}, {"front": "at someone's place", "back": "chez + person", "sub": "chez moi · chez Sarah · chez le médecin"}, {"front": "by transport (enclosed)", "back": "en + vehicle", "sub": "en train · en voiture · en avion · en bus"}, {"front": "by transport (open / on foot)", "back": "à + vehicle", "sub": "à pied · à vélo · à cheval"}, {"front": "in / inside", "back": "dans", "sub": "dans la cuisine · dans le train\nIl y a du lait dans le frigo."}, {"front": "on", "back": "sur", "sub": "sur la table · sur le quai"}, {"front": "under", "back": "sous", "sub": "sous la table · sous le lit"}, {"front": "in front of / behind", "back": "devant / derrière", "sub": "devant la maison · derrière la porte"}, {"front": "next to / near", "back": "à côté de / près de", "sub": "à côté de la fenêtre · près de la gare"}, {"front": "between", "back": "entre", "sub": "entre la table et le mur"}, {"front": "at + a time", "back": "à + heure", "sub": "à 8 heures · à midi\nLe train part à 13h30."}, {"front": "in X time vs how long it took", "back": "dans (future) · en (duration)", "sub": "Le train part dans deux heures. (in two hours)\nJe l'ai fait en deux heures. (it took two hours)"}, {"front": "since / for (ongoing)", "back": "depuis", "sub": "J'habite ici depuis 2020.\nJ'apprends le français depuis un an."}, {"front": "during / for", "back": "pendant", "sub": "pendant les vacances · pendant une heure"}, {"front": "before / after", "back": "avant / après", "sub": "avant le repas · après le travail\navant DE sortir (avant de + infinitive)"}, {"front": "in order to", "back": "pour + infinitive", "sub": "Je sors pour acheter du pain.\npour manger · pour travailler"}, {"front": "with / without", "back": "avec / sans", "sub": "avec du lait · sans sucre"}, {"front": "seasons: which preposition?", "back": "en for most · au for spring", "sub": "en été · en automne · en hiver · MAIS au printemps"}, {"front": "about / of — verb decides", "back": "parler DE · penser À", "sub": "On parle du film.\nJe pense à toi."}]},
+  {"id": "articles", "name": "📰 Articles", "cards": [{"front": "a / an / some", "back": "un (m) · une (f) · des (pl)", "sub": "un stylo · une tasse · des livres"}, {"front": "the", "back": "le (m) · la (f) · l' (vowel) · les (pl)", "sub": "le café · la maison · l'eau · les enfants"}, {"front": "some / any (uncountable)", "back": "du (m) · de la (f) · de l' · des (pl)", "sub": "du pain · de la soupe · de l'eau · des légumes"}, {"front": "⚠ after a NEGATIVE → de", "back": "un/une/du/de la/des → de / d'", "sub": "J'ai un vélo → Je n'ai pas DE vélo.\nJe bois de l'eau → Je ne bois pas D'eau."}, {"front": "general likes → THE", "back": "le/la/les after aimer, adorer, détester, préférer", "sub": "J'aime LE café. · Elle déteste LES lundis."}, {"front": "no article after parler", "back": "Je parle français", "sub": "Je parle français. · Je pense en français.\nBUT: J'apprends LE français."}, {"front": "à + article (to the / at the)", "back": "au · à la · à l' · aux", "sub": "au marché · à la gare · à l'école · aux États-Unis"}, {"front": "de + article (of / from / some)", "back": "du · de la · de l' · des", "sub": "la clé du garage · le lait de la vache · le nom des enfants"}, {"front": "un vélo vs le vélo — which?", "back": "un/une = A (one) · le/la = THE (specific/general)", "sub": "Je voudrais un café. (a coffee)\nLe café est chaud. (the coffee)"}, {"front": "quantity + de", "back": "beaucoup DE · un peu DE · trop DE", "sub": "beaucoup de pain · un peu d'eau · trop de sucre\n(no du/de la after a quantity!)"}, {"front": "my / your… replace the article", "back": "mon/ton/son… instead of le/la", "sub": "la voiture → ma voiture (not \"ma la voiture\")"}, {"front": "this / that replace the article", "back": "ce/cet/cette/ces instead of le/la", "sub": "le livre → ce livre · la semaine → cette semaine"}]},
+  {"id": "sentence_structure", "name": "🏗️ Sentence Structure", "cards": [{"front": "Basic word order", "back": "Subject + Verb + Object", "sub": "Je (S) mange (V) une pomme (O).\nElle regarde la télé."}, {"front": "Where do adjectives go?", "back": "AFTER the noun (usually)", "sub": "une voiture rouge · un livre intéressant\nun stylo rouge (not \"rouge stylo\")"}, {"front": "Which adjectives go BEFORE?", "back": "BAGS: Beauty, Age, Goodness, Size", "sub": "un beau jardin · une vieille maison · un bon repas · une grande table"}, {"front": "The negative", "back": "ne + verb + pas", "sub": "Je ne parle pas anglais.\nne → n' before a vowel: Je n'aime pas."}, {"front": "Other negatives", "back": "ne…jamais · ne…rien · ne…plus", "sub": "Je ne mange jamais de viande.\nIl ne fait rien.\nJe n'ai plus faim."}, {"front": "Questions — easy way", "back": "Est-ce que + normal sentence ?", "sub": "Est-ce que tu parles français ?\nEst-ce qu'elle vient ?"}, {"front": "Questions — intonation", "back": "just raise your voice", "sub": "Tu parles français ? · Vous venez ?"}, {"front": "Questions — inversion (formal)", "back": "verb - subject", "sub": "Parlez-vous français ?\nQuelle heure est-il ?"}, {"front": "Two verbs together", "back": "conjugate the 1st, infinitive for the 2nd", "sub": "Je veux manger. · Je vais partir.\nJ'aime cuisiner. · Je voudrais partir."}, {"front": "Where does the adverb go?", "back": "AFTER the conjugated verb", "sub": "Je vais souvent au restaurant.\nElle parle bien français."}, {"front": "there is / there are", "back": "il y a + noun", "sub": "Il y a une table dans la cuisine.\nNEG: Il n'y a pas de chaise."}, {"front": "it is — c'est vs il est", "back": "c'est + noun · il/elle est + adjective", "sub": "C'est un bon film. · C'est mardi.\nIl est grand. · Elle est française."}, {"front": "age / feelings → AVOIR", "back": "use avoir, not être", "sub": "J'ai 30 ans. (I am 30)\nJ'ai faim / froid / chaud."}, {"front": "Word order: telling the time", "back": "hour first, then minutes", "sub": "Il est deux heures vingt. (2:20)\nIl est une heure et quart."}, {"front": "Weather → il fait", "back": "il fait + adjective", "sub": "Il fait beau. · Il fait froid.\nBUT: Il pleut. Il neige. Il y a du vent."}]}
 ];
 
+const VERBS = [{"inf": "être", "en": "to be", "group": "Essential", "aux": "avoir", "refl": false, "note": "", "tenses": {"present": ["je suis", "tu es", "il/elle est", "nous sommes", "vous êtes", "ils/elles sont"], "passe": ["j'ai été", "tu as été", "il/elle a été", "nous avons été", "vous avez été", "ils/elles ont été"], "futur": ["je vais être", "tu vas être", "il/elle va être", "nous allons être", "vous allez être", "ils/elles vont être"], "imparfait": ["j'étais", "tu étais", "il/elle était", "nous étions", "vous étiez", "ils/elles étaient"]}, "ex": [["Je suis anglais.", "I am English."], ["C'est un bon restaurant.", "It's a good restaurant."], ["Nous sommes à la maison.", "We are at home."]]}, {"inf": "avoir", "en": "to have", "group": "Essential", "aux": "avoir", "refl": false, "note": "", "tenses": {"present": ["j'ai", "tu as", "il/elle a", "nous avons", "vous avez", "ils/elles ont"], "passe": ["j'ai eu", "tu as eu", "il/elle a eu", "nous avons eu", "vous avez eu", "ils/elles ont eu"], "futur": ["je vais avoir", "tu vas avoir", "il/elle va avoir", "nous allons avoir", "vous allez avoir", "ils/elles vont avoir"], "imparfait": ["j'avais", "tu avais", "il/elle avait", "nous avions", "vous aviez", "ils/elles avaient"]}, "ex": [["J'ai une voiture.", "I have a car."], ["J'ai faim.", "I'm hungry."], ["Il a mal à la tête.", "He has a headache."]]}, {"inf": "aller", "en": "to go", "group": "Essential", "aux": "être", "refl": false, "note": "Builds the near future: aller + infinitive.", "tenses": {"present": ["je vais", "tu vas", "il/elle va", "nous allons", "vous allez", "ils/elles vont"], "passe": ["je suis allé(e)", "tu es allé(e)", "il/elle est allé(e)", "nous sommes allé(e)s", "vous êtes allé(e)(s)", "ils/elles sont allé(e)s"], "futur": ["je vais aller", "tu vas aller", "il/elle va aller", "nous allons aller", "vous allez aller", "ils/elles vont aller"], "imparfait": ["j'allais", "tu allais", "il/elle allait", "nous allions", "vous alliez", "ils/elles allaient"]}, "tpl": [[0, "à Paris", "to Paris"], [3, "au supermarché", "to the supermarket"]], "env": ["go", "went"], "ex": []}, {"inf": "faire", "en": "to do / to make", "group": "Essential", "aux": "avoir", "refl": false, "note": "", "tenses": {"present": ["je fais", "tu fais", "il/elle fait", "nous faisons", "vous faites", "ils/elles font"], "passe": ["j'ai fait", "tu as fait", "il/elle a fait", "nous avons fait", "vous avez fait", "ils/elles ont fait"], "futur": ["je vais faire", "tu vas faire", "il/elle va faire", "nous allons faire", "vous allez faire", "ils/elles vont faire"], "imparfait": ["je faisais", "tu faisais", "il/elle faisait", "nous faisions", "vous faisiez", "ils/elles faisaient"]}, "tpl": [[0, "les courses", "the shopping"], [3, "du sport", "sport"]], "env": ["do", "did"], "ex": []}, {"inf": "parler", "en": "to speak", "group": "-ER (Group 1)", "aux": "avoir", "refl": false, "note": "", "tenses": {"present": ["je parle", "tu parles", "il/elle parle", "nous parlons", "vous parlez", "ils/elles parlent"], "passe": ["j'ai parlé", "tu as parlé", "il/elle a parlé", "nous avons parlé", "vous avez parlé", "ils/elles ont parlé"], "futur": ["je vais parler", "tu vas parler", "il/elle va parler", "nous allons parler", "vous allez parler", "ils/elles vont parler"], "imparfait": ["je parlais", "tu parlais", "il/elle parlait", "nous parlions", "vous parliez", "ils/elles parlaient"]}, "tpl": [[0, "français", "French"], [2, "à son frère", "to his/her brother"]], "env": ["speak", "spoke"], "ex": []}, {"inf": "penser", "en": "to think", "group": "-ER (Group 1)", "aux": "avoir", "refl": false, "note": "", "tenses": {"present": ["je pense", "tu penses", "il/elle pense", "nous pensons", "vous pensez", "ils/elles pensent"], "passe": ["j'ai pensé", "tu as pensé", "il/elle a pensé", "nous avons pensé", "vous avez pensé", "ils/elles ont pensé"], "futur": ["je vais penser", "tu vas penser", "il/elle va penser", "nous allons penser", "vous allez penser", "ils/elles vont penser"], "imparfait": ["je pensais", "tu pensais", "il/elle pensait", "nous pensions", "vous pensiez", "ils/elles pensaient"]}, "tpl": [[0, "à toi", "of you"], [3, "au week-end", "about the weekend"]], "env": ["think", "thought"], "ex": []}, {"inf": "aimer", "en": "to like / to love", "group": "-ER (Group 1)", "aux": "avoir", "refl": false, "note": "", "tenses": {"present": ["j'aime", "tu aimes", "il/elle aime", "nous aimons", "vous aimez", "ils/elles aiment"], "passe": ["j'ai aimé", "tu as aimé", "il/elle a aimé", "nous avons aimé", "vous avez aimé", "ils/elles ont aimé"], "futur": ["je vais aimer", "tu vas aimer", "il/elle va aimer", "nous allons aimer", "vous allez aimer", "ils/elles vont aimer"], "imparfait": ["j'aimais", "tu aimais", "il/elle aimait", "nous aimions", "vous aimiez", "ils/elles aimaient"]}, "tpl": [[0, "le café", "coffee"], [2, "la France", "France"]], "env": ["like", "liked"], "ex": []}, {"inf": "adorer", "en": "to adore / to love", "group": "-ER (Group 1)", "aux": "avoir", "refl": false, "note": "", "tenses": {"present": ["j'adore", "tu adores", "il/elle adore", "nous adorons", "vous adorez", "ils/elles adorent"], "passe": ["j'ai adoré", "tu as adoré", "il/elle a adoré", "nous avons adoré", "vous avez adoré", "ils/elles ont adoré"], "futur": ["je vais adorer", "tu vas adorer", "il/elle va adorer", "nous allons adorer", "vous allez adorer", "ils/elles vont adorer"], "imparfait": ["j'adorais", "tu adorais", "il/elle adorait", "nous adorions", "vous adoriez", "ils/elles adoraient"]}, "tpl": [[0, "le chocolat", "chocolate"], [2, "le fromage", "cheese"]], "env": ["love", "loved"], "ex": []}, {"inf": "détester", "en": "to hate", "group": "-ER (Group 1)", "aux": "avoir", "refl": false, "note": "", "tenses": {"present": ["je déteste", "tu détestes", "il/elle déteste", "nous détestons", "vous détestez", "ils/elles détestent"], "passe": ["j'ai détesté", "tu as détesté", "il/elle a détesté", "nous avons détesté", "vous avez détesté", "ils/elles ont détesté"], "futur": ["je vais détester", "tu vas détester", "il/elle va détester", "nous allons détester", "vous allez détester", "ils/elles vont détester"], "imparfait": ["je détestais", "tu détestais", "il/elle détestait", "nous détestions", "vous détestiez", "ils/elles détestaient"]}, "tpl": [[0, "les lundis", "Mondays"], [2, "le froid", "the cold"]], "env": ["hate", "hated"], "ex": []}, {"inf": "porter", "en": "to wear / to carry", "group": "-ER (Group 1)", "aux": "avoir", "refl": false, "note": "", "tenses": {"present": ["je porte", "tu portes", "il/elle porte", "nous portons", "vous portez", "ils/elles portent"], "passe": ["j'ai porté", "tu as porté", "il/elle a porté", "nous avons porté", "vous avez porté", "ils/elles ont porté"], "futur": ["je vais porter", "tu vas porter", "il/elle va porter", "nous allons porter", "vous allez porter", "ils/elles vont porter"], "imparfait": ["je portais", "tu portais", "il/elle portait", "nous portions", "vous portiez", "ils/elles portaient"]}, "tpl": [[0, "un pull rouge", "a red jumper"], [2, "une robe", "a dress"]], "env": ["wear", "wore"], "ex": []}, {"inf": "habiter", "en": "to live (reside)", "group": "-ER (Group 1)", "aux": "avoir", "refl": false, "note": "", "tenses": {"present": ["j'habite", "tu habites", "il/elle habite", "nous habitons", "vous habitez", "ils/elles habitent"], "passe": ["j'ai habité", "tu as habité", "il/elle a habité", "nous avons habité", "vous avez habité", "ils/elles ont habité"], "futur": ["je vais habiter", "tu vas habiter", "il/elle va habiter", "nous allons habiter", "vous allez habiter", "ils/elles vont habiter"], "imparfait": ["j'habitais", "tu habitais", "il/elle habitait", "nous habitions", "vous habitiez", "ils/elles habitaient"]}, "tpl": [[0, "à Londres", "in London"], [3, "dans une grande maison", "in a big house"]], "env": ["live", "lived"], "ex": []}, {"inf": "travailler", "en": "to work", "group": "-ER (Group 1)", "aux": "avoir", "refl": false, "note": "", "tenses": {"present": ["je travaille", "tu travailles", "il/elle travaille", "nous travaillons", "vous travaillez", "ils/elles travaillent"], "passe": ["j'ai travaillé", "tu as travaillé", "il/elle a travaillé", "nous avons travaillé", "vous avez travaillé", "ils/elles ont travaillé"], "futur": ["je vais travailler", "tu vas travailler", "il/elle va travailler", "nous allons travailler", "vous allez travailler", "ils/elles vont travailler"], "imparfait": ["je travaillais", "tu travaillais", "il/elle travaillait", "nous travaillions", "vous travailliez", "ils/elles travaillaient"]}, "tpl": [[0, "dans un bureau", "in an office"], [2, "le samedi", "on Saturdays"]], "env": ["work", "worked"], "ex": []}, {"inf": "regarder", "en": "to watch / to look at", "group": "-ER (Group 1)", "aux": "avoir", "refl": false, "note": "", "tenses": {"present": ["je regarde", "tu regardes", "il/elle regarde", "nous regardons", "vous regardez", "ils/elles regardent"], "passe": ["j'ai regardé", "tu as regardé", "il/elle a regardé", "nous avons regardé", "vous avez regardé", "ils/elles ont regardé"], "futur": ["je vais regarder", "tu vas regarder", "il/elle va regarder", "nous allons regarder", "vous allez regarder", "ils/elles vont regarder"], "imparfait": ["je regardais", "tu regardais", "il/elle regardait", "nous regardions", "vous regardiez", "ils/elles regardaient"]}, "tpl": [[0, "la télé", "TV"], [3, "un film", "a film"]], "env": ["watch", "watched"], "ex": []}, {"inf": "jouer", "en": "to play", "group": "-ER (Group 1)", "aux": "avoir", "refl": false, "note": "", "tenses": {"present": ["je joue", "tu joues", "il/elle joue", "nous jouons", "vous jouez", "ils/elles jouent"], "passe": ["j'ai joué", "tu as joué", "il/elle a joué", "nous avons joué", "vous avez joué", "ils/elles ont joué"], "futur": ["je vais jouer", "tu vas jouer", "il/elle va jouer", "nous allons jouer", "vous allez jouer", "ils/elles vont jouer"], "imparfait": ["je jouais", "tu jouais", "il/elle jouait", "nous jouions", "vous jouiez", "ils/elles jouaient"]}, "tpl": [[0, "au tennis", "tennis"], [2, "du piano", "the piano"]], "env": ["play", "played"], "ex": []}, {"inf": "cuisiner", "en": "to cook", "group": "-ER (Group 1)", "aux": "avoir", "refl": false, "note": "", "tenses": {"present": ["je cuisine", "tu cuisines", "il/elle cuisine", "nous cuisinons", "vous cuisinez", "ils/elles cuisinent"], "passe": ["j'ai cuisiné", "tu as cuisiné", "il/elle a cuisiné", "nous avons cuisiné", "vous avez cuisiné", "ils/elles ont cuisiné"], "futur": ["je vais cuisiner", "tu vas cuisiner", "il/elle va cuisiner", "nous allons cuisiner", "vous allez cuisiner", "ils/elles vont cuisiner"], "imparfait": ["je cuisinais", "tu cuisinais", "il/elle cuisinait", "nous cuisinions", "vous cuisiniez", "ils/elles cuisinaient"]}, "tpl": [[2, "un bon repas", "a nice meal"], [3, "ensemble", "together"]], "env": ["cook", "cooked"], "ex": []}, {"inf": "visiter", "en": "to visit", "group": "-ER (Group 1)", "aux": "avoir", "refl": false, "note": "", "tenses": {"present": ["je visite", "tu visites", "il/elle visite", "nous visitons", "vous visitez", "ils/elles visitent"], "passe": ["j'ai visité", "tu as visité", "il/elle a visité", "nous avons visité", "vous avez visité", "ils/elles ont visité"], "futur": ["je vais visiter", "tu vas visiter", "il/elle va visiter", "nous allons visiter", "vous allez visiter", "ils/elles vont visiter"], "imparfait": ["je visitais", "tu visitais", "il/elle visitait", "nous visitions", "vous visitiez", "ils/elles visitaient"]}, "tpl": [[3, "le musée", "the museum"], [0, "Paris", "Paris"]], "env": ["visit", "visited"], "ex": []}, {"inf": "écouter", "en": "to listen (to)", "group": "-ER (Group 1)", "aux": "avoir", "refl": false, "note": "", "tenses": {"present": ["j'écoute", "tu écoutes", "il/elle écoute", "nous écoutons", "vous écoutez", "ils/elles écoutent"], "passe": ["j'ai écouté", "tu as écouté", "il/elle a écouté", "nous avons écouté", "vous avez écouté", "ils/elles ont écouté"], "futur": ["je vais écouter", "tu vas écouter", "il/elle va écouter", "nous allons écouter", "vous allez écouter", "ils/elles vont écouter"], "imparfait": ["j'écoutais", "tu écoutais", "il/elle écoutait", "nous écoutions", "vous écoutiez", "ils/elles écoutaient"]}, "tpl": [[0, "la radio", "the radio"], [2, "de la musique", "music"]], "env": ["listen to", "listened to"], "ex": []}, {"inf": "réserver", "en": "to book / to reserve", "group": "-ER (Group 1)", "aux": "avoir", "refl": false, "note": "", "tenses": {"present": ["je réserve", "tu réserves", "il/elle réserve", "nous réservons", "vous réservez", "ils/elles réservent"], "passe": ["j'ai réservé", "tu as réservé", "il/elle a réservé", "nous avons réservé", "vous avez réservé", "ils/elles ont réservé"], "futur": ["je vais réserver", "tu vas réserver", "il/elle va réserver", "nous allons réserver", "vous allez réserver", "ils/elles vont réserver"], "imparfait": ["je réservais", "tu réservais", "il/elle réservait", "nous réservions", "vous réserviez", "ils/elles réservaient"]}, "tpl": [[0, "une table", "a table"], [3, "un hôtel", "a hotel"]], "env": ["book", "booked"], "ex": []}, {"inf": "valider", "en": "to validate (a ticket)", "group": "-ER (Group 1)", "aux": "avoir", "refl": false, "note": "", "tenses": {"present": ["je valide", "tu valides", "il/elle valide", "nous validons", "vous validez", "ils/elles valident"], "passe": ["j'ai validé", "tu as validé", "il/elle a validé", "nous avons validé", "vous avez validé", "ils/elles ont validé"], "futur": ["je vais valider", "tu vas valider", "il/elle va valider", "nous allons valider", "vous allez valider", "ils/elles vont valider"], "imparfait": ["je validais", "tu validais", "il/elle validait", "nous validions", "vous validiez", "ils/elles validaient"]}, "tpl": [[0, "mon billet", "my ticket"], [1, "ton billet à la gare", "your ticket at the station"]], "env": ["validate", "validated"], "ex": []}, {"inf": "rouler", "en": "to drive along / to roll", "group": "-ER (Group 1)", "aux": "avoir", "refl": false, "note": "", "tenses": {"present": ["je roule", "tu roules", "il/elle roule", "nous roulons", "vous roulez", "ils/elles roulent"], "passe": ["j'ai roulé", "tu as roulé", "il/elle a roulé", "nous avons roulé", "vous avez roulé", "ils/elles ont roulé"], "futur": ["je vais rouler", "tu vas rouler", "il/elle va rouler", "nous allons rouler", "vous allez rouler", "ils/elles vont rouler"], "imparfait": ["je roulais", "tu roulais", "il/elle roulait", "nous roulions", "vous rouliez", "ils/elles roulaient"]}, "tpl": [[0, "sur l'autoroute", "on the motorway"], [3, "doucement", "slowly"]], "env": ["drive", "drove"], "ex": []}, {"inf": "doubler", "en": "to overtake", "group": "-ER (Group 1)", "aux": "avoir", "refl": false, "note": "", "tenses": {"present": ["je double", "tu doubles", "il/elle double", "nous doublons", "vous doublez", "ils/elles doublent"], "passe": ["j'ai doublé", "tu as doublé", "il/elle a doublé", "nous avons doublé", "vous avez doublé", "ils/elles ont doublé"], "futur": ["je vais doubler", "tu vas doubler", "il/elle va doubler", "nous allons doubler", "vous allez doubler", "ils/elles vont doubler"], "imparfait": ["je doublais", "tu doublais", "il/elle doublait", "nous doublions", "vous doubliez", "ils/elles doublaient"]}, "tpl": [[0, "la voiture", "the car"], [2, "le camion", "the lorry"]], "env": ["overtake", "overtook"], "ex": []}, {"inf": "durer", "en": "to last", "group": "-ER (Group 1)", "aux": "avoir", "refl": false, "note": "", "tenses": {"present": ["je dure", "tu dures", "il/elle dure", "nous durons", "vous durez", "ils/elles durent"], "passe": ["j'ai duré", "tu as duré", "il/elle a duré", "nous avons duré", "vous avez duré", "ils/elles ont duré"], "futur": ["je vais durer", "tu vas durer", "il/elle va durer", "nous allons durer", "vous allez durer", "ils/elles vont durer"], "imparfait": ["je durais", "tu durais", "il/elle durait", "nous durions", "vous duriez", "ils/elles duraient"]}, "ex": [["Le trajet dure deux heures.", "The journey lasts two hours."], ["Le film dure longtemps.", "The film lasts a long time."]]}, {"inf": "décoller", "en": "to take off (plane)", "group": "-ER (Group 1)", "aux": "avoir", "refl": false, "note": "", "tenses": {"present": ["je décolle", "tu décolles", "il/elle décolle", "nous décollons", "vous décollez", "ils/elles décollent"], "passe": ["j'ai décollé", "tu as décollé", "il/elle a décollé", "nous avons décollé", "vous avez décollé", "ils/elles ont décollé"], "futur": ["je vais décoller", "tu vas décoller", "il/elle va décoller", "nous allons décoller", "vous allez décoller", "ils/elles vont décoller"], "imparfait": ["je décollais", "tu décollais", "il/elle décollait", "nous décollions", "vous décolliez", "ils/elles décollaient"]}, "ex": [["L'avion décolle à midi.", "The plane takes off at noon."], ["On décolle bientôt.", "We take off soon."]]}, {"inf": "rater", "en": "to miss (just miss)", "group": "-ER (Group 1)", "aux": "avoir", "refl": false, "note": "", "tenses": {"present": ["je rate", "tu rates", "il/elle rate", "nous ratons", "vous ratez", "ils/elles ratent"], "passe": ["j'ai raté", "tu as raté", "il/elle a raté", "nous avons raté", "vous avez raté", "ils/elles ont raté"], "futur": ["je vais rater", "tu vas rater", "il/elle va rater", "nous allons rater", "vous allez rater", "ils/elles vont rater"], "imparfait": ["je ratais", "tu ratais", "il/elle ratait", "nous rations", "vous ratiez", "ils/elles rataient"]}, "tpl": [[0, "le train", "the train"], [2, "le bus", "the bus"]], "env": ["miss", "missed"], "ex": []}, {"inf": "manquer", "en": "to miss", "group": "-ER (Group 1)", "aux": "avoir", "refl": false, "note": "", "tenses": {"present": ["je manque", "tu manques", "il/elle manque", "nous manquons", "vous manquez", "ils/elles manquent"], "passe": ["j'ai manqué", "tu as manqué", "il/elle a manqué", "nous avons manqué", "vous avez manqué", "ils/elles ont manqué"], "futur": ["je vais manquer", "tu vas manquer", "il/elle va manquer", "nous allons manquer", "vous allez manquer", "ils/elles vont manquer"], "imparfait": ["je manquais", "tu manquais", "il/elle manquait", "nous manquions", "vous manquiez", "ils/elles manquaient"]}, "tpl": [[0, "ma correspondance", "my connection"], [1, "le train", "the train"]], "env": ["miss", "missed"], "ex": []}, {"inf": "arriver", "en": "to arrive", "group": "-ER (Group 1)", "aux": "être", "refl": false, "note": "", "tenses": {"present": ["j'arrive", "tu arrives", "il/elle arrive", "nous arrivons", "vous arrivez", "ils/elles arrivent"], "passe": ["je suis arrivé(e)", "tu es arrivé(e)", "il/elle est arrivé(e)", "nous sommes arrivé(e)s", "vous êtes arrivé(e)(s)", "ils/elles sont arrivé(e)s"], "futur": ["je vais arriver", "tu vas arriver", "il/elle va arriver", "nous allons arriver", "vous allez arriver", "ils/elles vont arriver"], "imparfait": ["j'arrivais", "tu arrivais", "il/elle arrivait", "nous arrivions", "vous arriviez", "ils/elles arrivaient"]}, "tpl": [[0, "à la gare", "at the station"], [5, "à l'heure", "on time"]], "env": ["arrive", "arrived"], "ex": []}, {"inf": "rentrer", "en": "to go home / to return", "group": "-ER (Group 1)", "aux": "être", "refl": false, "note": "", "tenses": {"present": ["je rentre", "tu rentres", "il/elle rentre", "nous rentrons", "vous rentrez", "ils/elles rentrent"], "passe": ["je suis rentré(e)", "tu es rentré(e)", "il/elle est rentré(e)", "nous sommes rentré(e)s", "vous êtes rentré(e)(s)", "ils/elles sont rentré(e)s"], "futur": ["je vais rentrer", "tu vas rentrer", "il/elle va rentrer", "nous allons rentrer", "vous allez rentrer", "ils/elles vont rentrer"], "imparfait": ["je rentrais", "tu rentrais", "il/elle rentrait", "nous rentrions", "vous rentriez", "ils/elles rentraient"]}, "tpl": [[0, "tard le soir", "late in the evening"], [3, "après le travail", "after work"]], "env": ["go home", "went home"], "ex": []}, {"inf": "retourner", "en": "to go back / to return", "group": "-ER (Group 1)", "aux": "être", "refl": false, "note": "", "tenses": {"present": ["je retourne", "tu retournes", "il/elle retourne", "nous retournons", "vous retournez", "ils/elles retournent"], "passe": ["je suis retourné(e)", "tu es retourné(e)", "il/elle est retourné(e)", "nous sommes retourné(e)s", "vous êtes retourné(e)(s)", "ils/elles sont retourné(e)s"], "futur": ["je vais retourner", "tu vas retourner", "il/elle va retourner", "nous allons retourner", "vous allez retourner", "ils/elles vont retourner"], "imparfait": ["je retournais", "tu retournais", "il/elle retournait", "nous retournions", "vous retourniez", "ils/elles retournaient"]}, "tpl": [[0, "en France cet été", "to France this summer"], [3, "au bureau", "to the office"]], "env": ["go back", "went back"], "ex": []}, {"inf": "rester", "en": "to stay", "group": "-ER (Group 1)", "aux": "être", "refl": false, "note": "", "tenses": {"present": ["je reste", "tu restes", "il/elle reste", "nous restons", "vous restez", "ils/elles restent"], "passe": ["je suis resté(e)", "tu es resté(e)", "il/elle est resté(e)", "nous sommes resté(e)s", "vous êtes resté(e)(s)", "ils/elles sont resté(e)s"], "futur": ["je vais rester", "tu vas rester", "il/elle va rester", "nous allons rester", "vous allez rester", "ils/elles vont rester"], "imparfait": ["je restais", "tu restais", "il/elle restait", "nous restions", "vous restiez", "ils/elles restaient"]}, "tpl": [[0, "à la maison", "at home"], [3, "deux jours", "two days"]], "env": ["stay", "stayed"], "ex": []}, {"inf": "monter", "en": "to go up / to get on", "group": "-ER (Group 1)", "aux": "être", "refl": false, "note": "Takes AVOIR when transitive (monter les valises).", "tenses": {"present": ["je monte", "tu montes", "il/elle monte", "nous montons", "vous montez", "ils/elles montent"], "passe": ["je suis monté(e)", "tu es monté(e)", "il/elle est monté(e)", "nous sommes monté(e)s", "vous êtes monté(e)(s)", "ils/elles sont monté(e)s"], "futur": ["je vais monter", "tu vas monter", "il/elle va monter", "nous allons monter", "vous allez monter", "ils/elles vont monter"], "imparfait": ["je montais", "tu montais", "il/elle montait", "nous montions", "vous montiez", "ils/elles montaient"]}, "tpl": [[2, "au premier étage", "to the first floor"], [5, "au grenier", "to the attic"]], "env": ["go up", "went up"], "ex": []}, {"inf": "passer", "en": "to pass by / to go through", "group": "-ER (Group 1)", "aux": "être", "refl": false, "note": "Takes AVOIR when transitive (passer un examen).", "tenses": {"present": ["je passe", "tu passes", "il/elle passe", "nous passons", "vous passez", "ils/elles passent"], "passe": ["je suis passé(e)", "tu es passé(e)", "il/elle est passé(e)", "nous sommes passé(e)s", "vous êtes passé(e)(s)", "ils/elles sont passé(e)s"], "futur": ["je vais passer", "tu vas passer", "il/elle va passer", "nous allons passer", "vous allez passer", "ils/elles vont passer"], "imparfait": ["je passais", "tu passais", "il/elle passait", "nous passions", "vous passiez", "ils/elles passaient"]}, "tpl": [[0, "par Paris", "through Paris"], [3, "devant la gare", "past the station"]], "env": ["pass", "passed"], "ex": []}, {"inf": "manger", "en": "to eat", "group": "-ER spelling-change", "aux": "avoir", "refl": false, "note": "nous mangeONS keeps the e (soft g).", "tenses": {"present": ["je mange", "tu manges", "il/elle mange", "nous mangeons", "vous mangez", "ils/elles mangent"], "passe": ["j'ai mangé", "tu as mangé", "il/elle a mangé", "nous avons mangé", "vous avez mangé", "ils/elles ont mangé"], "futur": ["je vais manger", "tu vas manger", "il/elle va manger", "nous allons manger", "vous allez manger", "ils/elles vont manger"], "imparfait": ["je mangeais", "tu mangeais", "il/elle mangeait", "nous mangions", "vous mangiez", "ils/elles mangeaient"]}, "tpl": [[0, "une pomme", "an apple"], [3, "au restaurant", "at the restaurant"]], "env": ["eat", "ate"], "ex": []}, {"inf": "commencer", "en": "to begin", "group": "-ER spelling-change", "aux": "avoir", "refl": false, "note": "nous commençONS takes a cedilla (soft c).", "tenses": {"present": ["je commence", "tu commences", "il/elle commence", "nous commençons", "vous commencez", "ils/elles commencent"], "passe": ["j'ai commencé", "tu as commencé", "il/elle a commencé", "nous avons commencé", "vous avez commencé", "ils/elles ont commencé"], "futur": ["je vais commencer", "tu vas commencer", "il/elle va commencer", "nous allons commencer", "vous allez commencer", "ils/elles vont commencer"], "imparfait": ["je commençais", "tu commençais", "il/elle commençait", "nous commencions", "vous commenciez", "ils/elles commençaient"]}, "tpl": [[0, "à 8 heures", "at 8"], [2, "le travail", "work"]], "env": ["start", "started"], "ex": []}, {"inf": "préférer", "en": "to prefer", "group": "-ER spelling-change", "aux": "avoir", "refl": false, "note": "é→è when the ending is silent.", "tenses": {"present": ["je préfère", "tu préfères", "il/elle préfère", "nous préférons", "vous préférez", "ils/elles préfèrent"], "passe": ["j'ai préféré", "tu as préféré", "il/elle a préféré", "nous avons préféré", "vous avez préféré", "ils/elles ont préféré"], "futur": ["je vais préférer", "tu vas préférer", "il/elle va préférer", "nous allons préférer", "vous allez préférer", "ils/elles vont préférer"], "imparfait": ["je préférais", "tu préférais", "il/elle préférait", "nous préférions", "vous préfériez", "ils/elles préféraient"]}, "tpl": [[0, "le thé", "tea"], [2, "le vin rouge", "red wine"]], "env": ["prefer", "preferred"], "ex": []}, {"inf": "acheter", "en": "to buy", "group": "-ER spelling-change", "aux": "avoir", "refl": false, "note": "e→è when the ending is silent.", "tenses": {"present": ["j'achète", "tu achètes", "il/elle achète", "nous achetons", "vous achetez", "ils/elles achètent"], "passe": ["j'ai acheté", "tu as acheté", "il/elle a acheté", "nous avons acheté", "vous avez acheté", "ils/elles ont acheté"], "futur": ["je vais acheter", "tu vas acheter", "il/elle va acheter", "nous allons acheter", "vous allez acheter", "ils/elles vont acheter"], "imparfait": ["j'achetais", "tu achetais", "il/elle achetait", "nous achetions", "vous achetiez", "ils/elles achetaient"]}, "tpl": [[0, "du pain", "some bread"], [3, "des légumes au marché", "vegetables at the market"]], "env": ["buy", "bought"], "ex": []}, {"inf": "changer", "en": "to change (trains / money)", "group": "-ER spelling-change", "aux": "avoir", "refl": false, "note": "", "tenses": {"present": ["je change", "tu changes", "il/elle change", "nous changeons", "vous changez", "ils/elles changent"], "passe": ["j'ai changé", "tu as changé", "il/elle a changé", "nous avons changé", "vous avez changé", "ils/elles ont changé"], "futur": ["je vais changer", "tu vas changer", "il/elle va changer", "nous allons changer", "vous allez changer", "ils/elles vont changer"], "imparfait": ["je changeais", "tu changeais", "il/elle changeait", "nous changions", "vous changiez", "ils/elles changeaient"]}, "tpl": [[0, "de train à Lille", "trains at Lille"], [2, "de l'argent", "money"]], "env": ["change", "changed"], "ex": []}, {"inf": "finir", "en": "to finish", "group": "-IR (Group 2)", "aux": "avoir", "refl": false, "note": "", "tenses": {"present": ["je finis", "tu finis", "il/elle finit", "nous finissons", "vous finissez", "ils/elles finissent"], "passe": ["j'ai fini", "tu as fini", "il/elle a fini", "nous avons fini", "vous avez fini", "ils/elles ont fini"], "futur": ["je vais finir", "tu vas finir", "il/elle va finir", "nous allons finir", "vous allez finir", "ils/elles vont finir"], "imparfait": ["je finissais", "tu finissais", "il/elle finissait", "nous finissions", "vous finissiez", "ils/elles finissaient"]}, "tpl": [[0, "mon travail", "my work"], [2, "ses devoirs", "his/her homework"]], "env": ["finish", "finished"], "ex": []}, {"inf": "choisir", "en": "to choose", "group": "-IR (Group 2)", "aux": "avoir", "refl": false, "note": "", "tenses": {"present": ["je choisis", "tu choisis", "il/elle choisit", "nous choisissons", "vous choisissez", "ils/elles choisissent"], "passe": ["j'ai choisi", "tu as choisi", "il/elle a choisi", "nous avons choisi", "vous avez choisi", "ils/elles ont choisi"], "futur": ["je vais choisir", "tu vas choisir", "il/elle va choisir", "nous allons choisir", "vous allez choisir", "ils/elles vont choisir"], "imparfait": ["je choisissais", "tu choisissais", "il/elle choisissait", "nous choisissions", "vous choisissiez", "ils/elles choisissaient"]}, "tpl": [[0, "un bon film", "a good film"], [2, "une robe", "a dress"]], "env": ["choose", "chose"], "ex": []}, {"inf": "réussir", "en": "to succeed / to pass", "group": "-IR (Group 2)", "aux": "avoir", "refl": false, "note": "", "tenses": {"present": ["je réussis", "tu réussis", "il/elle réussit", "nous réussissons", "vous réussissez", "ils/elles réussissent"], "passe": ["j'ai réussi", "tu as réussi", "il/elle a réussi", "nous avons réussi", "vous avez réussi", "ils/elles ont réussi"], "futur": ["je vais réussir", "tu vas réussir", "il/elle va réussir", "nous allons réussir", "vous allez réussir", "ils/elles vont réussir"], "imparfait": ["je réussissais", "tu réussissais", "il/elle réussissait", "nous réussissions", "vous réussissiez", "ils/elles réussissaient"]}, "tpl": [[0, "mon examen", "my exam"], [2, "son examen", "his/her exam"]], "env": ["pass", "passed"], "ex": []}, {"inf": "réfléchir", "en": "to think over / to reflect", "group": "-IR (Group 2)", "aux": "avoir", "refl": false, "note": "", "tenses": {"present": ["je réfléchis", "tu réfléchis", "il/elle réfléchit", "nous réfléchissons", "vous réfléchissez", "ils/elles réfléchissent"], "passe": ["j'ai réfléchi", "tu as réfléchi", "il/elle a réfléchi", "nous avons réfléchi", "vous avez réfléchi", "ils/elles ont réfléchi"], "futur": ["je vais réfléchir", "tu vas réfléchir", "il/elle va réfléchir", "nous allons réfléchir", "vous allez réfléchir", "ils/elles vont réfléchir"], "imparfait": ["je réfléchissais", "tu réfléchissais", "il/elle réfléchissait", "nous réfléchissions", "vous réfléchissiez", "ils/elles réfléchissaient"]}, "tpl": [[0, "à la question", "about the question"], [3, "au problème", "about the problem"]], "env": ["think", "thought"], "ex": []}, {"inf": "remplir", "en": "to fill", "group": "-IR (Group 2)", "aux": "avoir", "refl": false, "note": "", "tenses": {"present": ["je remplis", "tu remplis", "il/elle remplit", "nous remplissons", "vous remplissez", "ils/elles remplissent"], "passe": ["j'ai rempli", "tu as rempli", "il/elle a rempli", "nous avons rempli", "vous avez rempli", "ils/elles ont rempli"], "futur": ["je vais remplir", "tu vas remplir", "il/elle va remplir", "nous allons remplir", "vous allez remplir", "ils/elles vont remplir"], "imparfait": ["je remplissais", "tu remplissais", "il/elle remplissait", "nous remplissions", "vous remplissiez", "ils/elles remplissaient"]}, "tpl": [[0, "le verre d'eau", "the glass with water"], [1, "le formulaire", "the form"]], "env": ["fill", "filled"], "ex": []}, {"inf": "grandir", "en": "to grow up", "group": "-IR (Group 2)", "aux": "avoir", "refl": false, "note": "", "tenses": {"present": ["je grandis", "tu grandis", "il/elle grandit", "nous grandissons", "vous grandissez", "ils/elles grandissent"], "passe": ["j'ai grandi", "tu as grandi", "il/elle a grandi", "nous avons grandi", "vous avez grandi", "ils/elles ont grandi"], "futur": ["je vais grandir", "tu vas grandir", "il/elle va grandir", "nous allons grandir", "vous allez grandir", "ils/elles vont grandir"], "imparfait": ["je grandissais", "tu grandissais", "il/elle grandissait", "nous grandissions", "vous grandissiez", "ils/elles grandissaient"]}, "tpl": [[5, "vite", "fast"], [2, "chaque année", "every year"]], "env": ["grow", "grew"], "ex": []}, {"inf": "guérir", "en": "to heal / to recover", "group": "-IR (Group 2)", "aux": "avoir", "refl": false, "note": "", "tenses": {"present": ["je guéris", "tu guéris", "il/elle guérit", "nous guérissons", "vous guérissez", "ils/elles guérissent"], "passe": ["j'ai guéri", "tu as guéri", "il/elle a guéri", "nous avons guéri", "vous avez guéri", "ils/elles ont guéri"], "futur": ["je vais guérir", "tu vas guérir", "il/elle va guérir", "nous allons guérir", "vous allez guérir", "ils/elles vont guérir"], "imparfait": ["je guérissais", "tu guérissais", "il/elle guérissait", "nous guérissions", "vous guérissiez", "ils/elles guérissaient"]}, "tpl": [[0, "vite", "quickly"], [2, "lentement", "slowly"]], "env": ["recover", "recovered"], "ex": []}, {"inf": "vieillir", "en": "to grow old", "group": "-IR (Group 2)", "aux": "avoir", "refl": false, "note": "", "tenses": {"present": ["je vieillis", "tu vieillis", "il/elle vieillit", "nous vieillissons", "vous vieillissez", "ils/elles vieillissent"], "passe": ["j'ai vieilli", "tu as vieilli", "il/elle a vieilli", "nous avons vieilli", "vous avez vieilli", "ils/elles ont vieilli"], "futur": ["je vais vieillir", "tu vas vieillir", "il/elle va vieillir", "nous allons vieillir", "vous allez vieillir", "ils/elles vont vieillir"], "imparfait": ["je vieillissais", "tu vieillissais", "il/elle vieillissait", "nous vieillissions", "vous vieillissiez", "ils/elles vieillissaient"]}, "tpl": [[3, "ensemble", "together"], [5, "vite", "fast"]], "env": ["grow old", "grew old"], "ex": []}, {"inf": "investir", "en": "to invest", "group": "-IR (Group 2)", "aux": "avoir", "refl": false, "note": "", "tenses": {"present": ["j'investis", "tu investis", "il/elle investit", "nous investissons", "vous investissez", "ils/elles investissent"], "passe": ["j'ai investi", "tu as investi", "il/elle a investi", "nous avons investi", "vous avez investi", "ils/elles ont investi"], "futur": ["je vais investir", "tu vas investir", "il/elle va investir", "nous allons investir", "vous allez investir", "ils/elles vont investir"], "imparfait": ["j'investissais", "tu investissais", "il/elle investissait", "nous investissions", "vous investissiez", "ils/elles investissaient"]}, "tpl": [[0, "dans une maison", "in a house"], [5, "beaucoup", "a lot"]], "env": ["invest", "invested"], "ex": []}, {"inf": "bâtir", "en": "to build", "group": "-IR (Group 2)", "aux": "avoir", "refl": false, "note": "", "tenses": {"present": ["je bâtis", "tu bâtis", "il/elle bâtit", "nous bâtissons", "vous bâtissez", "ils/elles bâtissent"], "passe": ["j'ai bâti", "tu as bâti", "il/elle a bâti", "nous avons bâti", "vous avez bâti", "ils/elles ont bâti"], "futur": ["je vais bâtir", "tu vas bâtir", "il/elle va bâtir", "nous allons bâtir", "vous allez bâtir", "ils/elles vont bâtir"], "imparfait": ["je bâtissais", "tu bâtissais", "il/elle bâtissait", "nous bâtissions", "vous bâtissiez", "ils/elles bâtissaient"]}, "tpl": [[3, "une maison", "a house"], [5, "un mur", "a wall"]], "env": ["build", "built"], "ex": []}, {"inf": "atterrir", "en": "to land (plane)", "group": "-IR (Group 2)", "aux": "avoir", "refl": false, "note": "Group 2 -ir, adds -iss-.", "tenses": {"present": ["j'atterris", "tu atterris", "il/elle atterrit", "nous atterrissons", "vous atterrissez", "ils/elles atterrissent"], "passe": ["j'ai atterri", "tu as atterri", "il/elle a atterri", "nous avons atterri", "vous avez atterri", "ils/elles ont atterri"], "futur": ["je vais atterrir", "tu vas atterrir", "il/elle va atterrir", "nous allons atterrir", "vous allez atterrir", "ils/elles vont atterrir"], "imparfait": ["j'atterrissais", "tu atterrissais", "il/elle atterrissait", "nous atterrissions", "vous atterrissiez", "ils/elles atterrissaient"]}, "tpl": [[3, "à Paris", "in Paris"], [5, "à l'heure", "on time"]], "env": ["land", "landed"], "ex": []}, {"inf": "dormir", "en": "to sleep", "group": "-IR (Group 3)", "aux": "avoir", "refl": false, "note": "", "tenses": {"present": ["je dors", "tu dors", "il/elle dort", "nous dormons", "vous dormez", "ils/elles dorment"], "passe": ["j'ai dormi", "tu as dormi", "il/elle a dormi", "nous avons dormi", "vous avez dormi", "ils/elles ont dormi"], "futur": ["je vais dormir", "tu vas dormir", "il/elle va dormir", "nous allons dormir", "vous allez dormir", "ils/elles vont dormir"], "imparfait": ["je dormais", "tu dormais", "il/elle dormait", "nous dormions", "vous dormiez", "ils/elles dormaient"]}, "tpl": [[0, "huit heures", "eight hours"], [2, "bien", "well"]], "env": ["sleep", "slept"], "ex": []}, {"inf": "partir", "en": "to leave / to go away", "group": "-IR (Group 3)", "aux": "être", "refl": false, "note": "", "tenses": {"present": ["je pars", "tu pars", "il/elle part", "nous partons", "vous partez", "ils/elles partent"], "passe": ["je suis parti(e)", "tu es parti(e)", "il/elle est parti(e)", "nous sommes parti(e)s", "vous êtes parti(e)(s)", "ils/elles sont parti(e)s"], "futur": ["je vais partir", "tu vas partir", "il/elle va partir", "nous allons partir", "vous allez partir", "ils/elles vont partir"], "imparfait": ["je partais", "tu partais", "il/elle partait", "nous partions", "vous partiez", "ils/elles partaient"]}, "tpl": [[0, "en vacances", "on holiday"], [3, "demain matin", "tomorrow morning"]], "env": ["leave", "left"], "ex": []}, {"inf": "sortir", "en": "to go out / to take out", "group": "-IR (Group 3)", "aux": "être", "refl": false, "note": "Takes AVOIR when transitive (sortir le chien).", "tenses": {"present": ["je sors", "tu sors", "il/elle sort", "nous sortons", "vous sortez", "ils/elles sortent"], "passe": ["je suis sorti(e)", "tu es sorti(e)", "il/elle est sorti(e)", "nous sommes sorti(e)s", "vous êtes sorti(e)(s)", "ils/elles sont sorti(e)s"], "futur": ["je vais sortir", "tu vas sortir", "il/elle va sortir", "nous allons sortir", "vous allez sortir", "ils/elles vont sortir"], "imparfait": ["je sortais", "tu sortais", "il/elle sortait", "nous sortions", "vous sortiez", "ils/elles sortaient"]}, "tpl": [[0, "avec des amis", "with friends"], [2, "ce soir", "tonight"]], "env": ["go out", "went out"], "ex": []}, {"inf": "sentir", "en": "to feel / to smell", "group": "-IR (Group 3)", "aux": "avoir", "refl": false, "note": "", "tenses": {"present": ["je sens", "tu sens", "il/elle sent", "nous sentons", "vous sentez", "ils/elles sentent"], "passe": ["j'ai senti", "tu as senti", "il/elle a senti", "nous avons senti", "vous avez senti", "ils/elles ont senti"], "futur": ["je vais sentir", "tu vas sentir", "il/elle va sentir", "nous allons sentir", "vous allez sentir", "ils/elles vont sentir"], "imparfait": ["je sentais", "tu sentais", "il/elle sentait", "nous sentions", "vous sentiez", "ils/elles sentaient"]}, "tpl": [[0, "le froid", "the cold"], [1, "la différence", "the difference"]], "env": ["feel", "felt"], "ex": []}, {"inf": "servir", "en": "to serve / to pour", "group": "-IR (Group 3)", "aux": "avoir", "refl": false, "note": "", "tenses": {"present": ["je sers", "tu sers", "il/elle sert", "nous servons", "vous servez", "ils/elles servent"], "passe": ["j'ai servi", "tu as servi", "il/elle a servi", "nous avons servi", "vous avez servi", "ils/elles ont servi"], "futur": ["je vais servir", "tu vas servir", "il/elle va servir", "nous allons servir", "vous allez servir", "ils/elles vont servir"], "imparfait": ["je servais", "tu servais", "il/elle servait", "nous servions", "vous serviez", "ils/elles servaient"]}, "tpl": [[2, "le vin", "the wine"], [0, "le café", "the coffee"]], "env": ["serve", "served"], "ex": []}, {"inf": "courir", "en": "to run", "group": "-IR (Group 3)", "aux": "avoir", "refl": false, "note": "", "tenses": {"present": ["je cours", "tu cours", "il/elle court", "nous courons", "vous courez", "ils/elles courent"], "passe": ["j'ai couru", "tu as couru", "il/elle a couru", "nous avons couru", "vous avez couru", "ils/elles ont couru"], "futur": ["je vais courir", "tu vas courir", "il/elle va courir", "nous allons courir", "vous allez courir", "ils/elles vont courir"], "imparfait": ["je courais", "tu courais", "il/elle courait", "nous courions", "vous couriez", "ils/elles couraient"]}, "tpl": [[0, "tous les matins", "every morning"], [2, "vite", "fast"]], "env": ["run", "ran"], "ex": []}, {"inf": "mourir", "en": "to die", "group": "-IR (Group 3)", "aux": "être", "refl": false, "note": "", "tenses": {"present": ["je meurs", "tu meurs", "il/elle meurt", "nous mourons", "vous mourez", "ils/elles meurent"], "passe": ["je suis mort(e)", "tu es mort(e)", "il/elle est mort(e)", "nous sommes mort(e)s", "vous êtes mort(e)(s)", "ils/elles sont mort(e)s"], "futur": ["je vais mourir", "tu vas mourir", "il/elle va mourir", "nous allons mourir", "vous allez mourir", "ils/elles vont mourir"], "imparfait": ["je mourais", "tu mourais", "il/elle mourait", "nous mourions", "vous mouriez", "ils/elles mouraient"]}, "ex": [["Je meurs de faim.", "I'm starving."], ["Les fleurs meurent en hiver.", "The flowers die in winter."]]}, {"inf": "venir", "en": "to come", "group": "-IR (Group 3)", "aux": "être", "refl": false, "note": "", "tenses": {"present": ["je viens", "tu viens", "il/elle vient", "nous venons", "vous venez", "ils/elles viennent"], "passe": ["je suis venu(e)", "tu es venu(e)", "il/elle est venu(e)", "nous sommes venu(e)s", "vous êtes venu(e)(s)", "ils/elles sont venu(e)s"], "futur": ["je vais venir", "tu vas venir", "il/elle va venir", "nous allons venir", "vous allez venir", "ils/elles vont venir"], "imparfait": ["je venais", "tu venais", "il/elle venait", "nous venions", "vous veniez", "ils/elles venaient"]}, "tpl": [[0, "de Londres", "from London"], [5, "avec nous", "with us"]], "env": ["come", "came"], "ex": []}, {"inf": "revenir", "en": "to come back", "group": "-IR (Group 3)", "aux": "être", "refl": false, "note": "", "tenses": {"present": ["je reviens", "tu reviens", "il/elle revient", "nous revenons", "vous revenez", "ils/elles reviennent"], "passe": ["je suis revenu(e)", "tu es revenu(e)", "il/elle est revenu(e)", "nous sommes revenu(e)s", "vous êtes revenu(e)(s)", "ils/elles sont revenu(e)s"], "futur": ["je vais revenir", "tu vas revenir", "il/elle va revenir", "nous allons revenir", "vous allez revenir", "ils/elles vont revenir"], "imparfait": ["je revenais", "tu revenais", "il/elle revenait", "nous revenions", "vous reveniez", "ils/elles revenaient"]}, "tpl": [[0, "dans une heure", "in an hour"], [2, "de France", "from France"]], "env": ["come back", "came back"], "ex": []}, {"inf": "devenir", "en": "to become", "group": "-IR (Group 3)", "aux": "être", "refl": false, "note": "", "tenses": {"present": ["je deviens", "tu deviens", "il/elle devient", "nous devenons", "vous devenez", "ils/elles deviennent"], "passe": ["je suis devenu(e)", "tu es devenu(e)", "il/elle est devenu(e)", "nous sommes devenu(e)s", "vous êtes devenu(e)(s)", "ils/elles sont devenu(e)s"], "futur": ["je vais devenir", "tu vas devenir", "il/elle va devenir", "nous allons devenir", "vous allez devenir", "ils/elles vont devenir"], "imparfait": ["je devenais", "tu devenais", "il/elle devenait", "nous devenions", "vous deveniez", "ils/elles devenaient"]}, "tpl": [[2, "médecin", "a doctor"], [1, "meilleur", "better"]], "env": ["become", "became"], "ex": []}, {"inf": "tenir", "en": "to hold", "group": "-IR (Group 3)", "aux": "avoir", "refl": false, "note": "", "tenses": {"present": ["je tiens", "tu tiens", "il/elle tient", "nous tenons", "vous tenez", "ils/elles tiennent"], "passe": ["j'ai tenu", "tu as tenu", "il/elle a tenu", "nous avons tenu", "vous avez tenu", "ils/elles ont tenu"], "futur": ["je vais tenir", "tu vas tenir", "il/elle va tenir", "nous allons tenir", "vous allez tenir", "ils/elles vont tenir"], "imparfait": ["je tenais", "tu tenais", "il/elle tenait", "nous tenions", "vous teniez", "ils/elles tenaient"]}, "tpl": [[0, "la porte", "the door"], [2, "mon bras", "my arm"]], "env": ["hold", "held"], "ex": []}, {"inf": "obtenir", "en": "to obtain / to get", "group": "-IR (Group 3)", "aux": "avoir", "refl": false, "note": "", "tenses": {"present": ["j'obtiens", "tu obtiens", "il/elle obtient", "nous obtenons", "vous obtenez", "ils/elles obtiennent"], "passe": ["j'ai obtenu", "tu as obtenu", "il/elle a obtenu", "nous avons obtenu", "vous avez obtenu", "ils/elles ont obtenu"], "futur": ["je vais obtenir", "tu vas obtenir", "il/elle va obtenir", "nous allons obtenir", "vous allez obtenir", "ils/elles vont obtenir"], "imparfait": ["j'obtenais", "tu obtenais", "il/elle obtenait", "nous obtenions", "vous obteniez", "ils/elles obtenaient"]}, "tpl": [[0, "un bon résultat", "a good result"], [2, "un rendez-vous", "an appointment"]], "env": ["get", "got"], "ex": []}, {"inf": "offrir", "en": "to offer / to give", "group": "-IR (Group 3)", "aux": "avoir", "refl": false, "note": "Type A: present endings like an -ER verb.", "tenses": {"present": ["j'offre", "tu offres", "il/elle offre", "nous offrons", "vous offrez", "ils/elles offrent"], "passe": ["j'ai offert", "tu as offert", "il/elle a offert", "nous avons offert", "vous avez offert", "ils/elles ont offert"], "futur": ["je vais offrir", "tu vas offrir", "il/elle va offrir", "nous allons offrir", "vous allez offrir", "ils/elles vont offrir"], "imparfait": ["j'offrais", "tu offrais", "il/elle offrait", "nous offrions", "vous offriez", "ils/elles offraient"]}, "tpl": [[0, "un cadeau à ma mère", "a gift to my mother"], [3, "des fleurs", "flowers"]], "env": ["give", "gave"], "ex": []}, {"inf": "ouvrir", "en": "to open", "group": "-IR (Group 3)", "aux": "avoir", "refl": false, "note": "Type A: present endings like an -ER verb.", "tenses": {"present": ["j'ouvre", "tu ouvres", "il/elle ouvre", "nous ouvrons", "vous ouvrez", "ils/elles ouvrent"], "passe": ["j'ai ouvert", "tu as ouvert", "il/elle a ouvert", "nous avons ouvert", "vous avez ouvert", "ils/elles ont ouvert"], "futur": ["je vais ouvrir", "tu vas ouvrir", "il/elle va ouvrir", "nous allons ouvrir", "vous allez ouvrir", "ils/elles vont ouvrir"], "imparfait": ["j'ouvrais", "tu ouvrais", "il/elle ouvrait", "nous ouvrions", "vous ouvriez", "ils/elles ouvraient"]}, "tpl": [[0, "la fenêtre", "the window"], [2, "le magasin à 9 heures", "the shop at 9"]], "env": ["open", "opened"], "ex": []}, {"inf": "couvrir", "en": "to cover", "group": "-IR (Group 3)", "aux": "avoir", "refl": false, "note": "", "tenses": {"present": ["je couvre", "tu couvres", "il/elle couvre", "nous couvrons", "vous couvrez", "ils/elles couvrent"], "passe": ["j'ai couvert", "tu as couvert", "il/elle a couvert", "nous avons couvert", "vous avez couvert", "ils/elles ont couvert"], "futur": ["je vais couvrir", "tu vas couvrir", "il/elle va couvrir", "nous allons couvrir", "vous allez couvrir", "ils/elles vont couvrir"], "imparfait": ["je couvrais", "tu couvrais", "il/elle couvrait", "nous couvrions", "vous couvriez", "ils/elles couvraient"]}, "tpl": [[0, "le plat", "the dish"], [2, "la casserole", "the saucepan"]], "env": ["cover", "covered"], "ex": []}, {"inf": "découvrir", "en": "to discover", "group": "-IR (Group 3)", "aux": "avoir", "refl": false, "note": "", "tenses": {"present": ["je découvre", "tu découvres", "il/elle découvre", "nous découvrons", "vous découvrez", "ils/elles découvrent"], "passe": ["j'ai découvert", "tu as découvert", "il/elle a découvert", "nous avons découvert", "vous avez découvert", "ils/elles ont découvert"], "futur": ["je vais découvrir", "tu vas découvrir", "il/elle va découvrir", "nous allons découvrir", "vous allez découvrir", "ils/elles vont découvrir"], "imparfait": ["je découvrais", "tu découvrais", "il/elle découvrait", "nous découvrions", "vous découvriez", "ils/elles découvraient"]}, "tpl": [[0, "une nouvelle ville", "a new city"], [3, "un bon restaurant", "a good restaurant"]], "env": ["discover", "discovered"], "ex": []}, {"inf": "souffrir", "en": "to suffer", "group": "-IR (Group 3)", "aux": "avoir", "refl": false, "note": "", "tenses": {"present": ["je souffre", "tu souffres", "il/elle souffre", "nous souffrons", "vous souffrez", "ils/elles souffrent"], "passe": ["j'ai souffert", "tu as souffert", "il/elle a souffert", "nous avons souffert", "vous avez souffert", "ils/elles ont souffert"], "futur": ["je vais souffrir", "tu vas souffrir", "il/elle va souffrir", "nous allons souffrir", "vous allez souffrir", "ils/elles vont souffrir"], "imparfait": ["je souffrais", "tu souffrais", "il/elle souffrait", "nous souffrions", "vous souffriez", "ils/elles souffraient"]}, "tpl": [[2, "en silence", "in silence"], [0, "beaucoup", "a lot"]], "env": ["suffer", "suffered"], "ex": []}, {"inf": "cueillir", "en": "to pick / to gather", "group": "-IR (Group 3)", "aux": "avoir", "refl": false, "note": "", "tenses": {"present": ["je cueille", "tu cueilles", "il/elle cueille", "nous cueillons", "vous cueillez", "ils/elles cueillent"], "passe": ["j'ai cueilli", "tu as cueilli", "il/elle a cueilli", "nous avons cueilli", "vous avez cueilli", "ils/elles ont cueilli"], "futur": ["je vais cueillir", "tu vas cueillir", "il/elle va cueillir", "nous allons cueillir", "vous allez cueillir", "ils/elles vont cueillir"], "imparfait": ["je cueillais", "tu cueillais", "il/elle cueillait", "nous cueillions", "vous cueilliez", "ils/elles cueillaient"]}, "tpl": [[0, "une rose", "a rose"], [3, "des fruits", "fruit"]], "env": ["pick", "picked"], "ex": []}, {"inf": "vouloir", "en": "to want", "group": "-OIR (Group 3)", "aux": "avoir", "refl": false, "note": "Je voudrais = I would like (polite conditional).", "tenses": {"present": ["je veux", "tu veux", "il/elle veut", "nous voulons", "vous voulez", "ils/elles veulent"], "passe": ["j'ai voulu", "tu as voulu", "il/elle a voulu", "nous avons voulu", "vous avez voulu", "ils/elles ont voulu"], "futur": ["je vais vouloir", "tu vas vouloir", "il/elle va vouloir", "nous allons vouloir", "vous allez vouloir", "ils/elles vont vouloir"], "imparfait": ["je voulais", "tu voulais", "il/elle voulait", "nous voulions", "vous vouliez", "ils/elles voulaient"]}, "tpl": [[0, "un café", "a coffee"], [1, "venir", "to come"]], "env": ["want", "wanted"], "ex": []}, {"inf": "pouvoir", "en": "can / to be able to", "group": "-OIR (Group 3)", "aux": "avoir", "refl": false, "note": "", "tenses": {"present": ["je peux", "tu peux", "il/elle peut", "nous pouvons", "vous pouvez", "ils/elles peuvent"], "passe": ["j'ai pu", "tu as pu", "il/elle a pu", "nous avons pu", "vous avez pu", "ils/elles ont pu"], "futur": ["je vais pouvoir", "tu vas pouvoir", "il/elle va pouvoir", "nous allons pouvoir", "vous allez pouvoir", "ils/elles vont pouvoir"], "imparfait": ["je pouvais", "tu pouvais", "il/elle pouvait", "nous pouvions", "vous pouviez", "ils/elles pouvaient"]}, "tpl": [[0, "t'aider", "help you"], [3, "partir", "leave"]], "env": ["can", "could", "be able to"], "ex": []}, {"inf": "devoir", "en": "must / to have to", "group": "-OIR (Group 3)", "aux": "avoir", "refl": false, "note": "", "tenses": {"present": ["je dois", "tu dois", "il/elle doit", "nous devons", "vous devez", "ils/elles doivent"], "passe": ["j'ai dû", "tu as dû", "il/elle a dû", "nous avons dû", "vous avez dû", "ils/elles ont dû"], "futur": ["je vais devoir", "tu vas devoir", "il/elle va devoir", "nous allons devoir", "vous allez devoir", "ils/elles vont devoir"], "imparfait": ["je devais", "tu devais", "il/elle devait", "nous devions", "vous deviez", "ils/elles devaient"]}, "tpl": [[0, "partir", "leave"], [1, "travailler", "work"]], "env": ["must", "had to", "have to"], "ex": []}, {"inf": "savoir", "en": "to know (a fact / how to)", "group": "-OIR (Group 3)", "aux": "avoir", "refl": false, "note": "", "tenses": {"present": ["je sais", "tu sais", "il/elle sait", "nous savons", "vous savez", "ils/elles savent"], "passe": ["j'ai su", "tu as su", "il/elle a su", "nous avons su", "vous avez su", "ils/elles ont su"], "futur": ["je vais savoir", "tu vas savoir", "il/elle va savoir", "nous allons savoir", "vous allez savoir", "ils/elles vont savoir"], "imparfait": ["je savais", "tu savais", "il/elle savait", "nous savions", "vous saviez", "ils/elles savaient"]}, "tpl": [[0, "nager", "how to swim"], [2, "la réponse", "the answer"]], "env": ["know", "knew"], "ex": []}, {"inf": "voir", "en": "to see", "group": "-OIR (Group 3)", "aux": "avoir", "refl": false, "note": "", "tenses": {"present": ["je vois", "tu vois", "il/elle voit", "nous voyons", "vous voyez", "ils/elles voient"], "passe": ["j'ai vu", "tu as vu", "il/elle a vu", "nous avons vu", "vous avez vu", "ils/elles ont vu"], "futur": ["je vais voir", "tu vas voir", "il/elle va voir", "nous allons voir", "vous allez voir", "ils/elles vont voir"], "imparfait": ["je voyais", "tu voyais", "il/elle voyait", "nous voyions", "vous voyiez", "ils/elles voyaient"]}, "tpl": [[0, "la mer", "the sea"], [3, "nos amis", "our friends"]], "env": ["see", "saw"], "ex": []}, {"inf": "recevoir", "en": "to receive", "group": "-OIR (Group 3)", "aux": "avoir", "refl": false, "note": "", "tenses": {"present": ["je reçois", "tu reçois", "il/elle reçoit", "nous recevons", "vous recevez", "ils/elles reçoivent"], "passe": ["j'ai reçu", "tu as reçu", "il/elle a reçu", "nous avons reçu", "vous avez reçu", "ils/elles ont reçu"], "futur": ["je vais recevoir", "tu vas recevoir", "il/elle va recevoir", "nous allons recevoir", "vous allez recevoir", "ils/elles vont recevoir"], "imparfait": ["je recevais", "tu recevais", "il/elle recevait", "nous recevions", "vous receviez", "ils/elles recevaient"]}, "tpl": [[0, "une lettre", "a letter"], [2, "un cadeau", "a gift"]], "env": ["receive", "received"], "ex": []}, {"inf": "vendre", "en": "to sell", "group": "-RE (Group 3)", "aux": "avoir", "refl": false, "note": "", "tenses": {"present": ["je vends", "tu vends", "il/elle vend", "nous vendons", "vous vendez", "ils/elles vendent"], "passe": ["j'ai vendu", "tu as vendu", "il/elle a vendu", "nous avons vendu", "vous avez vendu", "ils/elles ont vendu"], "futur": ["je vais vendre", "tu vas vendre", "il/elle va vendre", "nous allons vendre", "vous allez vendre", "ils/elles vont vendre"], "imparfait": ["je vendais", "tu vendais", "il/elle vendait", "nous vendions", "vous vendiez", "ils/elles vendaient"]}, "tpl": [[0, "ma voiture", "my car"], [5, "des légumes", "vegetables"]], "env": ["sell", "sold"], "ex": []}, {"inf": "attendre", "en": "to wait (for)", "group": "-RE (Group 3)", "aux": "avoir", "refl": false, "note": "", "tenses": {"present": ["j'attends", "tu attends", "il/elle attend", "nous attendons", "vous attendez", "ils/elles attendent"], "passe": ["j'ai attendu", "tu as attendu", "il/elle a attendu", "nous avons attendu", "vous avez attendu", "ils/elles ont attendu"], "futur": ["je vais attendre", "tu vas attendre", "il/elle va attendre", "nous allons attendre", "vous allez attendre", "ils/elles vont attendre"], "imparfait": ["j'attendais", "tu attendais", "il/elle attendait", "nous attendions", "vous attendiez", "ils/elles attendaient"]}, "tpl": [[0, "le bus", "the bus"], [3, "le train", "the train"]], "env": ["wait for", "waited for"], "ex": []}, {"inf": "entendre", "en": "to hear", "group": "-RE (Group 3)", "aux": "avoir", "refl": false, "note": "", "tenses": {"present": ["j'entends", "tu entends", "il/elle entend", "nous entendons", "vous entendez", "ils/elles entendent"], "passe": ["j'ai entendu", "tu as entendu", "il/elle a entendu", "nous avons entendu", "vous avez entendu", "ils/elles ont entendu"], "futur": ["je vais entendre", "tu vas entendre", "il/elle va entendre", "nous allons entendre", "vous allez entendre", "ils/elles vont entendre"], "imparfait": ["j'entendais", "tu entendais", "il/elle entendait", "nous entendions", "vous entendiez", "ils/elles entendaient"]}, "tpl": [[0, "un bruit", "a noise"], [1, "la musique", "the music"]], "env": ["hear", "heard"], "ex": []}, {"inf": "descendre", "en": "to go down / to get off", "group": "-RE (Group 3)", "aux": "être", "refl": false, "note": "Takes AVOIR when transitive (descendre les bagages).", "tenses": {"present": ["je descends", "tu descends", "il/elle descend", "nous descendons", "vous descendez", "ils/elles descendent"], "passe": ["je suis descendu(e)", "tu es descendu(e)", "il/elle est descendu(e)", "nous sommes descendu(e)s", "vous êtes descendu(e)(s)", "ils/elles sont descendu(e)s"], "futur": ["je vais descendre", "tu vas descendre", "il/elle va descendre", "nous allons descendre", "vous allez descendre", "ils/elles vont descendre"], "imparfait": ["je descendais", "tu descendais", "il/elle descendait", "nous descendions", "vous descendiez", "ils/elles descendaient"]}, "tpl": [[2, "à la cave", "to the cellar"], [0, "au rez-de-chaussée", "to the ground floor"]], "env": ["go down", "went down"], "ex": []}, {"inf": "prendre", "en": "to take / to have (food)", "group": "-RE (Group 3)", "aux": "avoir", "refl": false, "note": "", "tenses": {"present": ["je prends", "tu prends", "il/elle prend", "nous prenons", "vous prenez", "ils/elles prennent"], "passe": ["j'ai pris", "tu as pris", "il/elle a pris", "nous avons pris", "vous avez pris", "ils/elles ont pris"], "futur": ["je vais prendre", "tu vas prendre", "il/elle va prendre", "nous allons prendre", "vous allez prendre", "ils/elles vont prendre"], "imparfait": ["je prenais", "tu prenais", "il/elle prenait", "nous prenions", "vous preniez", "ils/elles prenaient"]}, "tpl": [[0, "un café", "a coffee"], [3, "le train", "the train"]], "env": ["take", "took"], "ex": []}, {"inf": "comprendre", "en": "to understand", "group": "-RE (Group 3)", "aux": "avoir", "refl": false, "note": "", "tenses": {"present": ["je comprends", "tu comprends", "il/elle comprend", "nous comprenons", "vous comprenez", "ils/elles comprennent"], "passe": ["j'ai compris", "tu as compris", "il/elle a compris", "nous avons compris", "vous avez compris", "ils/elles ont compris"], "futur": ["je vais comprendre", "tu vas comprendre", "il/elle va comprendre", "nous allons comprendre", "vous allez comprendre", "ils/elles vont comprendre"], "imparfait": ["je comprenais", "tu comprenais", "il/elle comprenait", "nous comprenions", "vous compreniez", "ils/elles comprenaient"]}, "tpl": [[0, "la leçon", "the lesson"], [1, "le français", "French"]], "env": ["understand", "understood"], "ex": []}, {"inf": "apprendre", "en": "to learn", "group": "-RE (Group 3)", "aux": "avoir", "refl": false, "note": "", "tenses": {"present": ["j'apprends", "tu apprends", "il/elle apprend", "nous apprenons", "vous apprenez", "ils/elles apprennent"], "passe": ["j'ai appris", "tu as appris", "il/elle a appris", "nous avons appris", "vous avez appris", "ils/elles ont appris"], "futur": ["je vais apprendre", "tu vas apprendre", "il/elle va apprendre", "nous allons apprendre", "vous allez apprendre", "ils/elles vont apprendre"], "imparfait": ["j'apprenais", "tu apprenais", "il/elle apprenait", "nous apprenions", "vous appreniez", "ils/elles apprenaient"]}, "tpl": [[0, "le français", "French"], [2, "à conduire", "to drive"]], "env": ["learn", "learnt"], "ex": []}, {"inf": "conduire", "en": "to drive", "group": "-RE (Group 3)", "aux": "avoir", "refl": false, "note": "", "tenses": {"present": ["je conduis", "tu conduis", "il/elle conduit", "nous conduisons", "vous conduisez", "ils/elles conduisent"], "passe": ["j'ai conduit", "tu as conduit", "il/elle a conduit", "nous avons conduit", "vous avez conduit", "ils/elles ont conduit"], "futur": ["je vais conduire", "tu vas conduire", "il/elle va conduire", "nous allons conduire", "vous allez conduire", "ils/elles vont conduire"], "imparfait": ["je conduisais", "tu conduisais", "il/elle conduisait", "nous conduisions", "vous conduisiez", "ils/elles conduisaient"]}, "tpl": [[0, "prudemment", "carefully"], [2, "une voiture rouge", "a red car"]], "env": ["drive", "drove"], "ex": []}, {"inf": "dire", "en": "to say / to tell", "group": "-RE (Group 3)", "aux": "avoir", "refl": false, "note": "vous dites — not \"vous disez\".", "tenses": {"present": ["je dis", "tu dis", "il/elle dit", "nous disons", "vous dites", "ils/elles disent"], "passe": ["j'ai dit", "tu as dit", "il/elle a dit", "nous avons dit", "vous avez dit", "ils/elles ont dit"], "futur": ["je vais dire", "tu vas dire", "il/elle va dire", "nous allons dire", "vous allez dire", "ils/elles vont dire"], "imparfait": ["je disais", "tu disais", "il/elle disait", "nous disions", "vous disiez", "ils/elles disaient"]}, "tpl": [[0, "la vérité", "the truth"], [2, "bonjour", "hello"]], "env": ["say", "said"], "ex": []}, {"inf": "mettre", "en": "to put / to place", "group": "-RE (Group 3)", "aux": "avoir", "refl": false, "note": "", "tenses": {"present": ["je mets", "tu mets", "il/elle met", "nous mettons", "vous mettez", "ils/elles mettent"], "passe": ["j'ai mis", "tu as mis", "il/elle a mis", "nous avons mis", "vous avez mis", "ils/elles ont mis"], "futur": ["je vais mettre", "tu vas mettre", "il/elle va mettre", "nous allons mettre", "vous allez mettre", "ils/elles vont mettre"], "imparfait": ["je mettais", "tu mettais", "il/elle mettait", "nous mettions", "vous mettiez", "ils/elles mettaient"]}, "tpl": [[0, "les clés sur la table", "the keys on the table"], [1, "le lait dans le frigo", "the milk in the fridge"]], "env": ["put", "put"], "ex": []}, {"inf": "boire", "en": "to drink", "group": "-RE (Group 3)", "aux": "avoir", "refl": false, "note": "", "tenses": {"present": ["je bois", "tu bois", "il/elle boit", "nous buvons", "vous buvez", "ils/elles boivent"], "passe": ["j'ai bu", "tu as bu", "il/elle a bu", "nous avons bu", "vous avez bu", "ils/elles ont bu"], "futur": ["je vais boire", "tu vas boire", "il/elle va boire", "nous allons boire", "vous allez boire", "ils/elles vont boire"], "imparfait": ["je buvais", "tu buvais", "il/elle buvait", "nous buvions", "vous buviez", "ils/elles buvaient"]}, "tpl": [[0, "de l'eau", "water"], [2, "un café le matin", "a coffee in the morning"]], "env": ["drink", "drank"], "ex": []}, {"inf": "lire", "en": "to read", "group": "-RE (Group 3)", "aux": "avoir", "refl": false, "note": "", "tenses": {"present": ["je lis", "tu lis", "il/elle lit", "nous lisons", "vous lisez", "ils/elles lisent"], "passe": ["j'ai lu", "tu as lu", "il/elle a lu", "nous avons lu", "vous avez lu", "ils/elles ont lu"], "futur": ["je vais lire", "tu vas lire", "il/elle va lire", "nous allons lire", "vous allez lire", "ils/elles vont lire"], "imparfait": ["je lisais", "tu lisais", "il/elle lisait", "nous lisions", "vous lisiez", "ils/elles lisaient"]}, "tpl": [[0, "un livre", "a book"], [2, "le journal", "the newspaper"]], "env": ["read", "read"], "ex": []}, {"inf": "écrire", "en": "to write", "group": "-RE (Group 3)", "aux": "avoir", "refl": false, "note": "", "tenses": {"present": ["j'écris", "tu écris", "il/elle écrit", "nous écrivons", "vous écrivez", "ils/elles écrivent"], "passe": ["j'ai écrit", "tu as écrit", "il/elle a écrit", "nous avons écrit", "vous avez écrit", "ils/elles ont écrit"], "futur": ["je vais écrire", "tu vas écrire", "il/elle va écrire", "nous allons écrire", "vous allez écrire", "ils/elles vont écrire"], "imparfait": ["j'écrivais", "tu écrivais", "il/elle écrivait", "nous écrivions", "vous écriviez", "ils/elles écrivaient"]}, "tpl": [[0, "une lettre", "a letter"], [2, "à ses parents", "to his/her parents"]], "env": ["write", "wrote"], "ex": []}, {"inf": "vivre", "en": "to live", "group": "-RE (Group 3)", "aux": "avoir", "refl": false, "note": "", "tenses": {"present": ["je vis", "tu vis", "il/elle vit", "nous vivons", "vous vivez", "ils/elles vivent"], "passe": ["j'ai vécu", "tu as vécu", "il/elle a vécu", "nous avons vécu", "vous avez vécu", "ils/elles ont vécu"], "futur": ["je vais vivre", "tu vas vivre", "il/elle va vivre", "nous allons vivre", "vous allez vivre", "ils/elles vont vivre"], "imparfait": ["je vivais", "tu vivais", "il/elle vivait", "nous vivions", "vous viviez", "ils/elles vivaient"]}, "tpl": [[0, "en Angleterre", "in England"], [5, "à Paris", "in Paris"]], "env": ["live", "lived"], "ex": []}, {"inf": "croire", "en": "to believe", "group": "-RE (Group 3)", "aux": "avoir", "refl": false, "note": "", "tenses": {"present": ["je crois", "tu crois", "il/elle croit", "nous croyons", "vous croyez", "ils/elles croient"], "passe": ["j'ai cru", "tu as cru", "il/elle a cru", "nous avons cru", "vous avez cru", "ils/elles ont cru"], "futur": ["je vais croire", "tu vas croire", "il/elle va croire", "nous allons croire", "vous allez croire", "ils/elles vont croire"], "imparfait": ["je croyais", "tu croyais", "il/elle croyait", "nous croyions", "vous croyiez", "ils/elles croyaient"]}, "tpl": [[0, "cette histoire", "this story"], [3, "en toi", "in you"]], "env": ["believe", "believed"], "ex": []}, {"inf": "suivre", "en": "to follow", "group": "-RE (Group 3)", "aux": "avoir", "refl": false, "note": "je suis = I follow AND I am — context decides.", "tenses": {"present": ["je suis", "tu suis", "il/elle suit", "nous suivons", "vous suivez", "ils/elles suivent"], "passe": ["j'ai suivi", "tu as suivi", "il/elle a suivi", "nous avons suivi", "vous avez suivi", "ils/elles ont suivi"], "futur": ["je vais suivre", "tu vas suivre", "il/elle va suivre", "nous allons suivre", "vous allez suivre", "ils/elles vont suivre"], "imparfait": ["je suivais", "tu suivais", "il/elle suivait", "nous suivions", "vous suiviez", "ils/elles suivaient"]}, "tpl": [[5, "le guide", "the guide"], [1, "la route", "the road"]], "env": ["follow", "followed"], "ex": []}, {"inf": "connaître", "en": "to know (be familiar with)", "group": "-RE (Group 3)", "aux": "avoir", "refl": false, "note": "", "tenses": {"present": ["je connais", "tu connais", "il/elle connaît", "nous connaissons", "vous connaissez", "ils/elles connaissent"], "passe": ["j'ai connu", "tu as connu", "il/elle a connu", "nous avons connu", "vous avez connu", "ils/elles ont connu"], "futur": ["je vais connaître", "tu vas connaître", "il/elle va connaître", "nous allons connaître", "vous allez connaître", "ils/elles vont connaître"], "imparfait": ["je connaissais", "tu connaissais", "il/elle connaissait", "nous connaissions", "vous connaissiez", "ils/elles connaissaient"]}, "tpl": [[0, "Paris", "Paris"], [1, "Marie", "Marie"]], "env": ["know", "knew"], "ex": []}, {"inf": "se réveiller", "en": "to wake up", "group": "Reflexive", "aux": "être", "refl": true, "note": "", "tenses": {"present": ["je me réveille", "tu te réveilles", "il/elle se réveille", "nous nous réveillons", "vous vous réveillez", "ils/elles se réveillent"], "passe": ["je me suis réveillé(e)", "tu t'es réveillé(e)", "il/elle s'est réveillé(e)", "nous nous sommes réveillé(e)s", "vous vous êtes réveillé(e)(s)", "ils/elles se sont réveillé(e)s"], "futur": ["je vais me réveiller", "tu vas te réveiller", "il/elle va se réveiller", "nous allons nous réveiller", "vous allez vous réveiller", "ils/elles vont se réveiller"], "imparfait": ["je me réveillais", "tu te réveillais", "il/elle se réveillait", "nous nous réveillions", "vous vous réveilliez", "ils/elles se réveillaient"]}, "tpl": [[0, "à 6 heures", "at 6"], [2, "tôt", "early"]], "env": ["wake up", "woke up"], "ex": []}, {"inf": "se lever", "en": "to get up", "group": "Reflexive", "aux": "être", "refl": true, "note": "", "tenses": {"present": ["je me lève", "tu te lèves", "il/elle se lève", "nous nous levons", "vous vous levez", "ils/elles se lèvent"], "passe": ["je me suis levé(e)", "tu t'es levé(e)", "il/elle s'est levé(e)", "nous nous sommes levé(e)s", "vous vous êtes levé(e)(s)", "ils/elles se sont levé(e)s"], "futur": ["je vais me lever", "tu vas te lever", "il/elle va se lever", "nous allons nous lever", "vous allez vous lever", "ils/elles vont se lever"], "imparfait": ["je me levais", "tu te levais", "il/elle se levait", "nous nous levions", "vous vous leviez", "ils/elles se levaient"]}, "tpl": [[0, "à 7 heures", "at 7"], [3, "tard le dimanche", "late on Sundays"]], "env": ["get up", "got up"], "ex": []}, {"inf": "se laver", "en": "to wash (oneself)", "group": "Reflexive", "aux": "être", "refl": true, "note": "", "tenses": {"present": ["je me lave", "tu te laves", "il/elle se lave", "nous nous lavons", "vous vous lavez", "ils/elles se lavent"], "passe": ["je me suis lavé(e)", "tu t'es lavé(e)", "il/elle s'est lavé(e)", "nous nous sommes lavé(e)s", "vous vous êtes lavé(e)(s)", "ils/elles se sont lavé(e)s"], "futur": ["je vais me laver", "tu vas te laver", "il/elle va se laver", "nous allons nous laver", "vous allez vous laver", "ils/elles vont se laver"], "imparfait": ["je me lavais", "tu te lavais", "il/elle se lavait", "nous nous lavions", "vous vous laviez", "ils/elles se lavaient"]}, "tpl": [[0, "le matin", "in the morning"], [2, "le soir", "in the evening"]], "env": ["wash", "washed"], "ex": []}, {"inf": "se brosser", "en": "to brush (teeth/hair)", "group": "Reflexive", "aux": "être", "refl": true, "note": "se brosser les dents = to brush one's teeth.", "tenses": {"present": ["je me brosse", "tu te brosses", "il/elle se brosse", "nous nous brossons", "vous vous brossez", "ils/elles se brossent"], "passe": ["je me suis brossé(e)", "tu t'es brossé(e)", "il/elle s'est brossé(e)", "nous nous sommes brossé(e)s", "vous vous êtes brossé(e)(s)", "ils/elles se sont brossé(e)s"], "futur": ["je vais me brosser", "tu vas te brosser", "il/elle va se brosser", "nous allons nous brosser", "vous allez vous brosser", "ils/elles vont se brosser"], "imparfait": ["je me brossais", "tu te brossais", "il/elle se brossait", "nous nous brossions", "vous vous brossiez", "ils/elles se brossaient"]}, "tpl": [[0, "les dents", "my teeth"], [2, "les cheveux", "his/her hair"]], "env": ["brush", "brushed"], "ex": []}, {"inf": "se doucher", "en": "to have a shower", "group": "Reflexive", "aux": "être", "refl": true, "note": "", "tenses": {"present": ["je me douche", "tu te douches", "il/elle se douche", "nous nous douchons", "vous vous douchez", "ils/elles se douchent"], "passe": ["je me suis douché(e)", "tu t'es douché(e)", "il/elle s'est douché(e)", "nous nous sommes douché(e)s", "vous vous êtes douché(e)(s)", "ils/elles se sont douché(e)s"], "futur": ["je vais me doucher", "tu vas te doucher", "il/elle va se doucher", "nous allons nous doucher", "vous allez vous doucher", "ils/elles vont se doucher"], "imparfait": ["je me douchais", "tu te douchais", "il/elle se douchait", "nous nous douchions", "vous vous douchiez", "ils/elles se douchaient"]}, "tpl": [[0, "le matin", "in the morning"], [2, "après le sport", "after sport"]], "env": ["shower", "showered"], "ex": []}, {"inf": "se coucher", "en": "to go to bed", "group": "Reflexive", "aux": "être", "refl": true, "note": "", "tenses": {"present": ["je me couche", "tu te couches", "il/elle se couche", "nous nous couchons", "vous vous couchez", "ils/elles se couchent"], "passe": ["je me suis couché(e)", "tu t'es couché(e)", "il/elle s'est couché(e)", "nous nous sommes couché(e)s", "vous vous êtes couché(e)(s)", "ils/elles se sont couché(e)s"], "futur": ["je vais me coucher", "tu vas te coucher", "il/elle va se coucher", "nous allons nous coucher", "vous allez vous coucher", "ils/elles vont se coucher"], "imparfait": ["je me couchais", "tu te couchais", "il/elle se couchait", "nous nous couchions", "vous vous couchiez", "ils/elles se couchaient"]}, "tpl": [[0, "tôt", "early"], [5, "à 8 heures", "at 8"]], "env": ["go to bed", "went to bed"], "ex": []}, {"inf": "s'endormir", "en": "to fall asleep", "group": "Reflexive", "aux": "être", "refl": true, "note": "", "tenses": {"present": ["je m'endors", "tu t'endors", "il/elle s'endort", "nous nous endormons", "vous vous endormez", "ils/elles s'endorment"], "passe": ["je me suis endormi(e)", "tu t'es endormi(e)", "il/elle s'est endormi(e)", "nous nous sommes endormi(e)s", "vous vous êtes endormi(e)(s)", "ils/elles se sont endormi(e)s"], "futur": ["je vais m'endormir", "tu vas t'endormir", "il/elle va s'endormir", "nous allons nous endormir", "vous allez vous endormir", "ils/elles vont s'endormir"], "imparfait": ["je m'endormais", "tu t'endormais", "il/elle s'endormait", "nous nous endormions", "vous vous endormiez", "ils/elles s'endormaient"]}, "tpl": [[0, "vite", "quickly"], [2, "devant la télé", "in front of the TV"]], "env": ["fall asleep", "fell asleep"], "ex": []}, {"inf": "s'amuser", "en": "to enjoy oneself / have fun", "group": "Reflexive", "aux": "être", "refl": true, "note": "", "tenses": {"present": ["je m'amuse", "tu t'amuses", "il/elle s'amuse", "nous nous amusons", "vous vous amusez", "ils/elles s'amusent"], "passe": ["je me suis amusé(e)", "tu t'es amusé(e)", "il/elle s'est amusé(e)", "nous nous sommes amusé(e)s", "vous vous êtes amusé(e)(s)", "ils/elles se sont amusé(e)s"], "futur": ["je vais m'amuser", "tu vas t'amuser", "il/elle va s'amuser", "nous allons nous amuser", "vous allez vous amuser", "ils/elles vont s'amuser"], "imparfait": ["je m'amusais", "tu t'amusais", "il/elle s'amusait", "nous nous amusions", "vous vous amusiez", "ils/elles s'amusaient"]}, "tpl": [[5, "dans le jardin", "in the garden"], [0, "avec mes amis", "with my friends"]], "env": ["have fun", "had fun"], "ex": []}, {"inf": "se sentir", "en": "to feel (oneself)", "group": "Reflexive", "aux": "être", "refl": true, "note": "", "tenses": {"present": ["je me sens", "tu te sens", "il/elle se sent", "nous nous sentons", "vous vous sentez", "ils/elles se sentent"], "passe": ["je me suis senti(e)", "tu t'es senti(e)", "il/elle s'est senti(e)", "nous nous sommes senti(e)s", "vous vous êtes senti(e)(s)", "ils/elles se sont senti(e)s"], "futur": ["je vais me sentir", "tu vas te sentir", "il/elle va se sentir", "nous allons nous sentir", "vous allez vous sentir", "ils/elles vont se sentir"], "imparfait": ["je me sentais", "tu te sentais", "il/elle se sentait", "nous nous sentions", "vous vous sentiez", "ils/elles se sentaient"]}, "tpl": [[0, "bien", "well"], [2, "mieux", "better"]], "env": ["feel", "felt"], "ex": []}, {"inf": "s'appeler", "en": "to be called", "group": "Reflexive", "aux": "être", "refl": true, "note": "Doubles the l when stressed; nous/vous keep one l.", "tenses": {"present": ["je m'appelle", "tu t'appelles", "il/elle s'appelle", "nous nous appelons", "vous vous appelez", "ils/elles s'appellent"], "passe": ["je me suis appelé(e)", "tu t'es appelé(e)", "il/elle s'est appelé(e)", "nous nous sommes appelé(e)s", "vous vous êtes appelé(e)(s)", "ils/elles se sont appelé(e)s"], "futur": ["je vais m'appeler", "tu vas t'appeler", "il/elle va s'appeler", "nous allons nous appeler", "vous allez vous appeler", "ils/elles vont s'appeler"], "imparfait": ["je m'appelais", "tu t'appelais", "il/elle s'appelait", "nous nous appelions", "vous vous appeliez", "ils/elles s'appelaient"]}, "ex": [["Je m'appelle Jack.", "My name is Jack."], ["Comment tu t'appelles ?", "What's your name?"]]}, {"inf": "s'excuser", "en": "to apologise", "group": "Reflexive", "aux": "être", "refl": true, "note": "", "tenses": {"present": ["je m'excuse", "tu t'excuses", "il/elle s'excuse", "nous nous excusons", "vous vous excusez", "ils/elles s'excusent"], "passe": ["je me suis excusé(e)", "tu t'es excusé(e)", "il/elle s'est excusé(e)", "nous nous sommes excusé(e)s", "vous vous êtes excusé(e)(s)", "ils/elles se sont excusé(e)s"], "futur": ["je vais m'excuser", "tu vas t'excuser", "il/elle va s'excuser", "nous allons nous excuser", "vous allez vous excuser", "ils/elles vont s'excuser"], "imparfait": ["je m'excusais", "tu t'excusais", "il/elle s'excusait", "nous nous excusions", "vous vous excusiez", "ils/elles s'excusaient"]}, "tpl": [[0, "du retard", "for the delay"], [2, "souvent", "often"]], "env": ["apologise", "apologised"], "ex": []}, {"inf": "se trouver", "en": "to be located", "group": "Reflexive", "aux": "être", "refl": true, "note": "", "tenses": {"present": ["je me trouve", "tu te trouves", "il/elle se trouve", "nous nous trouvons", "vous vous trouvez", "ils/elles se trouvent"], "passe": ["je me suis trouvé(e)", "tu t'es trouvé(e)", "il/elle s'est trouvé(e)", "nous nous sommes trouvé(e)s", "vous vous êtes trouvé(e)(s)", "ils/elles se sont trouvé(e)s"], "futur": ["je vais me trouver", "tu vas te trouver", "il/elle va se trouver", "nous allons nous trouver", "vous allez vous trouver", "ils/elles vont se trouver"], "imparfait": ["je me trouvais", "tu te trouvais", "il/elle se trouvait", "nous nous trouvions", "vous vous trouviez", "ils/elles se trouvaient"]}, "ex": [["Où se trouve la banque ?", "Where is the bank?"], ["La gare se trouve ici.", "The station is here."]]}, {"inf": "s'intéresser", "en": "to be interested (in)", "group": "Reflexive", "aux": "être", "refl": true, "note": "s'intéresser à quelque chose.", "tenses": {"present": ["je m'intéresse", "tu t'intéresses", "il/elle s'intéresse", "nous nous intéressons", "vous vous intéressez", "ils/elles s'intéressent"], "passe": ["je me suis intéressé(e)", "tu t'es intéressé(e)", "il/elle s'est intéressé(e)", "nous nous sommes intéressé(e)s", "vous vous êtes intéressé(e)(s)", "ils/elles se sont intéressé(e)s"], "futur": ["je vais m'intéresser", "tu vas t'intéresser", "il/elle va s'intéresser", "nous allons nous intéresser", "vous allez vous intéresser", "ils/elles vont s'intéresser"], "imparfait": ["je m'intéressais", "tu t'intéressais", "il/elle s'intéressait", "nous nous intéressions", "vous vous intéressiez", "ils/elles s'intéressaient"]}, "ex": [["Je m'intéresse au tennis.", "I'm interested in tennis."], ["Elle s'intéresse à l'art.", "She's interested in art."]]}, {"inf": "se souvenir", "en": "to remember", "group": "Reflexive", "aux": "être", "refl": true, "note": "se souvenir de quelque chose.", "tenses": {"present": ["je me souviens", "tu te souviens", "il/elle se souvient", "nous nous souvenons", "vous vous souvenez", "ils/elles se souviennent"], "passe": ["je me suis souvenu(e)", "tu t'es souvenu(e)", "il/elle s'est souvenu(e)", "nous nous sommes souvenu(e)s", "vous vous êtes souvenu(e)(s)", "ils/elles se sont souvenu(e)s"], "futur": ["je vais me souvenir", "tu vas te souvenir", "il/elle va se souvenir", "nous allons nous souvenir", "vous allez vous souvenir", "ils/elles vont se souvenir"], "imparfait": ["je me souvenais", "tu te souvenais", "il/elle se souvenait", "nous nous souvenions", "vous vous souveniez", "ils/elles se souvenaient"]}, "tpl": [[0, "de toi", "you"], [3, "de Paris", "Paris"]], "env": ["remember", "remembered"], "ex": []}, {"inf": "se perdre", "en": "to get lost", "group": "Reflexive", "aux": "être", "refl": true, "note": "", "tenses": {"present": ["je me perds", "tu te perds", "il/elle se perd", "nous nous perdons", "vous vous perdez", "ils/elles se perdent"], "passe": ["je me suis perdu(e)", "tu t'es perdu(e)", "il/elle s'est perdu(e)", "nous nous sommes perdu(e)s", "vous vous êtes perdu(e)(s)", "ils/elles se sont perdu(e)s"], "futur": ["je vais me perdre", "tu vas te perdre", "il/elle va se perdre", "nous allons nous perdre", "vous allez vous perdre", "ils/elles vont se perdre"], "imparfait": ["je me perdais", "tu te perdais", "il/elle se perdait", "nous nous perdions", "vous vous perdiez", "ils/elles se perdaient"]}, "tpl": [[0, "en ville", "in town"], [3, "facilement", "easily"]], "env": ["get lost", "got lost"], "ex": []}, {"inf": "se garer", "en": "to park", "group": "Reflexive", "aux": "être", "refl": true, "note": "", "tenses": {"present": ["je me gare", "tu te gares", "il/elle se gare", "nous nous garons", "vous vous garez", "ils/elles se garent"], "passe": ["je me suis garé(e)", "tu t'es garé(e)", "il/elle s'est garé(e)", "nous nous sommes garé(e)s", "vous vous êtes garé(e)(s)", "ils/elles se sont garé(e)s"], "futur": ["je vais me garer", "tu vas te garer", "il/elle va se garer", "nous allons nous garer", "vous allez vous garer", "ils/elles vont se garer"], "imparfait": ["je me garais", "tu te garais", "il/elle se garait", "nous nous garions", "vous vous gariez", "ils/elles se garaient"]}, "tpl": [[0, "devant la maison", "in front of the house"], [2, "dans la rue", "in the street"]], "env": ["park", "parked"], "ex": []}, {"inf": "falloir", "en": "to be necessary / to have to", "group": "Impersonal", "aux": "", "refl": false, "note": "Only ever \"il faut\" (+ infinitive/noun): Il faut manger.", "impersonal": true, "tenses": {"present": ["il faut"], "passe": ["il a fallu"], "futur": ["il va falloir"], "imparfait": ["il fallait"]}, "ex": [["Il faut manger.", "One must eat."], ["Il faut du temps.", "It takes time."]]}, {"inf": "pleuvoir", "en": "to rain", "group": "Impersonal", "aux": "", "refl": false, "note": "", "impersonal": true, "tenses": {"present": ["il pleut"], "passe": ["il a plu"], "futur": ["il va pleuvoir"], "imparfait": ["il pleuvait"]}, "ex": [["Il pleut aujourd'hui.", "It's raining today."], ["Il pleut tout le temps.", "It rains all the time."]]}, {"inf": "neiger", "en": "to snow", "group": "Impersonal", "aux": "", "refl": false, "note": "", "impersonal": true, "tenses": {"present": ["il neige"], "passe": ["il a neigé"], "futur": ["il va neiger"], "imparfait": ["il neigeait"]}, "ex": [["Il neige en hiver.", "It snows in winter."], ["Il neige beaucoup ici.", "It snows a lot here."]]}];
+const TENSE_EXPL = {"present": "The present — le présent. For what's happening now, what you do regularly, and general facts. One French present covers English 'I speak', 'I am speaking' and 'I do speak'. E.g. Je parle français.", "passe": "The passé composé — the main past tense. For completed, one-off past actions: what happened. Formed from a helper (avoir or être, present) + the past participle. Most verbs use avoir; movement verbs and all reflexive verbs use être, and then the ending agrees with the subject — the (e)/(s) shows that. E.g. J'ai mangé = I ate / I have eaten.", "futur": "The futur proche — the near future, 'going to…'. Formed from aller (present) + the infinitive. The everyday way to talk about the future at your level. E.g. Je vais manger = I'm going to eat.", "imparfait": "The imparfait — the background past. For what used to happen, repeated habits, and ongoing states: 'was doing / used to do'. Formed from the nous-present stem + fixed endings. E.g. Je mangeais = I was eating / I used to eat. Often the backdrop to a passé composé event."};
+const AREAS = {"grammar": "Grammar & Structure", "articles": "Grammar & Structure", "prepositions": "Grammar & Structure", "sentence_structure": "Grammar & Structure", "possessives": "Grammar & Structure", "demonstratives": "Grammar & Structure", "frequency": "Grammar & Structure", "bon_bien": "Grammar & Structure", "pronouns": "People & Identity", "nationalities": "People & Identity", "languages": "People & Identity", "family": "People & Identity", "appearance": "People & Identity", "personality": "People & Identity", "house": "Home & Everyday", "furniture": "Home & Everyday", "kitchen": "Home & Everyday", "clothes": "Home & Everyday", "colours": "Home & Everyday", "adjectives": "Home & Everyday", "weather": "Home & Everyday", "countries": "Places & Travel", "shops": "Places & Travel", "travel_rail": "Places & Travel", "travel_road": "Places & Travel", "travel_air": "Places & Travel", "travel_journey": "Places & Travel", "travel_phrases": "Places & Travel", "days": "Time & Numbers", "months": "Time & Numbers", "seasons": "Time & Numbers", "time": "Time & Numbers", "telling_time": "Time & Numbers", "ordinals": "Time & Numbers", "body": "Body & Actions", "faire": "Body & Actions"};
+const AREA_ORDER = ["Grammar & Structure", "People & Identity", "Home & Everyday", "Places & Travel", "Time & Numbers", "Body & Actions"];
+const SITUATIONS = [{"id": "airport", "name": "✈️ At the airport", "who": "Check-in agent", "lines": [{"who": "them", "fr": "Bonjour, votre passeport et votre billet, s'il vous plaît.", "en": "Hello, your passport and ticket, please."}, {"who": "you", "fr": "Bonjour, voici mon passeport.", "en": "Hello, here is my passport."}, {"who": "them", "fr": "Vous avez des bagages à enregistrer ?", "en": "Do you have bags to check in?"}, {"who": "you", "fr": "Oui, une valise.", "en": "Yes, one suitcase."}, {"who": "them", "fr": "Vous préférez un siège côté couloir ou côté hublot ?", "en": "Would you prefer an aisle or a window seat?"}, {"who": "you", "fr": "Côté hublot, s'il vous plaît.", "en": "A window seat, please."}, {"who": "them", "fr": "Voici votre carte d'embarquement. Embarquement à 14h, porte 22.", "en": "Here's your boarding pass. Boarding at 2pm, gate 22."}, {"who": "you", "fr": "Merci beaucoup.", "en": "Thank you very much."}], "phrases": [["Où est l'enregistrement ?", "Where is check-in?"], ["À quelle heure est l'embarquement ?", "What time is boarding?"], ["Mon vol est en retard.", "My flight is delayed."], ["J'ai seulement un bagage à main.", "I only have hand luggage."]]}, {"id": "bakery", "name": "🥖 At the bakery", "who": "Baker", "lines": [{"who": "them", "fr": "Bonjour, vous désirez ?", "en": "Hello, what would you like?"}, {"who": "you", "fr": "Bonjour, une baguette, s'il vous plaît.", "en": "Hello, a baguette, please."}, {"who": "them", "fr": "Avec ceci ?", "en": "Anything else?"}, {"who": "you", "fr": "Oui, deux croissants aussi.", "en": "Yes, two croissants too."}, {"who": "them", "fr": "Ce sera tout ?", "en": "Will that be all?"}, {"who": "you", "fr": "Oui, c'est tout. Ça fait combien ?", "en": "Yes, that's all. How much is it?"}, {"who": "them", "fr": "Ça fait quatre euros cinquante.", "en": "That's four euros fifty."}, {"who": "you", "fr": "Voilà. Merci, au revoir !", "en": "Here you go. Thanks, goodbye!"}], "phrases": [["Je voudrais une baguette.", "I'd like a baguette."], ["Vous avez des pains au chocolat ?", "Do you have any pains au chocolat?"], ["Je vais prendre celui-là.", "I'll take that one."], ["Je peux payer par carte ?", "Can I pay by card?"]]}, {"id": "restaurant", "name": "🍽️ At a restaurant", "who": "Waiter", "lines": [{"who": "them", "fr": "Bonsoir, vous avez réservé ?", "en": "Good evening, do you have a reservation?"}, {"who": "you", "fr": "Oui, une table pour deux au nom de Kelly.", "en": "Yes, a table for two under Kelly."}, {"who": "them", "fr": "Très bien, suivez-moi. Voici la carte.", "en": "Very well, follow me. Here's the menu."}, {"who": "you", "fr": "Merci. Qu'est-ce que vous recommandez ?", "en": "Thank you. What do you recommend?"}, {"who": "them", "fr": "Le poisson du jour est excellent.", "en": "The fish of the day is excellent."}, {"who": "you", "fr": "Parfait. Je vais prendre le poisson et une carafe d'eau.", "en": "Perfect. I'll have the fish and a jug of water."}, {"who": "them", "fr": "Et comme boisson ?", "en": "And to drink?"}, {"who": "you", "fr": "Un verre de vin rouge, s'il vous plaît.", "en": "A glass of red wine, please."}], "phrases": [["Une table pour deux, s'il vous plaît.", "A table for two, please."], ["Qu'est-ce que vous recommandez ?", "What do you recommend?"], ["Je suis végétarien.", "I'm vegetarian."], ["L'addition, s'il vous plaît.", "The bill, please."], ["C'était délicieux.", "It was delicious."]]}, {"id": "police", "name": "🚓 Stopped by the police", "who": "Police officer", "lines": [{"who": "them", "fr": "Bonjour, vos papiers, s'il vous plaît.", "en": "Hello, your documents, please."}, {"who": "you", "fr": "Bonjour, voici mon permis et la carte grise.", "en": "Hello, here's my licence and the registration."}, {"who": "them", "fr": "Vous savez pourquoi je vous arrête ?", "en": "Do you know why I've stopped you?"}, {"who": "you", "fr": "Non, je ne sais pas. J'ai fait quelque chose ?", "en": "No, I don't know. Did I do something?"}, {"who": "them", "fr": "Vous rouliez un peu vite.", "en": "You were driving a bit fast."}, {"who": "you", "fr": "Je suis désolé, je ne savais pas.", "en": "I'm sorry, I didn't know."}, {"who": "them", "fr": "Faites attention. Bonne route.", "en": "Be careful. Have a safe trip."}, {"who": "you", "fr": "Merci, au revoir.", "en": "Thank you, goodbye."}], "phrases": [["Voici mon permis de conduire.", "Here's my driving licence."], ["Je suis touriste.", "I'm a tourist."], ["Je ne parle pas très bien français.", "I don't speak French very well."], ["Pouvez-vous répéter, s'il vous plaît ?", "Can you repeat, please?"], ["Il y a un problème ?", "Is there a problem?"]]}, {"id": "shop", "name": "🛍️ In a shop", "who": "Shop assistant", "lines": [{"who": "them", "fr": "Bonjour, je peux vous aider ?", "en": "Hello, can I help you?"}, {"who": "you", "fr": "Je regarde seulement, merci.", "en": "I'm just looking, thanks."}, {"who": "you", "fr": "Est-ce que vous avez ce pull en bleu ?", "en": "Do you have this jumper in blue?"}, {"who": "them", "fr": "Oui, en quelle taille ?", "en": "Yes, in what size?"}, {"who": "you", "fr": "En taille moyenne.", "en": "In medium."}, {"who": "them", "fr": "Voilà. La cabine d'essayage est là-bas.", "en": "Here you go. The fitting room is over there."}, {"who": "you", "fr": "Je le prends. Je peux payer par carte ?", "en": "I'll take it. Can I pay by card?"}, {"who": "them", "fr": "Bien sûr.", "en": "Of course."}], "phrases": [["Je cherche un cadeau.", "I'm looking for a gift."], ["Vous l'avez en plus grand ?", "Do you have it in a bigger size?"], ["Je peux l'essayer ?", "Can I try it on?"], ["C'est trop cher.", "It's too expensive."], ["C'est combien ?", "How much is it?"]]}, {"id": "museum", "name": "🏛️ At the museum", "who": "Ticket clerk", "lines": [{"who": "them", "fr": "Bonjour, un billet ?", "en": "Hello, one ticket?"}, {"who": "you", "fr": "Oui, un adulte, s'il vous plaît. C'est combien ?", "en": "Yes, one adult, please. How much is it?"}, {"who": "them", "fr": "Douze euros. Vous avez une réduction ?", "en": "Twelve euros. Do you have a concession?"}, {"who": "you", "fr": "Je suis étudiant, voici ma carte.", "en": "I'm a student, here's my card."}, {"who": "them", "fr": "Alors c'est huit euros.", "en": "Then it's eight euros."}, {"who": "you", "fr": "À quelle heure ferme le musée ?", "en": "What time does the museum close?"}, {"who": "them", "fr": "À dix-huit heures. L'audioguide est gratuit.", "en": "At 6pm. The audio guide is free."}, {"who": "you", "fr": "Super, merci.", "en": "Great, thanks."}], "phrases": [["Un billet, s'il vous plaît.", "One ticket, please."], ["Il y a une réduction étudiant ?", "Is there a student discount?"], ["Où est l'entrée ?", "Where is the entrance?"], ["On peut prendre des photos ?", "Can we take photos?"]]}, {"id": "hotel", "name": "🏨 At the hotel", "who": "Receptionist", "lines": [{"who": "them", "fr": "Bonjour, vous avez une réservation ?", "en": "Hello, do you have a reservation?"}, {"who": "you", "fr": "Oui, une chambre pour deux nuits au nom de Kelly.", "en": "Yes, a room for two nights under Kelly."}, {"who": "them", "fr": "Très bien. Voici votre clé, chambre douze.", "en": "Very good. Here's your key, room 12."}, {"who": "you", "fr": "À quelle heure est le petit déjeuner ?", "en": "What time is breakfast?"}, {"who": "them", "fr": "De sept à dix heures.", "en": "From 7 to 10."}, {"who": "you", "fr": "Est-ce qu'il y a le wifi ?", "en": "Is there wifi?"}, {"who": "them", "fr": "Oui, le code est à la réception.", "en": "Yes, the code is at reception."}], "phrases": [["J'ai réservé une chambre.", "I've booked a room."], ["Une chambre pour deux personnes.", "A room for two people."], ["À quelle heure est le check-out ?", "What time is check-out?"], ["Le petit déjeuner est inclus ?", "Is breakfast included?"]]}, {"id": "directions", "name": "🧭 Asking directions", "who": "Passer-by", "lines": [{"who": "you", "fr": "Excusez-moi, où est la gare, s'il vous plaît ?", "en": "Excuse me, where is the station, please?"}, {"who": "them", "fr": "Allez tout droit, puis tournez à gauche.", "en": "Go straight on, then turn left."}, {"who": "you", "fr": "C'est loin ?", "en": "Is it far?"}, {"who": "them", "fr": "Non, c'est à cinq minutes à pied.", "en": "No, it's five minutes on foot."}, {"who": "you", "fr": "Merci beaucoup !", "en": "Thank you very much!"}, {"who": "them", "fr": "Je vous en prie.", "en": "You're welcome."}], "phrases": [["Où est… ?", "Where is…?"], ["Tournez à droite / à gauche.", "Turn right / left."], ["Continuez tout droit.", "Keep going straight."], ["C'est près d'ici ?", "Is it near here?"], ["Je suis perdu.", "I'm lost."]]}, {"id": "cafe", "name": "☕ At the café", "who": "Server", "lines": [{"who": "them", "fr": "Bonjour, qu'est-ce que je vous sers ?", "en": "Hello, what can I get you?"}, {"who": "you", "fr": "Un café au lait, s'il vous plaît.", "en": "A coffee with milk, please."}, {"who": "them", "fr": "Quelque chose à manger ?", "en": "Anything to eat?"}, {"who": "you", "fr": "Non merci, juste le café.", "en": "No thanks, just the coffee."}, {"who": "them", "fr": "Sur place ou à emporter ?", "en": "Eat in or takeaway?"}, {"who": "you", "fr": "Sur place, merci.", "en": "Eat in, thanks."}], "phrases": [["Un café, s'il vous plaît.", "A coffee, please."], ["Un thé / un jus d'orange.", "A tea / an orange juice."], ["L'addition, s'il vous plaît.", "The bill, please."], ["C'est combien ?", "How much is it?"]]}, {"id": "pharmacy", "name": "💊 At the pharmacy", "who": "Pharmacist", "lines": [{"who": "them", "fr": "Bonjour, je peux vous aider ?", "en": "Hello, can I help you?"}, {"who": "you", "fr": "Oui, j'ai mal à la tête.", "en": "Yes, I have a headache."}, {"who": "them", "fr": "Depuis quand ?", "en": "Since when?"}, {"who": "you", "fr": "Depuis ce matin.", "en": "Since this morning."}, {"who": "them", "fr": "Prenez ce médicament, deux fois par jour.", "en": "Take this medicine, twice a day."}, {"who": "you", "fr": "Merci. Ça fait combien ?", "en": "Thank you. How much is it?"}], "phrases": [["J'ai mal à la gorge.", "I have a sore throat."], ["Avez-vous quelque chose pour le rhume ?", "Do you have something for a cold?"], ["Je suis allergique à…", "I'm allergic to…"], ["Deux fois par jour.", "Twice a day."]]}, {"id": "station", "name": "🚉 At the train station", "who": "Ticket seller", "lines": [{"who": "you", "fr": "Un aller-retour pour Paris, s'il vous plaît.", "en": "A return to Paris, please."}, {"who": "them", "fr": "Pour aujourd'hui ?", "en": "For today?"}, {"who": "you", "fr": "Oui. Le prochain train part à quelle heure ?", "en": "Yes. What time does the next train leave?"}, {"who": "them", "fr": "À quatorze heures dix, voie trois.", "en": "At 2:10pm, platform 3."}, {"who": "you", "fr": "Merci. Il y a une correspondance ?", "en": "Thank you. Is there a connection?"}, {"who": "them", "fr": "Non, c'est direct.", "en": "No, it's direct."}], "phrases": [["Un aller simple / un aller-retour.", "A single / a return."], ["Le train part de quelle voie ?", "Which platform does the train leave from?"], ["Le train a du retard.", "The train is delayed."], ["J'ai raté ma correspondance.", "I missed my connection."]]}, {"id": "greetings", "name": "👋 Meeting someone", "who": "New acquaintance", "lines": [{"who": "them", "fr": "Bonjour, comment allez-vous ?", "en": "Hello, how are you?"}, {"who": "you", "fr": "Très bien, merci, et vous ?", "en": "Very well, thank you, and you?"}, {"who": "them", "fr": "Ça va bien. Vous êtes d'où ?", "en": "I'm good. Where are you from?"}, {"who": "you", "fr": "Je suis anglais, j'habite près d'Exeter.", "en": "I'm English, I live near Exeter."}, {"who": "them", "fr": "Vous parlez très bien français !", "en": "You speak French very well!"}, {"who": "you", "fr": "Merci, j'apprends encore.", "en": "Thank you, I'm still learning."}], "phrases": [["Enchanté.", "Nice to meet you."], ["Comment vous appelez-vous ?", "What's your name?"], ["Je viens d'Angleterre.", "I'm from England."], ["Pouvez-vous parler plus lentement ?", "Can you speak more slowly?"], ["Je ne comprends pas.", "I don't understand."]]}];
 
+// ---------------- state ----------------
+const DAY = 86400000;
+const BOX_DAYS = [0,0,1,2,4,8,16]; // index = box (1..6)
+let srs = {};            // cardId -> {box, due}
+let prefs = { dir:'en' };
+function load(){ try{ srs=JSON.parse(localStorage.getItem('jf_srs')||'{}'); }catch(e){srs={}}
+  try{ prefs=Object.assign(prefs,JSON.parse(localStorage.getItem('jf_prefs')||'{}')); }catch(e){} }
+function save(){ try{ localStorage.setItem('jf_srs',JSON.stringify(srs)); }catch(e){} }
+function savePrefs(){ try{ localStorage.setItem('jf_prefs',JSON.stringify(prefs)); }catch(e){} }
+function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function nl(s){ return esc(s).replace(/\n/g,'<br>'); }
 
-let currentCatIndex = 0;
-let currentCardIndex = 0;
-let isFlipped = false;
-let knownCards = {};
-let reviewModeOnly = false;
-let showFrenchFirst = false;
-let currentDeck = [];
+// build a flat list of all vocab cards with ids
+let ALL = [];
+categories.forEach(cat=>{
+  cat.cards.forEach((c,i)=>{
+    ALL.push({ id: cat.id+'_'+i, front:c.front, back:c.back, sub:c.sub||'', catId:cat.id, catName:cat.name });
+  });
+});
+function st(id){ return srs[id] || {box:1, due:0}; }
+function grade(id, good){
+  let s = st(id);
+  if(good){ s.box = Math.min(6, s.box+1); s.due = Date.now() + BOX_DAYS[s.box]*DAY; }
+  else { s.box = 1; s.due = Date.now(); }
+  srs[id]=s; save();
+}
+function dueCount(pool){ const now=Date.now(); return pool.filter(c=>st(c.id).due<=now).length; }
 
-function buildDeck() {
-  const cat = categories[currentCatIndex];
-  let pool = cat.cards.map((c, i) => ({ ...c, origIndex: i }));
-  if (reviewModeOnly) {
-    const filtered = pool.filter(c => !knownCards[cat.id + '_' + c.origIndex]);
-    pool = filtered.length > 0 ? filtered : pool;
+// ---------------- view switch ----------------
+let view='cards';
+function setView(v){
+  view=v;
+  document.getElementById('cardsView').classList.toggle('hidden', v!=='cards');
+  document.getElementById('verbsView').classList.toggle('hidden', v!=='verbs');
+  document.getElementById('talkView').classList.toggle('hidden', v!=='talk');
+  document.getElementById('vb-cards').classList.toggle('active', v==='cards');
+  document.getElementById('vb-verbs').classList.toggle('active', v==='verbs');
+  document.getElementById('vb-talk').classList.toggle('active', v==='talk');
+  if(v==='verbs'){ renderChips(); renderVerbList(); }
+  if(v==='talk'){ renderSituList(); }
+}
+
+// ---------------- TALK: situational dialogues ----------------
+let talkHideEn=false;
+function renderSituList(){
+  document.getElementById('situDetailWrap').classList.add('hidden');
+  const w=document.getElementById('situListWrap'); w.classList.remove('hidden');
+  document.getElementById('situList').innerHTML =
+    '<div class="verb-group-head">Situations — mini conversations</div>' +
+    SITUATIONS.map((s,i)=>`<div class="verb-item" onclick="showSitu(${i})">
+       <div><div class="vinf">${s.name}</div><div class="ven">${esc(s.who)} · ${s.lines.length} lines · ${s.phrases.length} key phrases</div></div>
+       <div class="vaux">›</div></div>`).join('');
+}
+function showSitu(i){
+  const s=SITUATIONS[i];
+  document.getElementById('situListWrap').classList.add('hidden');
+  const w=document.getElementById('situDetailWrap'); w.classList.remove('hidden');
+  const dlg = s.lines.map(l=>{
+    const you = l.who==='you';
+    return `<div class="who-label ${you?'who-you':''}">${you?'You':esc(s.who)}</div>
+      <div class="bubble ${you?'bubble-you':'bubble-them'}"><div class="b-fr">${esc(l.fr)}</div><div class="b-en">${esc(l.en)}</div></div>`;
+  }).join('');
+  w.innerHTML = `<div class="verb-detail ${talkHideEn?'hide-en':''}" id="situBox">
+     <button class="vd-back" onclick="renderSituList()">← All situations</button>
+     <div class="vd-inf">${s.name}</div>
+     <div class="vd-en">A typical exchange — read your lines out loud.</div>
+     <div class="tense-tabs"><button class="tense-tab ${talkHideEn?'active':''}" onclick="toggleTalkEn(${i})">${talkHideEn?'Show':'Hide'} English</button></div>
+     <div class="dialogue">${dlg}</div>
+     <div class="phrases"><div class="ph-head">More useful phrases here</div>
+       ${s.phrases.map(p=>`<div class="ph"><div class="ph-fr">${esc(p[0])}</div><div class="ph-en">${esc(p[1])}</div></div>`).join('')}</div>
+   </div>`;
+}
+function toggleTalkEn(i){ talkHideEn=!talkHideEn; showSitu(i); }
+
+// ---------------- CARDS: browse mode ----------------
+let curCat=0, browseDeck=[], bIdx=0, revealed=false;
+let curArea = (typeof AREA_ORDER!=='undefined') ? AREA_ORDER[0] : '';
+let session=null; // when running a study session
+
+function catsInArea(a){ let out=[]; categories.forEach((c,i)=>{ if(AREAS[c.id]===a) out.push({c,i}); }); return out; }
+function renderAreas(){
+  document.getElementById('areaBar').innerHTML = AREA_ORDER.map(a=>
+    `<div class="chip ${a===curArea?'active':''}" onclick="switchArea('${a.replace(/'/g,"\\'")}')">${esc(a)}</div>`).join('');
+}
+function renderTabs(){
+  const list=catsInArea(curArea);
+  document.getElementById('tabs').innerHTML = list.map(x=>
+    `<button class="tab ${x.i===curCat?'active':''}" onclick="switchCat(${x.i})">${x.c.name}</button>`).join('');
+}
+function switchArea(a){ curArea=a; const list=catsInArea(a); if(list.length && !list.some(x=>x.i===curCat)) curCat=list[0].i; renderAreas(); renderTabs(); buildBrowse(); }
+function switchCat(i){ curCat=i; renderTabs(); buildBrowse(); }
+function buildBrowse(){
+  const cat=categories[curCat];
+  browseDeck = ALL.filter(c=>c.catId===cat.id);
+  bIdx=0; revealed=false;
+  document.getElementById('summaryArea').classList.add('hidden');
+  document.getElementById('cardArea').classList.remove('hidden');
+  document.getElementById('progWrap').classList.remove('hidden');
+  renderCard();
+}
+function currentCard(){ return session ? session.queue[session.pos] : browseDeck[bIdx]; }
+
+function renderCard(){
+  const card=currentCard();
+  const area=document.getElementById('cardArea');
+  if(!card){ area.innerHTML=''; return; }
+  const dir = session ? session.dir : prefs.dir;
+  const promptTxt = dir==='en' ? card.front : card.back;
+  const answerTxt = dir==='en' ? card.back : card.front;
+  const promptLbl = dir==='en' ? 'English — recall the French' : 'Français — recall the English';
+  const answerLbl = dir==='en' ? 'Français' : 'English';
+  const box = st(card.id).box;
+  const pips = '●'.repeat(box) + '○'.repeat(6-box);
+
+  let html = `<div class="card-container"><div class="card"><div class="flashface">
+      <div class="card-label">${promptLbl}</div>
+      <div class="card-main">${esc(promptTxt)}</div>`;
+  if(!revealed){
+    html += `<button class="reveal-btn" onclick="reveal()">Show answer</button>
+      <div class="prompt-hint">Say it out loud first, then check.</div>`;
+  } else {
+    html += `<div class="answer-block">
+        <div class="card-label">${answerLbl}</div>
+        <div class="answer-main">${esc(answerTxt)}</div>
+        ${card.sub?`<div class="card-sub">${nl(card.sub)}</div>`:''}
+      </div>
+      <div class="box-pip">Memory strength: ${pips}</div>`;
   }
-  currentDeck = pool;
-  currentCardIndex = 0;
-}
+  html += `</div></div></div>`;
 
-function renderTabs() {
-  document.getElementById('tabs').innerHTML = categories.map((c, i) =>
-    `<button class="tab ${i === currentCatIndex ? 'active' : ''}" onclick="switchCategory(${i})">${c.name}</button>`
-  ).join('');
-}
-
-function renderCard() {
-  if (!currentDeck.length) return;
-  const card = currentDeck[currentCardIndex];
-  const cat = categories[currentCatIndex];
-  const key = cat.id + '_' + card.origIndex;
-  const isKnown = !!knownCards[key];
-
-  const A = showFrenchFirst ? card.back : card.front;
-  const B = showFrenchFirst ? card.front : card.back;
-  const labelA = showFrenchFirst ? 'Français' : 'English';
-  const labelB = showFrenchFirst ? 'English' : 'Français';
-
-  document.getElementById('cardFront').innerHTML =
-    `<div class="card-label">${labelA}</div>
-     <div class="card-main">${esc(A)}</div>
-     ${isKnown ? '<div class="known-badge">✓ Known</div>' : ''}
-     <div class="flip-hint">tap to reveal →</div>`;
-
-  const subHtml = card.sub ? `<div class="card-sub">${esc(card.sub).replace(/\n/g, '<br>')}</div>` : '';
-  document.getElementById('cardBack').innerHTML =
-    `<div class="card-label">${labelB}</div>
-     <div class="card-main">${esc(B)}</div>
-     ${subHtml}
-     <div class="cat-badge">${cat.name}</div>`;
-
-  const cardEl = document.getElementById('card');
-  cardEl.classList.remove('flipped');
-  isFlipped = false;
-
-  document.getElementById('cardCounter').textContent = `${currentCardIndex + 1} / ${currentDeck.length}`;
+  // controls
+  if(revealed){
+    html += `<div class="grade-row">
+      <button class="btn-grade btn-again" onclick="gradeCard(false)">↩ Again<small>didn't get it</small></button>
+      <button class="btn-grade btn-got" onclick="gradeCard(true)">✓ Got it<small>recalled it</small></button>
+    </div>`;
+  }
+  if(session){
+    // session HUD handled separately; show position
+  } else {
+    html += `<div class="nav-row">
+        <button class="nav-btn" onclick="prevCard()">← Prev</button>
+        <span class="card-counter">${bIdx+1} / ${browseDeck.length}</span>
+        <button class="nav-btn" onclick="nextCard()">Next →</button>
+      </div>
+      <div class="controls-row">
+        <button class="ctrl-btn ${prefs.dir==='en'?'active':''}" onclick="toggleDir()">🔁 ${prefs.dir==='en'?'EN→FR':'FR→EN'}</button>
+        <button class="ctrl-btn" onclick="shuffleBrowse()">🔀 Shuffle</button>
+        <button class="ctrl-btn" onclick="resetCat()">↺ Reset this deck</button>
+      </div>`;
+  }
+  area.innerHTML=html;
   updateProgress();
 }
+function reveal(){ revealed=true; renderCard(); }
+function nextCard(){ if(!browseDeck.length)return; bIdx=(bIdx+1)%browseDeck.length; revealed=false; renderCard(); }
+function prevCard(){ if(!browseDeck.length)return; bIdx=(bIdx-1+browseDeck.length)%browseDeck.length; revealed=false; renderCard(); }
+function toggleDir(){ prefs.dir = prefs.dir==='en'?'fr':'en'; savePrefs(); revealed=false; renderCard(); }
+function shuffleBrowse(){ for(let i=browseDeck.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[browseDeck[i],browseDeck[j]]=[browseDeck[j],browseDeck[i]];} bIdx=0; revealed=false; renderCard(); }
+function resetCat(){ browseDeck.forEach(c=>{ delete srs[c.id]; }); save(); revealed=false; renderCard(); }
 
-function esc(s) {
-  return (s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+function updateProgress(){
+  let pool = session ? session.pool : browseDeck;
+  if(!pool||!pool.length){ document.getElementById('progressText').textContent=''; document.getElementById('progressFill').style.width='0%'; return; }
+  const learned = pool.filter(c=>st(c.id).box>=4).length;
+  const due = dueCount(pool);
+  const pct = pool.length? learned/pool.length*100 : 0;
+  document.getElementById('progressFill').style.width=pct+'%';
+  document.getElementById('progressText').textContent = `${learned}/${pool.length} strong · ${due} due`;
 }
 
-function updateProgress() {
-  const cat = categories[currentCatIndex];
-  const total = cat.cards.length;
-  const known = cat.cards.filter((_, i) => knownCards[cat.id + '_' + i]).length;
-  const pct = total > 0 ? (known / total * 100) : 0;
-  document.getElementById('progressFill').style.width = pct + '%';
-  document.getElementById('progressText').textContent = `${known} / ${total} known`;
+// grade in either browse or session
+function gradeCard(good){
+  const card=currentCard();
+  if(!card) return;
+  grade(card.id, good);
+  if(session){ advanceSession(good); }
+  else { revealed=false; nextCard(); }
 }
 
-function flipCard() {
-  isFlipped = !isFlipped;
-  document.getElementById('card').classList.toggle('flipped', isFlipped);
+// ---------------- STUDY SESSION ----------------
+let studySel = { scope:'all', lim:'c20', dir:'en' };
+function openStudy(){
+  // scope options: All vocab · each study area · current tab
+  const scopes = [['all','All vocab']].concat(AREA_ORDER.map((a,ix)=>['area:'+ix, a])).concat([['cat','This tab only']]);
+  document.getElementById('opt-scope').innerHTML = scopes.map((s,i)=>
+    `<div class="opt ${i===0?'active':''}" data-scope="${s[0]}" onclick="pick('scope',this)">${esc(s[1])}</div>`).join('');
+  studySel={scope:'all', lim:'c20', dir: prefs.dir};
+  // reflect dir default
+  document.querySelectorAll('#opt-dir .opt').forEach(o=>o.classList.toggle('active', o.dataset.dir===studySel.dir));
+  document.getElementById('studyOverlay').classList.remove('hidden');
 }
-
-function nextCard() {
-  if (!currentDeck.length) return;
-  currentCardIndex = (currentCardIndex + 1) % currentDeck.length;
-  renderCard();
+function closeStudy(){ document.getElementById('studyOverlay').classList.add('hidden'); }
+function pick(kind,el){
+  const map={scope:'#opt-scope',dir:'#opt-dir',lim:'#opt-limit'};
+  document.querySelectorAll(map[kind]+' .opt').forEach(o=>o.classList.remove('active'));
+  el.classList.add('active');
+  if(kind==='scope') studySel.scope=el.dataset.scope;
+  if(kind==='dir') studySel.dir=el.dataset.dir;
+  if(kind==='lim') studySel.lim=el.dataset.lim;
 }
-
-function prevCard() {
-  if (!currentDeck.length) return;
-  currentCardIndex = (currentCardIndex - 1 + currentDeck.length) % currentDeck.length;
-  renderCard();
+function beginSession(){
+  closeStudy();
+  setView('cards');
+  let pool;
+  if(studySel.scope==='cat') pool = ALL.filter(c=>c.catId===categories[curCat].id);
+  else if(studySel.scope.indexOf('area:')===0){ const a=AREA_ORDER[+studySel.scope.slice(5)]; pool = ALL.filter(c=>AREAS[c.catId]===a); }
+  else pool = ALL.slice();
+  // queue: due first (oldest due), then not-due by lowest box — interleave via shuffle within tiers
+  const now=Date.now();
+  let due = pool.filter(c=>st(c.id).due<=now);
+  let notdue = pool.filter(c=>st(c.id).due>now);
+  shuffle(due); shuffle(notdue);
+  notdue.sort((a,b)=>st(a.id).box-st(b.id).box);
+  let queue = due.concat(notdue);
+  const lim=studySel.lim;
+  let byTime=false, limitN=queue.length, endAt=0;
+  if(lim[0]==='c'){ limitN=parseInt(lim.slice(1)); queue=queue.slice(0,limitN); }
+  else { byTime=true; endAt=now+parseInt(lim.slice(1))*60000; } // keep full queue, loop
+  session={ pool, queue, pos:0, dir:studySel.dir, byTime, endAt, limitN, done:0, got:0, again:0, startCount:queue.length };
+  revealed=false;
+  document.getElementById('kbHint').classList.remove('hidden');
+  document.getElementById('progWrap').classList.remove('hidden');
+  renderHud(); renderCard();
+  if(byTime){ session.timer=setInterval(tick,1000); }
 }
-
-function markKnown() {
-  if (!currentDeck.length) return;
-  const card = currentDeck[currentCardIndex];
-  const cat = categories[currentCatIndex];
-  knownCards[cat.id + '_' + card.origIndex] = true;
-  save();
-  nextCard();
+function shuffle(a){ for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} }
+function renderHud(){
+  const hud=document.getElementById('sessionHud');
+  hud.classList.remove('hidden');
+  let right;
+  if(session.byTime){ const rem=Math.max(0,session.endAt-Date.now()); const m=Math.floor(rem/60000), s=Math.floor(rem%60000/1000); right=`⏱ ${m}:${s<10?'0':''}${s}`; }
+  else { right=`${session.done}/${session.limitN}`; }
+  hud.innerHTML=`<span>📚 Study · ${session.got}✓ / ${session.again}↩</span><span>${right}</span><button class="end" onclick="endSession()">End</button>`;
 }
-
-function markAgain() {
-  if (!currentDeck.length) return;
-  const card = currentDeck[currentCardIndex];
-  const cat = categories[currentCatIndex];
-  delete knownCards[cat.id + '_' + card.origIndex];
-  save();
-  nextCard();
-}
-
-function shuffleCards() {
-  for (let i = currentDeck.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [currentDeck[i], currentDeck[j]] = [currentDeck[j], currentDeck[i]];
+function tick(){ if(!session||!session.byTime)return; if(Date.now()>=session.endAt){ endSession(); } else renderHud(); }
+function advanceSession(good){
+  session.done++; if(good)session.got++; else session.again++;
+  if(good){ session.pos++; }
+  else { // requeue this card a few positions ahead for another attempt this session
+    const card=session.queue[session.pos];
+    session.queue.splice(session.pos,1);
+    const insertAt=Math.min(session.queue.length, session.pos+4);
+    session.queue.splice(insertAt,0,card);
+    // pos stays (next card slides in)
   }
-  currentCardIndex = 0;
-  renderCard();
+  revealed=false;
+  const finishedCount = !session.byTime && session.done>=session.limitN;
+  const outOfCards = session.pos>=session.queue.length;
+  if(finishedCount || (outOfCards && !session.byTime)){ endSession(); return; }
+  if(outOfCards && session.byTime){ session.pos=0; shuffle(session.queue); }
+  renderHud(); renderCard();
+}
+function endSession(){
+  if(session&&session.timer) clearInterval(session.timer);
+  const s=session; session=null; revealed=false;
+  document.getElementById('sessionHud').classList.add('hidden');
+  document.getElementById('cardArea').classList.add('hidden');
+  document.getElementById('progWrap').classList.add('hidden');
+  document.getElementById('kbHint').classList.add('hidden');
+  const nextDue = s ? soonestDue(s.pool) : '';
+  document.getElementById('summaryArea').classList.remove('hidden');
+  document.getElementById('summaryArea').innerHTML = `<div class="summary">
+     <h2>Session complete 🎉</h2>
+     <div class="row">
+       <div class="stat"><b>${s?s.done:0}</b><span>reviewed</span></div>
+       <div class="stat"><b style="color:#276749">${s?s.got:0}</b><span>got it</span></div>
+       <div class="stat"><b style="color:#9b2c2c">${s?s.again:0}</b><span>again</span></div>
+     </div>
+     <div style="color:#8895a3;font-size:0.85rem;margin-bottom:18px">${nextDue}</div>
+     <button class="study-btn" onclick="openStudy()">▶ Another session</button>
+     <button class="ctrl-btn" style="margin-left:8px" onclick="exitSummary()">Back to cards</button>
+   </div>`;
+}
+function exitSummary(){ document.getElementById('summaryArea').classList.add('hidden'); buildBrowse(); }
+function soonestDue(pool){
+  const now=Date.now();
+  const future=pool.map(c=>st(c.id).due).filter(d=>d>now).sort((a,b)=>a-b);
+  if(!future.length) return 'All caught up — no cards scheduled ahead.';
+  const d=future[0]-now;
+  if(d<DAY) return 'Next cards are due later today.';
+  const days=Math.round(d/DAY);
+  return `Next review due in about ${days} day${days>1?'s':''}. Come back then.`;
 }
 
-function toggleReviewMode() {
-  reviewModeOnly = !reviewModeOnly;
-  document.getElementById('reviewBtn').classList.toggle('active', reviewModeOnly);
-  buildDeck();
-  renderCard();
+// ---------------- VERBS ----------------
+let curGroup='all', curVerb=null, curTense='present';
+function groups(){ const g=[]; VERBS.forEach(v=>{ if(!g.includes(v.group)) g.push(v.group); }); return g; }
+function renderChips(){
+  const gs=['all'].concat(groups());
+  document.getElementById('groupChips').innerHTML = gs.map(g=>
+    `<div class="chip ${g===curGroup?'active':''}" onclick="setGroup('${g.replace(/'/g,"\\'")}')">${g==='all'?'All':esc(g)}</div>`).join('');
+}
+function setGroup(g){ curGroup=g; renderChips(); renderVerbList(); }
+function renderVerbList(){
+  document.getElementById('verbDetailWrap').classList.add('hidden');
+  document.getElementById('verbListWrap').classList.remove('hidden');
+  const q=(document.getElementById('verbSearch').value||'').toLowerCase().trim();
+  let list=VERBS.filter(v=> (curGroup==='all'||v.group===curGroup) &&
+     (!q || v.inf.toLowerCase().includes(q) || v.en.toLowerCase().includes(q)) );
+  let html=''; let lastG=null;
+  list.forEach(v=>{
+    if(v.group!==lastG){ html+=`<div class="verb-group-head">${esc(v.group)}</div>`; lastG=v.group; }
+    const idx=VERBS.indexOf(v);
+    html+=`<div class="verb-item" onclick="showVerb(${idx})">
+       <div><div class="vinf">${esc(v.inf)}</div><div class="ven">${esc(v.en)}</div></div>
+       <div class="vaux">${v.aux?esc(v.aux):(v.impersonal?'impers.':'')}</div></div>`;
+  });
+  if(!list.length) html='<p style="color:#8895a3;padding:20px 4px">No verbs match that search.</p>';
+  document.getElementById('verbList').innerHTML=html;
+}
+function showVerb(idx){
+  curVerb=idx; curTense='present';
+  document.getElementById('verbListWrap').classList.add('hidden');
+  const w=document.getElementById('verbDetailWrap'); w.classList.remove('hidden');
+  renderVerbDetail();
+}
+function renderVerbDetail(){
+  const v=VERBS[curVerb];
+  const tenses=[['present','Présent'],['passe','Passé composé'],['futur','Futur proche'],['imparfait','Imparfait']];
+  const subj=['je','tu','il/elle','nous','vous','ils/elles'];
+  const forms=v.tenses[curTense];
+  let rows;
+  if(v.impersonal){ rows=`<tr><td class="subj">il</td><td class="form">${esc(forms[0])}</td></tr>`; }
+  else { rows=forms.map(f=>{ const p=f.split(' ')[0]; return `<tr><td class="subj">${esc(p.match(/^(je|j'|tu|il\/elle|nous|vous|ils\/elles)/)?p:'')}</td><td class="form">${esc(f)}</td></tr>`; }).join(''); }
+  // simpler: show full conjugated string per row, subject implied
+  rows = v.impersonal ? `<tr><td class="form">${esc(forms[0])}</td></tr>`
+        : forms.map(f=>`<tr><td class="form">${esc(f)}</td></tr>`).join('');
+  document.getElementById('verbDetailWrap').innerHTML = `<div class="verb-detail">
+     <button class="vd-back" onclick="renderVerbList()">← All verbs</button>
+     <div class="vd-inf">${esc(v.inf)}</div>
+     <div class="vd-en">${esc(v.en)}</div>
+     <div class="vd-meta">${v.impersonal?'impersonal':esc(v.group)}${v.aux?' · auxiliaire '+esc(v.aux):''}</div>
+     <div class="tense-tabs">${tenses.map(t=>`<button class="tense-tab ${t[0]===curTense?'active':''}" onclick="setTense('${t[0]}')">${t[1]}</button>`).join('')}</div>
+     <div class="expl-box">${esc(TENSE_EXPL[curTense])}</div>
+     <table class="conj-table">${rows}</table>
+     ${(function(){ const ph=buildPhrases(v); return ph.length?`<div class="phrases"><div class="ph-head">Phrases — ${ {present:'présent',passe:'passé composé',futur:'futur proche',imparfait:'imparfait'}[curTense] }</div>${ph.map(p=>`<div class="ph"><div class="ph-fr">${esc(p[0])}</div><div class="ph-en">${esc(p[1])}</div></div>`).join('')}</div>`:''; })()}
+     ${v.note?`<div class="vd-note">Note: ${esc(v.note)}</div>`:''}
+   </div>`;
+}
+function setTense(t){ curTense=t; renderVerbDetail(); }
+
+// tense-aware phrase construction: FR reuses the conjugation table; EN is built
+// from the verb's English forms so phrases follow the selected tense.
+const EN_SUBJ=['I','You','He/She','We','You','They'];
+const EN_GOING=["I'm","You're","He's/She's","We're","You're","They're"];
+function en3(base){
+  const parts=base.split(' '); let w=parts[0];
+  if(w==='have') w='has';
+  else if(w==='can'||w==='must') { /* modals unchanged */ }
+  else if(/(s|sh|ch|x|o)$/.test(w)) w=w+'es';
+  else if(/[^aeiou]y$/.test(w)) w=w.slice(0,-1)+'ies';
+  else w=w+'s';
+  parts[0]=w; return parts.join(' ');
+}
+function cap(s){ return s.charAt(0).toUpperCase()+s.slice(1); }
+function enPhrase(v,p,comp,tense){
+  const base=v.env[0], past=v.env[1], gb=v.env[2]||base;
+  const tail = comp?' '+comp:'';
+  if(tense==='present') return EN_SUBJ[p]+' '+(p===2?en3(base):base)+tail+'.';
+  if(tense==='passe')   return EN_SUBJ[p]+' '+past+tail+'.';
+  if(tense==='futur')   return EN_GOING[p]+' going to '+gb+tail+'.';
+  return EN_SUBJ[p]+' used to '+gb+tail+'.'; // imparfait
+}
+function buildPhrases(v){
+  if(v.tpl&&v.tpl.length&&v.env){
+    return v.tpl.map(t=>{
+      const p=t[0], frc=t[1], enc=t[2];
+      const fr=cap(v.tenses[curTense][p]+(frc?' '+frc:''))+'.';
+      return [fr, enPhrase(v,p,enc,curTense)];
+    });
+  }
+  return v.ex||[];
 }
 
-function toggleFlipDefault() {
-  showFrenchFirst = !showFrenchFirst;
-  const btn = document.getElementById('flipDefaultBtn');
-  btn.textContent = showFrenchFirst ? '🔄 Show English first' : '🔄 Show French first';
-  btn.classList.toggle('active', showFrenchFirst);
-  renderCard();
-}
-
-function resetProgress() {
-  const cat = categories[currentCatIndex];
-  cat.cards.forEach((_, i) => delete knownCards[cat.id + '_' + i]);
-  save();
-  buildDeck();
-  renderCard();
-}
-
-function switchCategory(i) {
-  currentCatIndex = i;
-  renderTabs();
-  buildDeck();
-  renderCard();
-}
-
-function save() {
-  try { localStorage.setItem('jf_flashcards', JSON.stringify(knownCards)); } catch(e) {}
-}
-function load() {
-  try { const s = localStorage.getItem('jf_flashcards'); if (s) knownCards = JSON.parse(s); } catch(e) {}
-}
-
-load();
-renderTabs();
-buildDeck();
-renderCard();
-
-document.addEventListener('keydown', e => {
-  if (e.key === 'ArrowRight') nextCard();
-  else if (e.key === 'ArrowLeft') prevCard();
-  else if (e.key === ' ') { e.preventDefault(); flipCard(); }
-  else if (e.key === 'Enter') markKnown();
+// ---------------- keyboard ----------------
+document.addEventListener('keydown',e=>{
+  if(view!=='cards') return;
+  if(document.getElementById('summaryArea').classList.contains('hidden')===false) return;
+  if(e.key===' '){ e.preventDefault(); if(!revealed) reveal(); }
+  else if(e.key==='1'){ if(revealed) gradeCard(false); }
+  else if(e.key==='2'){ if(revealed) gradeCard(true); }
+  else if(e.key==='ArrowRight' && !session){ nextCard(); }
+  else if(e.key==='ArrowLeft' && !session){ prevCard(); }
 });
+
+// ---------------- init ----------------
+load();
+curArea = AREAS[categories[curCat].id] || AREA_ORDER[0];
+renderAreas();
+renderTabs();
+buildBrowse();
 </script>
 </body>
 </html>
